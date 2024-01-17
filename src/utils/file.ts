@@ -1,6 +1,6 @@
-import * as util from "util";
 import * as fs from "fs";
 import * as url from "url";
+import * as util from "util";
 
 export const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 export const readdir = util.promisify(fs.readdir);
@@ -21,5 +21,5 @@ export const copyFile = util.promisify(fs.copyFile);
  * console.log(isDirectory); // true or false
  */
 export async function isFsDirectory(sourcePath: string) {
-  return (await fs.promises.stat(sourcePath)).isDirectory();
+	return (await fs.promises.stat(sourcePath)).isDirectory();
 }

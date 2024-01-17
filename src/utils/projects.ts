@@ -1,5 +1,5 @@
-import { commanderInit } from "./commands";
 import inquirer from "inquirer";
+import { commanderInit } from "./commands";
 import { envFilesDirectory } from "./env";
 import { readdir } from "./file";
 
@@ -16,10 +16,10 @@ import { readdir } from "./file";
  * console.log(projects); // ['project1', 'project2', ...]
  */
 export async function getProjectsList(): Promise<string[]> {
-  const dirents = await readdir(envFilesDirectory, { withFileTypes: true });
-  return dirents
-    .filter((dirent) => dirent.isDirectory())
-    .map((dirent) => dirent.name);
+	const dirents = await readdir(envFilesDirectory, { withFileTypes: true });
+	return dirents
+		.filter((dirent) => dirent.isDirectory())
+		.map((dirent) => dirent.name);
 }
 
 /**
@@ -37,24 +37,24 @@ export async function getProjectsList(): Promise<string[]> {
  * console.log(selectedProject); // 'project1' or 'project2'
  */
 export async function selectProject(projects: string[]): Promise<string> {
-  const options = commanderInit();
+	const options = commanderInit();
 
-  if (!options.project) {
-    const answer = await inquirer.prompt([
-      {
-        type: "list",
-        name: "project",
-        message: "Select a project to copy .env files:",
-        choices: projects,
-      },
-    ]);
-    return answer.project;
-  }
+	if (!options.project) {
+		const answer = await inquirer.prompt([
+			{
+				type: "list",
+				name: "project",
+				message: "Select a project to copy .env files:",
+				choices: projects,
+			},
+		]);
+		return answer.project;
+	}
 
-  if (!projects.includes(options.project)) {
-    console.log("Error: Specified project not found in the directory.");
-    process.exit(1); // Exit the process with an error code
-  }
+	if (!projects.includes(options.project)) {
+		console.log("Error: Specified project not found in the directory.");
+		process.exit(1); // Exit the process with an error code
+	}
 
-  return options.project;
+	return options.project;
 }

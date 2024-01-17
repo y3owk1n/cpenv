@@ -11,19 +11,19 @@ import inquirer from "inquirer";
  * console.log(answer.overwriteAll); // Access the value of the 'overwriteAll' property
  */
 export async function promptForGlobalOverwrite(): Promise<{
-  overwriteAll: boolean;
+	overwriteAll: boolean;
 }> {
-  const response = await inquirer.prompt([
-    {
-      type: "confirm",
-      name: "overwriteAll",
-      message:
-        "Do you want to overwrite all existing files in the current project if it exists?",
-      default: false,
-    },
-  ]);
+	const response = await inquirer.prompt([
+		{
+			type: "confirm",
+			name: "overwriteAll",
+			message:
+				"Do you want to overwrite all existing files in the current project if it exists?",
+			default: false,
+		},
+	]);
 
-  return { overwriteAll: response.overwriteAll };
+	return { overwriteAll: response.overwriteAll };
 }
 
 /**
@@ -39,17 +39,17 @@ export async function promptForGlobalOverwrite(): Promise<{
  * console.log(answer.overwrite); // Access the value of the 'overwrite' property
  */
 export async function promptForOverwrite(
-  file: string,
-  currentPath: string,
+	file: string,
+	currentPath: string,
 ): Promise<{ overwrite: boolean }> {
-  const response = await inquirer.prompt([
-    {
-      type: "confirm",
-      name: "overwrite",
-      message: `Warning: ${file} already exists in ${currentPath}. Do you want to overwrite it?`,
-      default: false,
-    },
-  ]);
+	const response = await inquirer.prompt([
+		{
+			type: "confirm",
+			name: "overwrite",
+			message: `Warning: ${file} already exists in ${currentPath}. Do you want to overwrite it?`,
+			default: false,
+		},
+	]);
 
-  return { overwrite: response.overwrite };
+	return { overwrite: response.overwrite };
 }

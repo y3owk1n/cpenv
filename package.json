@@ -21,9 +21,11 @@
   },
   "scripts": {
     "build": "bun build.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "format": "biome check --apply . && biome format --write ."
   },
   "devDependencies": {
+    "@biomejs/biome": "1.5.2",
     "@types/inquirer": "^9.0.7",
     "@types/minimist": "^1.2.5",
     "bun-types": "latest"

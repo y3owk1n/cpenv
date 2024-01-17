@@ -1,5 +1,5 @@
-import * as path from "path";
 import * as fs from "fs";
+import * as path from "path";
 import { __dirname } from "./file";
 
 /**
@@ -13,9 +13,12 @@ import { __dirname } from "./file";
  * console.log(`Current version: ${version}`);
  */
 export function getCurrentVersion(): string {
-  const packageJsonPath: string = path.join(__dirname, "..", "package.json");
-  console.log(packageJsonPath);
-  const packageJsonContent: string = fs.readFileSync(packageJsonPath, "utf-8");
-  const packageJson = JSON.parse(packageJsonContent);
-  return packageJson.version;
+	const packageJsonPath: string = path.join(__dirname, "..", "package.json");
+	console.log(packageJsonPath);
+	const packageJsonContent: string = fs.readFileSync(
+		packageJsonPath,
+		"utf-8",
+	);
+	const packageJson = JSON.parse(packageJsonContent);
+	return packageJson.version;
 }

@@ -1,19 +1,19 @@
 import * as commander from "commander";
 
 type CommandOption = {
-  flags: string;
-  description: string;
+	flags: string;
+	description: string;
 };
 
 export const commandOptions: CommandOption[] = [
-  {
-    flags: "-p, --project <project>",
-    description: "Select a project to copy .env files",
-  },
-  {
-    flags: "-y, --auto-yes",
-    description: "Automatically overwrite files without prompting",
-  },
+	{
+		flags: "-p, --project <project>",
+		description: "Select a project to copy .env files",
+	},
+	{
+		flags: "-y, --auto-yes",
+		description: "Automatically overwrite files without prompting",
+	},
 ];
 
 /**
@@ -27,12 +27,12 @@ export const commandOptions: CommandOption[] = [
  * console.log(options.project); // Access the value of the 'project' option
  */
 export function commanderInit() {
-  const program = new commander.Command();
-  configureCommand(program, commandOptions);
+	const program = new commander.Command();
+	configureCommand(program, commandOptions);
 
-  const options = program.opts();
+	const options = program.opts();
 
-  return options;
+	return options;
 }
 
 /**
@@ -48,11 +48,11 @@ export function commanderInit() {
  * program.parse(process.argv);
  */
 export function configureCommand(
-  program: commander.Command,
-  options: CommandOption[],
+	program: commander.Command,
+	options: CommandOption[],
 ): void {
-  for (const opt of options) {
-    program.option(opt.flags, opt.description);
-  }
-  program.parse(process.argv);
+	for (const opt of options) {
+		program.option(opt.flags, opt.description);
+	}
+	program.parse(process.argv);
 }
