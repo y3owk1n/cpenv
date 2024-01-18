@@ -1,6 +1,6 @@
 {
   "name": "cpenv",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A CLI for copy and paste your local .env to right projects faster",
   "main": "index.js",
   "type": "module",
