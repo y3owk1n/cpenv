@@ -2,23 +2,43 @@ import * as fs from "fs";
 import * as path from "path";
 import { __dirname } from "./file";
 
+type PackageJson = {
+	name: string;
+	version: string;
+	description: string;
+};
+
 /**
- * Retrieves the current version from the package.json file.
+ * Retrieves the data from the package.json file.
  *
- * @returns The version string from the package.json file.
+ * @returns The current data from the package.json file.
  * @throws If there is an issue reading or parsing the package.json file.
  *
  * @example
- * const version = getCurrentVersion();
- * console.log(`Current version: ${version}`);
+ * const jsonData = getCurrentPackageJsonData();
+ * console.log(`Current data: ${jsonData}`);
  */
-export function getCurrentVersion(): string {
+export function getCurrentPackageJsonData(): PackageJson {
 	const packageJsonPath: string = path.join(__dirname, "..", "package.json");
-	console.log(packageJsonPath);
 	const packageJsonContent: string = fs.readFileSync(
 		packageJsonPath,
 		"utf-8",
 	);
 	const packageJson = JSON.parse(packageJsonContent);
-	return packageJson.version;
+	return packageJson;
+}
+
+export function getCurrentVersion(): string {
+	const { version } = getCurrentPackageJsonData();
+	return version;
+}
+
+export function getCurrentName(): string {
+	const { name } = getCurrentPackageJsonData();
+	return name;
+}
+
+export function getCurrentDescription(): string {
+	const { description } = getCurrentPackageJsonData();
+	return description;
 }

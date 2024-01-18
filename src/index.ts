@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { commanderInit } from "./utils/commands";
 import { copyEnvFiles } from "./utils/env";
 import { getProjectsList, selectProject } from "./utils/projects";

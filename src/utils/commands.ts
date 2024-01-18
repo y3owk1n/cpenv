@@ -1,4 +1,9 @@
 import * as commander from "commander";
+import {
+	getCurrentDescription,
+	getCurrentName,
+	getCurrentVersion,
+} from "./version";
 
 type CommandOption = {
 	flags: string;
@@ -28,6 +33,12 @@ export const commandOptions: CommandOption[] = [
  */
 export function commanderInit() {
 	const program = new commander.Command();
+
+	const name = getCurrentName();
+	const description = getCurrentDescription();
+	const version = getCurrentVersion();
+
+	program.name(name).description(description).version(version);
 	configureCommand(program, commandOptions);
 
 	const options = program.opts();
