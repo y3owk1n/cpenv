@@ -35,11 +35,8 @@
     "@biomejs/biome": "1.5.2",
     "@types/inquirer": "^9.0.7",
     "@types/minimist": "^1.2.5",
-    "bun-types": "latest",
     "np": "^9.2.0",
-    "tsup": "^8.0.1"
-  },
-  "peerDependencies": {
+    "tsup": "^8.0.1",
     "typescript": "^5.0.0"
   },
   "dependencies": {
