@@ -1,41 +1,42 @@
 {
-    "name": "env-cli",
-    "version": "0.1.0",
-    "description": "A CLI for copy and paste your local .env to right projects faster",
-    "main": "index.js",
-    "type": "module",
-    "module": "./src/index.ts",
-    "bin": {
-        "env-cli": "./dist/index.js"
-    },
-    "engines": {
-        "node": ">=18.17.0"
-    },
-    "scripts": {
-        "build": "bun build.ts",
-        "test": "bun test",
-        "format": "biome check --apply . && biome format --write ."
-    },
-    "keywords": [
-        "cli",
-        "env",
-        "node",
-        "bun"
-    ],
-    "author": "Kyle Wong",
-    "license": "ISC",
-    "devDependencies": {
-        "@biomejs/biome": "1.5.2",
-        "@types/inquirer": "^9.0.7",
-        "@types/minimist": "^1.2.5",
-        "bun-types": "latest"
-    },
-    "peerDependencies": {
-        "typescript": "^5.0.0"
-    },
-    "dependencies": {
-        "commander": "^11.1.0",
-        "inquirer": "^9.2.12",
-        "minimist": "^1.2.8"
-    }
+  "name": "env-cli",
+  "version": "0.1.0",
+  "description": "A CLI for copy and paste your local .env to right projects faster",
+  "main": "index.js",
+  "type": "module",
+  "module": "./src/index.ts",
+  "bin": {
+    "env-cli": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "scripts": {
+    "build": "bun build.ts",
+    "test": "bun test",
+    "format": "biome check --apply . && biome format --write ."
+  },
+  "keywords": [
+    "cli",
+    "env",
+    "node",
+    "bun"
+  ],
+  "author": "Kyle Wong",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "1.5.2",
+    "@types/inquirer": "^9.0.7",
+    "@types/minimist": "^1.2.5",
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.12",
+    "minimist": "^1.2.8",
+    "np": "^9.2.0"
+  }
 }
