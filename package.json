@@ -14,7 +14,8 @@
     "node": ">=18.17.0"
   },
   "scripts": {
-    "build": "rm -rf ./dist && bun build.ts",
+    "build": "rm -rf dist && tsup",
+    "clean": "rm -rf dist",
     "test": "echo \"No test specified\"",
     "format": "biome check --apply . && biome format --write ."
   },
@@ -31,7 +32,8 @@
     "@types/inquirer": "^9.0.7",
     "@types/minimist": "^1.2.5",
     "bun-types": "latest",
-    "np": "^9.2.0"
+    "np": "^9.2.0",
+    "tsup": "^8.0.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
