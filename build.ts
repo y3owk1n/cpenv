@@ -5,6 +5,5 @@ await Bun.build({
 	minify: true,
 	target: "node",
 	splitting: true,
-	external: ["*"],
 	// sourcemap: "external",
 });
