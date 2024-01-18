@@ -19,7 +19,7 @@
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf dist",
-    "publish": "pnpm clean && pnpm build && pnpm np",
+    "release": "pnpm clean && pnpm build && pnpm np",
     "test": "echo \"No test specified\"",
     "format": "biome check --apply . && biome format --write ."
   },
