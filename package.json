@@ -8,7 +8,9 @@
     "src/*",
     "README.md",
     "LICENSE",
-    "package.json"
+    "package.json",
+        "tsconfig.json",
+        "tsup.config.ts"
   ],
   "bin": {
     "cpenv": "./dist/index.js"
