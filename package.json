@@ -20,7 +20,7 @@
     "build": "tsup",
     "clean": "rm -rf dist",
     "release": "bun run clean && bun run build && bun run np",
-    "test": "echo \"No test specified\"",
+    "test": "bun test",
     "format": "biome check --apply . && biome format --write ."
   },
   "keywords": [
