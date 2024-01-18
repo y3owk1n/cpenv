@@ -4,6 +4,20 @@ EnvCopy CLI is a powerful command-line tool that simplifies the process of copyi
 
 This is useful when it comes to working within git worktrees, and you need the same .env(s) across multiple worktrees. Also sometimes when you need to run commands like `git reset --hard; and git clean -dfx`, you can always get your .env file back easily.
 
+<!--toc:start-->
+
+- [Prerequisites](#prerequisites)
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Options](#options)
+  - [Examples](#examples)
+- [Troubleshooting](#troubleshooting)
+- [Contributions](#contributions)
+- [License](#license)
+<!--toc:end-->
+
 ## Prerequisites
 
 Before using EnvCopy CLI, ensure you have the following prerequisites:
