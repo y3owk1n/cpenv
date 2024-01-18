@@ -1,5 +1,8 @@
 # Local .env copy CLI
 
+![GitHub Tag](https://img.shields.io/github/v/tag/y3owk1n/cpenv)
+![GitHub License](https://img.shields.io/github/license/y3owk1n/cpenv)
+
 EnvCopy CLI is a powerful command-line tool that simplifies the process of copying environment files for different projects. With just a few commands, you can effortlessly manage and replicate environment configurations across your projects.
 
 This is useful when it comes to working within git worktrees, and you need the same .env(s) across multiple worktrees. Also sometimes when you need to run commands like `git reset --hard; and git clean -dfx`, you can always get your .env file back easily.
