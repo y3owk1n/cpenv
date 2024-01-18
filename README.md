@@ -1,8 +1,44 @@
-# cpenv
+# Local .env copy CLI
 
-Copy and paste your local .env to right projects faster
+EnvCopy CLI is a powerful command-line tool that simplifies the process of copying environment files for different projects. With just a few commands, you can effortlessly manage and replicate environment configurations across your projects.
 
-## Usage
+## Prerequisites
+
+Before using EnvCopy CLI, ensure you have the following prerequisites:
+
+1. **Node.js:** Make sure you have Node.js installed on your machine.
+
+2. Create env-files Directory:
+
+   - Create a directory named `env-files` in your home directory (~/).
+
+3. Organize your projects within this directory. Each project should have its own subdirectory.
+
+```plaintext
+  ~/env-files
+  ├── single-env-project
+  │   ├── .env
+  ├── multi-env-project
+  │   ├── .env
+  │   ├── apps
+  │   │   ├── web
+  │   │   │   ├── .env
+  │   │   ├── api
+  │   │   │   ├── .env
+  └── other-projects...
+```
+
+## Features
+
+- **Interactive Project Selection:** Easily choose the project for which you want to copy environment files using a user-friendly interactive prompt or specify it directly through command-line options.
+
+- **Automatic Overwrite:** Use the --auto-yes option to automatically overwrite existing files without prompting for confirmation.
+
+- **Global Overwrite Option:** Opt for a global overwrite to replace all existing files in the current project with a single confirmation.
+
+## Getting Started
+
+### Installation
 
 Install cpenv globally:
 
@@ -10,23 +46,66 @@ Install cpenv globally:
 npm install -g cpenv
 ```
 
-Make a local env vault at `~/env-files`, and restructure the folders with env as per your actual project.
+or locally:
 
 ```bash
-- ~/env-files
-├── single-env-project
-├──── .env
-├── multi-env-project
-├──── .env
-├──── apps
-├────── web
-├──────── .env
-├────── api
-├──────── .env
+npm install --save-dev cpenv
+yarn add --dev cpenv
+pnpm add -D cpenv
+bun add -d cpenv
 ```
 
-Go to your project directory and run the following command in your terminal:
+### Usage
+
+If you install globally, go to your project directory and run the following command in your terminal:
 
 ```bash
 cpenv
 ```
+
+If you install locally within a project, you can run the following command in your terminal:
+
+```bash
+pnpm cpenv # whatever package manager you are using
+```
+
+This will launch the interactive mode, guiding you through project selection and file copying.
+
+### Options
+
+- -p, --project <project>: Specify the project for which you want to copy environment files.
+- -y, --auto-yes: Automatically overwrite files without prompting for confirmation.
+
+### Examples
+
+Interactive Mode
+
+```bash
+cpenv # pnpm cpenv if running locally
+```
+
+Specify Project
+
+```bash
+cpenv -p single-env-project # pnpm cpenv if running locally
+```
+
+Specify Project and Enable Auto-Overwrite
+
+```bash
+cpenv -p multi-env-project --auto-yes # pnpm cpenv if running locally
+```
+
+## Troubleshooting
+
+If you encounter any issues or errors, please refer to the ~~troubleshooting section in the wiki~~ (Not ready yet).
+
+## Contributions
+
+Feel free to contribute by opening issues, suggesting enhancements, or submitting pull requests. We value your feedback and ideas to enhance the capabilities of `cpenv` further!
+
+## License
+
+This plugin is licensed under the MIT License. Feel free to use, modify, and distribute it as you see fit.
+
+Happy coding!
