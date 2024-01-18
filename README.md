@@ -1,15 +1,32 @@
-# env-cli
+# cpenv
 
-To install dependencies:
+Copy and paste your local .env to right projects faster
 
-```bash
-bun install
-```
+## Usage
 
-To run:
+Install cpenv globally:
 
 ```bash
-bun run index.ts
+npm install -g cpenv
 ```
 
-This project was created using `bun init` in bun v1.0.13. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+Make a local env vault at `~/env-files`, and restructure the folders with env as per your actual project.
+
+```bash
+- ~/env-files
+├── single-env-project
+├──── .env
+├── multi-env-project
+├──── .env
+├──── apps
+├────── web
+├──────── .env
+├────── api
+├──────── .env
+```
+
+Go to your project directory and run the following command in your terminal:
+
+```bash
+cpenv
+```

@@ -9,7 +9,7 @@
     "dist"
   ],
   "bin": {
-    "env-cli": "./dist/index.js"
+    "cpenv": "./dist/index.js"
   },
   "engines": {
     "node": ">=18.17.0"
