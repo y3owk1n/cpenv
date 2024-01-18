@@ -14,7 +14,7 @@
     "node": ">=18.17.0"
   },
   "scripts": {
-    "build": "bun build.ts",
+    "build": "rm -rf ./dist && bun build.ts",
     "test": "echo \"No test specified\"",
     "format": "biome check --apply . && biome format --write ."
   },

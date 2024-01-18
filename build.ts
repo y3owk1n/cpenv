@@ -3,6 +3,8 @@ await Bun.build({
 	format: "esm",
 	outdir: "./dist",
 	minify: true,
-	target: "bun",
-	sourcemap: "external",
+	target: "node",
+	splitting: true,
+	external: ["*"],
+	// sourcemap: "external",
 });
