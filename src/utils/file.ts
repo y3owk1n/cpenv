@@ -1,8 +1,6 @@
 import * as fs from "fs";
-import * as url from "url";
 import * as util from "util";
 
-export const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 export const readdir = util.promisify(fs.readdir);
 export const mkdir = util.promisify(fs.mkdir);
 export const copyFile = util.promisify(fs.copyFile);
