@@ -2,15 +2,19 @@
 
 EnvCopy CLI is a powerful command-line tool that simplifies the process of copying environment files for different projects. With just a few commands, you can effortlessly manage and replicate environment configurations across your projects.
 
+This is useful when it comes to working within git worktrees, and you need the same .env(s) across multiple worktrees. Also sometimes when you need to run commands like `git reset --hard; and git clean -dfx`, you can always get your .env file back easily.
+
 ## Prerequisites
 
 Before using EnvCopy CLI, ensure you have the following prerequisites:
 
 1. **Node.js:** Make sure you have Node.js installed on your machine.
 
-2. Create env-files Directory:
+2. Create a directory named `env-files` in your home directory `~`, or you can use the following command for ease.
 
-   - Create a directory named `env-files` in your home directory (~/).
+```bash
+mkdir ~/env-files
+```
 
 3. Organize your projects within this directory. Each project should have its own subdirectory.
 
