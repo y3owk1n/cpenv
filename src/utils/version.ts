@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-import { __dirname } from "./file";
 
 type PackageJson = {
 	name: string;
@@ -19,7 +18,8 @@ type PackageJson = {
  * console.log(`Current data: ${jsonData}`);
  */
 export function getCurrentPackageJsonData(): PackageJson {
-	const packageJsonPath: string = path.join(__dirname, "..", "package.json");
+	const rootPath: string = process.cwd();
+	const packageJsonPath: string = path.join(rootPath, "package.json");
 	const packageJsonContent: string = fs.readFileSync(
 		packageJsonPath,
 		"utf-8",
