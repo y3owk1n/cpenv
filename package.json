@@ -1,10 +1,13 @@
 {
-  "name": "env-cli",
+  "name": "cpenv",
   "version": "0.1.0",
   "description": "A CLI for copy and paste your local .env to right projects faster",
   "main": "index.js",
   "type": "module",
   "module": "./src/index.ts",
+  "files": [
+    "dist"
+  ],
   "bin": {
     "env-cli": "./dist/index.js"
   },
