@@ -19,7 +19,7 @@
     "node": ">=18.17.0"
   },
   "scripts": {
-    "build": "rm -rf dist && tsup",
+    "build": "tsup",
     "clean": "rm -rf dist",
     "postinstall": "npm run build",
     "test": "echo \"No test specified\"",
@@ -37,13 +37,13 @@
     "@biomejs/biome": "1.5.2",
     "@types/inquirer": "^9.0.7",
     "@types/minimist": "^1.2.5",
-    "np": "^9.2.0",
-    "tsup": "^8.0.1",
-    "typescript": "^5.0.0"
+    "np": "^9.2.0"
   },
   "dependencies": {
     "commander": "^11.1.0",
     "inquirer": "^9.2.12",
-    "minimist": "^1.2.8"
+    "minimist": "^1.2.8",
+    "tsup": "^8.0.1",
+    "typescript": "^5.0.0"
   }
 }
