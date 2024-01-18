@@ -16,7 +16,6 @@
   },
   "scripts": {
     "build": "bun build.ts",
-    "test": "bun test",
     "format": "biome check --apply . && biome format --write ."
   },
   "keywords": [
