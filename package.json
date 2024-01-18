@@ -5,12 +5,10 @@
   "type": "module",
   "exports": "./dist/index.js",
   "files": [
-    "src/*",
+    "dist/*",
     "README.md",
     "LICENSE",
-    "package.json",
-    "tsconfig.json",
-    "tsup.config.ts"
+    "package.json"
   ],
   "bin": {
     "cpenv": "./dist/index.js"
@@ -21,7 +19,7 @@
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf dist",
-    "postinstall": "npm run build",
+    "publish": "pnpm clean && pnpm build && pnpm np",
     "test": "echo \"No test specified\"",
     "format": "biome check --apply . && biome format --write ."
   },
@@ -37,13 +35,13 @@
     "@biomejs/biome": "1.5.2",
     "@types/inquirer": "^9.0.7",
     "@types/minimist": "^1.2.5",
-    "np": "^9.2.0"
+    "np": "^9.2.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.0.0"
   },
   "dependencies": {
     "commander": "^11.1.0",
     "inquirer": "^9.2.12",
-    "minimist": "^1.2.8",
-    "tsup": "^8.0.1",
-    "typescript": "^5.0.0"
+    "minimist": "^1.2.8"
   }
 }
