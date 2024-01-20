@@ -13,9 +13,30 @@ export const envConfigDirectory: string = path.join(
 	".env-files.json",
 );
 
+export async function createEnvFilesDirectoryIfNotFound(
+	vaultDir: string,
+): Promise<string> {
+	const envFilesDirectory = path.join(os.homedir(), vaultDir);
+
+	try {
+		await fs.access(envFilesDirectory);
+	} catch (error) {
+		console.log(
+			`Env files directory not found. Creating a new one at ${envFilesDirectory}`,
+		);
+		await fs.mkdir(envFilesDirectory, { recursive: true });
+		console.log("Env files directory created.");
+	}
+
+	return envFilesDirectory;
+}
+
 export async function getEnvFilesDirectory(): Promise<string> {
 	const { vaultDir } = await getEnvConfigJsonData();
-	return path.join(os.homedir(), vaultDir);
+
+	const envFilesDirectory = await createEnvFilesDirectoryIfNotFound(vaultDir);
+
+	return envFilesDirectory;
 }
 
 export async function envInit(): Promise<void> {
