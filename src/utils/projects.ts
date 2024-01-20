@@ -1,4 +1,4 @@
-import inquirer from "inquirer";
+import { rawlist } from "@inquirer/prompts";
 import { commanderInit } from "./commands";
 import { getEnvFilesDirectory } from "./env";
 import { readdir } from "./file";
@@ -15,12 +15,17 @@ import { readdir } from "./file";
  * const projects = await getProjectsList();
  * console.log(projects); // ['project1', 'project2', ...]
  */
-export async function getProjectsList(): Promise<string[]> {
+export async function getProjectsList(): Promise<
+	{ name: string; value: string }[]
+> {
 	const envFilesDirectory = await getEnvFilesDirectory();
 	const dirents = await readdir(envFilesDirectory, { withFileTypes: true });
 	return dirents
 		.filter((dirent) => dirent.isDirectory())
-		.map((dirent) => dirent.name);
+		.map((dirent) => ({
+			name: dirent.name,
+			value: dirent.name,
+		}));
 }
 
 /**
@@ -37,19 +42,17 @@ export async function getProjectsList(): Promise<string[]> {
  * const selectedProject = await selectProject(projects);
  * console.log(selectedProject); // 'project1' or 'project2'
  */
-export async function selectProject(projects: string[]): Promise<string> {
+export async function selectProject(
+	projects: { name: string; value: string }[],
+): Promise<string> {
 	const options = commanderInit();
 
 	if (!options.project) {
-		const answer = await inquirer.prompt([
-			{
-				type: "list",
-				name: "project",
-				message: "Select a project to copy .env files:",
-				choices: projects,
-			},
-		]);
-		return answer.project;
+		const project = await rawlist({
+			message: "Select a project to copy .env files:",
+			choices: projects,
+		});
+		return project;
 	}
 
 	if (!projects.includes(options.project)) {
