@@ -9,7 +9,7 @@ export async function promptForVaultDir(): Promise<{
 			name: "vaultDir",
 			message:
 				"Path to the root directory where the .env files should be stored, starts from your home `~/`:",
-			default: "env-files",
+			default: ".env-files",
 		},
 	]);
 
