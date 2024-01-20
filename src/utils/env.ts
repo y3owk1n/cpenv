@@ -18,9 +18,9 @@ export async function getEnvFilesDirectory(): Promise<string> {
 	return path.join(os.homedir(), vaultDir);
 }
 
-export async function getEnvConfigJsonData(): Promise<ConfigJson> {
+export async function envInit(): Promise<void> {
 	try {
-		console.log("Loading config file...");
+		console.log("Checking config file...");
 
 		try {
 			// Use try-catch block to handle file not found error
@@ -43,16 +43,23 @@ export async function getEnvConfigJsonData(): Promise<ConfigJson> {
 				"utf-8",
 			);
 			console.log("Config file created.");
-			return defaultConfig;
 		}
+	} catch (error) {
+		console.error(
+			"Error while loading config:",
+			error instanceof Error ? error.message : error,
+		);
+		throw error;
+	}
+}
 
-		// If the file exists, read and parse its content
+export async function getEnvConfigJsonData(): Promise<ConfigJson> {
+	try {
 		const envConfigJsonContent: string = await fs.readFile(
 			envConfigDirectory,
 			"utf-8",
 		);
 		const envConfigJson = JSON.parse(envConfigJsonContent);
-		console.log("Config file loaded successfully.");
 		return envConfigJson;
 	} catch (error) {
 		console.error(

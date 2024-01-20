@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { commanderInit } from "./utils/commands";
-import { copyEnvFiles, getEnvConfigJsonData } from "./utils/env";
+import { copyEnvFiles, envInit } from "./utils/env";
 import { getProjectsList, selectProject } from "./utils/projects";
 import { promptForGlobalOverwrite } from "./utils/prompt";
 import { getCurrentVersion } from "./utils/version";
@@ -10,7 +10,7 @@ import { getCurrentVersion } from "./utils/version";
 	try {
 		console.log(`CLI Version: ${getCurrentVersion()}`);
 
-		const config = await getEnvConfigJsonData();
+		await envInit();
 
 		const projects: string[] = await getProjectsList();
 		const selectedProject: string = await selectProject(projects);
