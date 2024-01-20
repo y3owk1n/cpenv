@@ -1,4 +1,4 @@
-import { rawlist } from "@inquirer/prompts";
+import { select } from "@inquirer/prompts";
 import { commanderInit } from "./commands";
 import { getEnvFilesDirectory } from "./env";
 import { readdir } from "./file";
@@ -48,7 +48,7 @@ export async function selectProject(
 	const options = commanderInit();
 
 	if (!options.project) {
-		const project = await rawlist({
+		const project = await select({
 			message: "Select a project to copy .env files:",
 			choices: projects,
 		});
