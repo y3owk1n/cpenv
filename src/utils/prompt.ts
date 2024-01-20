@@ -2,6 +2,11 @@ import { input, confirm } from "@inquirer/prompts";
 import * as path from "path";
 import * as os from "os";
 
+/**
+ * Asynchronously prompts the user for the directory path where the environment files should be stored.
+ *
+ * @returns A Promise that resolves to an object containing the user-inputted vault directory.
+ */
 export async function promptForVaultDir(): Promise<{
 	vaultDir: string;
 }> {

@@ -13,6 +13,13 @@ export const envConfigDirectory: string = path.join(
 	".env-files.json",
 );
 
+/**
+ * Asynchronously creates the environment files directory if not found.
+ *
+ * @param vaultDir - The directory within the user's home directory where the environment files directory will be created.
+ * @returns A Promise that resolves to the path of the environment files directory.
+ * @throws If there is an issue accessing or creating the directory.
+ */
 export async function createEnvFilesDirectoryIfNotFound(
 	vaultDir: string,
 ): Promise<string> {
@@ -31,6 +38,12 @@ export async function createEnvFilesDirectoryIfNotFound(
 	return envFilesDirectory;
 }
 
+/**
+ * Asynchronously retrieves the path to the environment files directory.
+ *
+ * @returns A Promise that resolves to the path of the environment files directory.
+ * @throws If there is an issue obtaining the environment configuration data or creating the directory.
+ */
 export async function getEnvFilesDirectory(): Promise<string> {
 	const { vaultDir } = await getEnvConfigJsonData();
 
@@ -39,6 +52,12 @@ export async function getEnvFilesDirectory(): Promise<string> {
 	return envFilesDirectory;
 }
 
+/**
+ * Asynchronously initializes the environment by checking and creating the configuration file if not found.
+ *
+ * @returns A Promise that resolves when the initialization is complete.
+ * @throws If there is an issue accessing, creating, or loading the configuration file.
+ */
 export async function envInit(): Promise<void> {
 	try {
 		console.log("Checking config file...");
@@ -74,6 +93,12 @@ export async function envInit(): Promise<void> {
 	}
 }
 
+/**
+ * Asynchronously reads and parses the environment configuration file content.
+ *
+ * @returns A Promise that resolves to the parsed content of the environment configuration file.
+ * @throws If there is an issue reading or parsing the configuration file.
+ */
 export async function getEnvConfigJsonData(): Promise<ConfigJson> {
 	try {
 		const envConfigJsonContent: string = await fs.readFile(
