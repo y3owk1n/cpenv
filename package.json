@@ -44,8 +44,8 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@inquirer/prompts": "^3.3.0",
     "commander": "^11.1.0",
-    "inquirer": "^9.2.12",
     "minimist": "^1.2.8"
   }
 }
