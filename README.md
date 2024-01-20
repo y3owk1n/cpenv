@@ -28,16 +28,14 @@ Before using EnvCopy CLI, ensure you have the following prerequisites:
 
 1. **Node.js:** Make sure you have Node.js installed on your machine.
 
-2. Create a directory named `env-files` in your home directory `~`, or you can use the following command for ease.
+2. Running `cpenv` for the first time will prompt you to setup your `env-files` folder.
 
-```bash
-mkdir ~/env-files
-```
+- You can set it to any folder you like, but the default is `~/.env-files`
 
-3. Organize your projects within this directory. Each project should have its own subdirectory.
+3. Organize your projects within your chosen directory. Each project should have its own subdirectory.
 
 ```plaintext
-  ~/env-files
+  ~/.env-files
   ├── single-env-project
   │   ├── .env
   ├── multi-env-project
@@ -51,6 +49,8 @@ mkdir ~/env-files
 ```
 
 ## Features
+
+- **Automatic Project Setup:** Automatically setup the `env-files` folder if it doesn't exist through simple prompts.
 
 - **Interactive Project Selection:** Easily choose the project for which you want to copy environment files using a user-friendly interactive prompt or specify it directly through command-line options.
 
