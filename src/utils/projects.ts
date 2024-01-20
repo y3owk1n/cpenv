@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import { commanderInit } from "./commands";
-import { envFilesDirectory } from "./env";
+import { getEnvFilesDirectory } from "./env";
 import { readdir } from "./file";
 
 /**
@@ -16,6 +16,7 @@ import { readdir } from "./file";
  * console.log(projects); // ['project1', 'project2', ...]
  */
 export async function getProjectsList(): Promise<string[]> {
+	const envFilesDirectory = await getEnvFilesDirectory();
 	const dirents = await readdir(envFilesDirectory, { withFileTypes: true });
 	return dirents
 		.filter((dirent) => dirent.isDirectory())

@@ -2,7 +2,7 @@ import * as os from "os";
 import * as path from "path";
 import * as fs from "fs/promises";
 import { copyFile, isFsDirectory, mkdir, readdir } from "./file";
-import { promptForOverwrite } from "./prompt";
+import { promptForOverwrite, promptForVaultDir } from "./prompt";
 
 type ConfigJson = {
 	vaultDir: string;
@@ -12,7 +12,11 @@ export const envConfigDirectory: string = path.join(
 	os.homedir(),
 	".env-files.json",
 );
-export const envFilesDirectory: string = path.join(os.homedir(), "env-files");
+
+export async function getEnvFilesDirectory(): Promise<string> {
+	const { vaultDir } = await getEnvConfigJsonData();
+	return path.join(os.homedir(), vaultDir);
+}
 
 export async function getEnvConfigJsonData(): Promise<ConfigJson> {
 	try {
@@ -27,8 +31,10 @@ export async function getEnvConfigJsonData(): Promise<ConfigJson> {
 				`Config file not found. Creating a new one at ${envConfigDirectory}`,
 			);
 
+			const { vaultDir } = await promptForVaultDir();
+
 			const defaultConfig: ConfigJson = {
-				vaultDir: "~/.env-files",
+				vaultDir,
 			};
 
 			await fs.writeFile(
@@ -36,7 +42,7 @@ export async function getEnvConfigJsonData(): Promise<ConfigJson> {
 				JSON.stringify(defaultConfig, null, 2),
 				"utf-8",
 			);
-			console.log("Default config file created.");
+			console.log("Config file created.");
 			return defaultConfig;
 		}
 
@@ -76,6 +82,7 @@ export async function copyEnvFiles(
 	currentPath = "",
 	autoYes = false,
 ): Promise<void> {
+	const envFilesDirectory = await getEnvFilesDirectory();
 	const projectPath: string = path.join(
 		envFilesDirectory,
 		project,

@@ -1,5 +1,21 @@
 import inquirer from "inquirer";
 
+export async function promptForVaultDir(): Promise<{
+	vaultDir: string;
+}> {
+	const response = await inquirer.prompt([
+		{
+			type: "input",
+			name: "vaultDir",
+			message:
+				"Path to the root directory where the .env files should be stored, starts from your home `~/`:",
+			default: "env-files",
+		},
+	]);
+
+	return { vaultDir: response.vaultDir };
+}
+
 /**
  * Function to prompt for global overwrite confirmation.
  *
