@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "dev": "tsup --watch",
     "clean": "rm -rf dist",
     "release": "bun run clean && bun run build && bun run np",
     "test": "echo \"No test specified\"",
