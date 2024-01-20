@@ -1,9 +1,61 @@
 import * as os from "os";
 import * as path from "path";
+import * as fs from "fs/promises";
 import { copyFile, isFsDirectory, mkdir, readdir } from "./file";
 import { promptForOverwrite } from "./prompt";
 
+type ConfigJson = {
+	vaultDir: string;
+};
+
+export const envConfigDirectory: string = path.join(
+	os.homedir(),
+	".env-files.json",
+);
 export const envFilesDirectory: string = path.join(os.homedir(), "env-files");
+
+export async function getEnvConfigJsonData(): Promise<ConfigJson> {
+	try {
+		console.log("Loading config file...");
+
+		try {
+			// Use try-catch block to handle file not found error
+			await fs.access(envConfigDirectory);
+		} catch (error) {
+			// If the file doesn't exist, create a new one with default content
+			console.log(
+				`Config file not found. Creating a new one at ${envConfigDirectory}`,
+			);
+
+			const defaultConfig: ConfigJson = {
+				vaultDir: "~/.env-files",
+			};
+
+			await fs.writeFile(
+				envConfigDirectory,
+				JSON.stringify(defaultConfig, null, 2),
+				"utf-8",
+			);
+			console.log("Default config file created.");
+			return defaultConfig;
+		}
+
+		// If the file exists, read and parse its content
+		const envConfigJsonContent: string = await fs.readFile(
+			envConfigDirectory,
+			"utf-8",
+		);
+		const envConfigJson = JSON.parse(envConfigJsonContent);
+		console.log("Config file loaded successfully.");
+		return envConfigJson;
+	} catch (error) {
+		console.error(
+			"Error while loading config:",
+			error instanceof Error ? error.message : error,
+		);
+		throw error;
+	}
+}
 
 /**
  * Asynchronously copies .env files from the specified project to the current working directory.
