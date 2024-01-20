@@ -1,4 +1,30 @@
-import inquirer from "inquirer";
+import { input, confirm } from "@inquirer/prompts";
+import * as path from "path";
+import * as os from "os";
+
+export async function promptForVaultDir(): Promise<{
+	vaultDir: string;
+}> {
+	const vaultDir = await input({
+		message:
+			"Path from the root directory where the .env files should be stored, starts from your home `~/`:",
+		default: ".env-files",
+	});
+
+	const confirmVaultDir = await confirm({
+		message: `Are you sure you want to use ${path.join(
+			os.homedir(),
+			vaultDir,
+		)} as the vault directory?`,
+		default: true,
+	});
+
+	if (confirmVaultDir === false) {
+		return await promptForVaultDir();
+	}
+
+	return { vaultDir };
+}
 
 /**
  * Function to prompt for global overwrite confirmation.
@@ -13,17 +39,13 @@ import inquirer from "inquirer";
 export async function promptForGlobalOverwrite(): Promise<{
 	overwriteAll: boolean;
 }> {
-	const response = await inquirer.prompt([
-		{
-			type: "confirm",
-			name: "overwriteAll",
-			message:
-				"Do you want to overwrite all existing files in the current project if it exists?",
-			default: false,
-		},
-	]);
+	const overwriteAll = await confirm({
+		message:
+			"Do you want to overwrite all existing files in the current project if it exists?",
+		default: false,
+	});
 
-	return { overwriteAll: response.overwriteAll };
+	return { overwriteAll };
 }
 
 /**
@@ -42,14 +64,10 @@ export async function promptForOverwrite(
 	file: string,
 	currentPath: string,
 ): Promise<{ overwrite: boolean }> {
-	const response = await inquirer.prompt([
-		{
-			type: "confirm",
-			name: "overwrite",
-			message: `Warning: ${file} already exists in ${currentPath}. Do you want to overwrite it?`,
-			default: false,
-		},
-	]);
+	const overwrite = await confirm({
+		message: `Warning: ${file} already exists in ${currentPath}. Do you want to overwrite it?`,
+		default: false,
+	});
 
-	return { overwrite: response.overwrite };
+	return { overwrite };
 }

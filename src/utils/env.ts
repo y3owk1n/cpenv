@@ -1,9 +1,95 @@
 import * as os from "os";
 import * as path from "path";
+import * as fs from "fs/promises";
 import { copyFile, isFsDirectory, mkdir, readdir } from "./file";
-import { promptForOverwrite } from "./prompt";
+import { promptForOverwrite, promptForVaultDir } from "./prompt";
 
-export const envFilesDirectory: string = path.join(os.homedir(), "env-files");
+type ConfigJson = {
+	vaultDir: string;
+};
+
+export const envConfigDirectory: string = path.join(
+	os.homedir(),
+	".env-files.json",
+);
+
+export async function createEnvFilesDirectoryIfNotFound(
+	vaultDir: string,
+): Promise<string> {
+	const envFilesDirectory = path.join(os.homedir(), vaultDir);
+
+	try {
+		await fs.access(envFilesDirectory);
+	} catch (error) {
+		console.log(
+			`Env files directory not found. Creating a new one at ${envFilesDirectory}`,
+		);
+		await fs.mkdir(envFilesDirectory, { recursive: true });
+		console.log("Env files directory created.");
+	}
+
+	return envFilesDirectory;
+}
+
+export async function getEnvFilesDirectory(): Promise<string> {
+	const { vaultDir } = await getEnvConfigJsonData();
+
+	const envFilesDirectory = await createEnvFilesDirectoryIfNotFound(vaultDir);
+
+	return envFilesDirectory;
+}
+
+export async function envInit(): Promise<void> {
+	try {
+		console.log("Checking config file...");
+
+		try {
+			// Use try-catch block to handle file not found error
+			await fs.access(envConfigDirectory);
+		} catch (error) {
+			// If the file doesn't exist, create a new one with default content
+			console.log(
+				`Config file not found. Creating a new one at ${envConfigDirectory}`,
+			);
+
+			const { vaultDir } = await promptForVaultDir();
+
+			const defaultConfig: ConfigJson = {
+				vaultDir,
+			};
+
+			await fs.writeFile(
+				envConfigDirectory,
+				JSON.stringify(defaultConfig, null, 2),
+				"utf-8",
+			);
+			console.log("Config file created.");
+		}
+	} catch (error) {
+		console.error(
+			"Error while loading config:",
+			error instanceof Error ? error.message : error,
+		);
+		throw error;
+	}
+}
+
+export async function getEnvConfigJsonData(): Promise<ConfigJson> {
+	try {
+		const envConfigJsonContent: string = await fs.readFile(
+			envConfigDirectory,
+			"utf-8",
+		);
+		const envConfigJson = JSON.parse(envConfigJsonContent);
+		return envConfigJson;
+	} catch (error) {
+		console.error(
+			"Error while loading config:",
+			error instanceof Error ? error.message : error,
+		);
+		throw error;
+	}
+}
 
 /**
  * Asynchronously copies .env files from the specified project to the current working directory.
@@ -24,6 +110,7 @@ export async function copyEnvFiles(
 	currentPath = "",
 	autoYes = false,
 ): Promise<void> {
+	const envFilesDirectory = await getEnvFilesDirectory();
 	const projectPath: string = path.join(
 		envFilesDirectory,
 		project,
