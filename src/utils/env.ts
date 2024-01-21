@@ -233,9 +233,12 @@ export async function copyEnvFiles(
 			const fileExists = await checkFileExists(destinationPath, file);
 
 			if (!fileExists) {
+				const spinner = ora(
+					`Copying ${file} to ${destinationPathWithFile}`,
+				).start();
 				// No matching .env files found, copy the entire .env file to the project
 				await copyFile(sourcePath, destinationPathWithFile);
-				console.log(
+				spinner.succeed(
 					`Successfully copied ${file} to the ${destinationPathWithFile}.`,
 				);
 			} else {
@@ -277,8 +280,11 @@ export async function handleEnvFileCopy(
 	const shouldOverwrite = autoYesForRemainingFiles;
 
 	if (shouldOverwrite) {
+		const spinner = ora(`Copying ${file} to ${destinationPath}`).start();
 		await copyFile(sourcePath, destinationPath);
-		console.log(`Successfully copied ${file} to the ${destinationPath}.`);
+		spinner.succeed(
+			`Successfully copied ${file} to the ${destinationPath}.`,
+		);
 	} else {
 		if (!autoYesForRemainingFiles) {
 			const overwriteAnswer = await promptForOverwrite(
@@ -286,17 +292,20 @@ export async function handleEnvFileCopy(
 				destinationPath,
 			);
 
+			const spinner = ora(
+				`Copying ${file} to ${destinationPath}`,
+			).start();
 			if (overwriteAnswer.overwrite) {
 				await copyFile(sourcePath, destinationPath);
-				console.log(
+				spinner.succeed(
 					`Successfully copied ${file} to ${destinationPath}.`,
 				);
 			} else {
-				console.log(`Skipped copying ${file} to ${destinationPath}.`);
+				spinner.info(`Skipped copying ${file} to ${destinationPath}.`);
 				autoYesForRemainingFiles = false;
 			}
 		} else {
-			console.log(`Skipped copying ${file} to ${destinationPath}.`);
+			ora(`Skipped copying ${file} to ${destinationPath}.`).info();
 		}
 	}
 }
