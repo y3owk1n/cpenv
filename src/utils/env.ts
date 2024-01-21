@@ -280,7 +280,9 @@ export async function handleEnvFileCopy(
 	const shouldOverwrite = autoYesForRemainingFiles;
 
 	if (shouldOverwrite) {
-		const spinner = ora(`Copying ${file} to ${destinationPath}`).start();
+		const spinner = ora(`Copying ${file} to ${destinationPath}`);
+		spinner.indent = 2;
+		spinner.start();
 		await copyFile(sourcePath, destinationPath);
 		spinner.succeed(
 			`Successfully copied ${file} to the ${destinationPath}.`,
@@ -292,9 +294,9 @@ export async function handleEnvFileCopy(
 				destinationPath,
 			);
 
-			const spinner = ora(
-				`Copying ${file} to ${destinationPath}`,
-			).start();
+			const spinner = ora(`Copying ${file} to ${destinationPath}`);
+			spinner.indent = 2;
+			spinner.start();
 			if (overwriteAnswer.overwrite) {
 				await copyFile(sourcePath, destinationPath);
 				spinner.succeed(
