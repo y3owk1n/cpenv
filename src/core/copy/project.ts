@@ -1,5 +1,5 @@
 import { getEnvFilesDirectory } from "@/utils/env";
-import { Directory, getDirectories } from "@/utils/projects";
+import { Directory, getDirectories } from "@/utils/directory";
 import { commanderInit } from "./command";
 import { promptToSelectProject } from "./prompt";
 

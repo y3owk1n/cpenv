@@ -1,4 +1,4 @@
-import { CommandOption, configureCommand } from "@/utils/commands";
+import { CommandOption, configureCommand } from "@/utils/command";
 import {
 	getCurrentDescription,
 	getCurrentName,
