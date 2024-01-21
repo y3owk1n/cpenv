@@ -1,50 +1,9 @@
-import * as commander from "commander";
-import {
-	getCurrentDescription,
-	getCurrentName,
-	getCurrentVersion,
-} from "./version";
+import { Command } from "commander";
 
-type CommandOption = {
+export type CommandOption = {
 	flags: string;
 	description: string;
 };
-
-export const commandOptions: CommandOption[] = [
-	{
-		flags: "-p, --project <project>",
-		description: "Select a project to copy .env files",
-	},
-	{
-		flags: "-y, --auto-yes",
-		description: "Automatically overwrite files without prompting",
-	},
-];
-
-/**
- * Initializes and configures a Commander program with specified command options.
- *
- * @returns An object containing the parsed command-line options.
- *
- * @example
- * // Usage example:
- * const options = commanderInit();
- * console.log(options.project); // Access the value of the 'project' option
- */
-export function commanderInit() {
-	const program = new commander.Command();
-
-	const name = getCurrentName();
-	const description = getCurrentDescription();
-	const version = getCurrentVersion();
-
-	program.name(name).description(description).version(version);
-	configureCommand(program, commandOptions);
-
-	const options = program.opts();
-
-	return options;
-}
 
 /**
  * Configures a Commander program with specified command options.
@@ -59,7 +18,7 @@ export function commanderInit() {
  * program.parse(process.argv);
  */
 export function configureCommand(
-	program: commander.Command,
+	program: Command,
 	options: CommandOption[],
 ): void {
 	for (const opt of options) {
