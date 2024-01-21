@@ -3,6 +3,11 @@ import { commanderInit } from "./commands";
 import { getEnvFilesDirectory } from "./env";
 import { readdir } from "./file";
 
+export type Project = {
+	name: string;
+	value: string;
+};
+
 /**
  * Asynchronously retrieves a list of directories within the envFilesDirectory.
  *
@@ -15,9 +20,7 @@ import { readdir } from "./file";
  * const projects = await getProjectsList();
  * console.log(projects); // ['project1', 'project2', ...]
  */
-export async function getProjectsList(): Promise<
-	{ name: string; value: string }[]
-> {
+export async function getProjectsList(): Promise<Project[]> {
 	const envFilesDirectory = await getEnvFilesDirectory();
 	const dirents = await readdir(envFilesDirectory, { withFileTypes: true });
 	return dirents
@@ -42,9 +45,7 @@ export async function getProjectsList(): Promise<
  * const selectedProject = await selectProject(projects);
  * console.log(selectedProject); // 'project1' or 'project2'
  */
-export async function selectProject(
-	projects: { name: string; value: string }[],
-): Promise<string> {
+export async function selectProject(projects: Project[]): Promise<string> {
 	const options = commanderInit();
 
 	if (!options.project) {

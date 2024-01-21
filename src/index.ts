@@ -2,7 +2,7 @@
 
 import { commanderInit } from "./utils/commands";
 import { copyEnvFiles, envInit } from "./utils/env";
-import { getProjectsList, selectProject } from "./utils/projects";
+import { Project, getProjectsList, selectProject } from "./utils/projects";
 import { promptForGlobalOverwrite } from "./utils/prompt";
 import { getCurrentVersion } from "./utils/version";
 
@@ -12,7 +12,7 @@ import { getCurrentVersion } from "./utils/version";
 
 		await envInit();
 
-		const projects: string[] = await getProjectsList();
+		const projects: Project[] = await getProjectsList();
 		const selectedProject: string = await selectProject(projects);
 
 		const options = commanderInit();
