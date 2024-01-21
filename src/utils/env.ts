@@ -1,9 +1,9 @@
 import * as os from "os";
 import * as path from "path";
 import * as fs from "fs/promises";
+import { isFsDirectory, mkdir, readdir } from "./directory";
 import { copyFile } from "./file";
 import { promptForOverwrite, promptForVaultDir } from "./prompt";
-import { isFsDirectory, mkdir, readdir } from "./directory";
 
 type ConfigJson = {
 	vaultDir: string;
