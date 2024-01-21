@@ -1,8 +1,8 @@
 import { Directory, getDirectories } from "@/utils/directory";
 import { getEnvFilesDirectory } from "@/utils/env";
+import ora from "ora";
 import { OptionValues } from "./command";
 import { promptToSelectProject } from "./prompt";
-import ora from "ora";
 
 export type Project = Directory;
 

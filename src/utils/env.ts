@@ -1,10 +1,10 @@
 import * as os from "os";
 import * as path from "path";
 import * as fs from "fs/promises";
+import ora from "ora";
 import { isFsDirectory, mkdir, readdir } from "./directory";
 import { checkFileExists, copyFile } from "./file";
 import { promptForOverwrite, promptForVaultDir } from "./prompt";
-import ora from "ora";
 
 type ConfigJson = {
 	vaultDir: string;
