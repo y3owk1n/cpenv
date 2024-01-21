@@ -2,6 +2,7 @@ import { Directory, getDirectories } from "@/utils/directory";
 import { getEnvFilesDirectory } from "@/utils/env";
 import { OptionValues } from "./command";
 import { promptToSelectProject } from "./prompt";
+import ora from "ora";
 
 export type Project = Directory;
 
@@ -21,7 +22,19 @@ export type Project = Directory;
 export async function getProjectsList(): Promise<Directory[]> {
 	const envFilesDirectory = await getEnvFilesDirectory();
 
+	const spinner = ora("Loading available projects");
 	const projects = await getDirectories(envFilesDirectory);
+
+	if (projects.length === 0) {
+		spinner.warn(
+			`No projects found in ${envFilesDirectory}, add a project first.`,
+		);
+		spinner.warn(
+			"If you indeed have projects but the directory is wrong, reconfigure the vault path at ~/.env-files.json",
+		);
+		process.exit(1);
+	}
+
 	return projects;
 }
 
