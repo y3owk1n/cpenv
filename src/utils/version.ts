@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { __dirname } from "./file";
+import { __dirname } from "./directory";
 
 type PackageJson = {
 	name: string;

@@ -1,7 +1,9 @@
-import { select } from "@inquirer/prompts";
-import { commanderInit } from "./commands";
-import { getEnvFilesDirectory } from "./env";
-import { readdir } from "./file";
+import { getEnvFilesDirectory } from "@/utils/env";
+import { Directory, getDirectories } from "@/utils/directory";
+import { OptionValues } from "./command";
+import { promptToSelectProject } from "./prompt";
+
+export type Project = Directory;
 
 /**
  * Asynchronously retrieves a list of directories within the envFilesDirectory.
@@ -13,19 +15,14 @@ import { readdir } from "./file";
  * @example
  * // Usage example:
  * const projects = await getProjectsList();
- * console.log(projects); // ['project1', 'project2', ...]
+ * console.log(projects);
+ * // [{ name: "project1", value: "project1" }, { name: "project2", value: "project2" }, ...]
  */
-export async function getProjectsList(): Promise<
-	{ name: string; value: string }[]
-> {
+export async function getProjectsList(): Promise<Directory[]> {
 	const envFilesDirectory = await getEnvFilesDirectory();
-	const dirents = await readdir(envFilesDirectory, { withFileTypes: true });
-	return dirents
-		.filter((dirent) => dirent.isDirectory())
-		.map((dirent) => ({
-			name: dirent.name,
-			value: dirent.name,
-		}));
+
+	const projects = await getDirectories(envFilesDirectory);
+	return projects;
 }
 
 /**
@@ -43,19 +40,17 @@ export async function getProjectsList(): Promise<
  * console.log(selectedProject); // 'project1' or 'project2'
  */
 export async function selectProject(
-	projects: { name: string; value: string }[],
+	projects: Directory[],
+	options: OptionValues,
 ): Promise<string> {
-	const options = commanderInit();
-
 	if (!options.project) {
-		const project = await select({
-			message: "Select a project to copy .env files:",
-			choices: projects,
-		});
+		const { project } = await promptToSelectProject(projects);
 		return project;
 	}
 
-	if (!projects.includes(options.project)) {
+	const projectsInStrArr = projects.map((project) => project.value);
+
+	if (!projectsInStrArr.includes(options.project)) {
 		console.log("Error: Specified project not found in the directory.");
 		process.exit(1); // Exit the process with an error code
 	}

@@ -1,14 +1,16 @@
-import * as commander from "commander";
+import { CommandOption, configureCommand } from "@/utils/command";
 import {
 	getCurrentDescription,
 	getCurrentName,
 	getCurrentVersion,
-} from "./version";
+} from "@/utils/version";
+import { OptionValues as CommanderOptionValues } from "commander";
+import { Command } from "commander";
 
-type CommandOption = {
-	flags: string;
-	description: string;
-};
+export interface OptionValues extends CommanderOptionValues {
+	project?: string;
+	autoYes?: boolean;
+}
 
 export const commandOptions: CommandOption[] = [
 	{
@@ -24,6 +26,7 @@ export const commandOptions: CommandOption[] = [
 /**
  * Initializes and configures a Commander program with specified command options.
  *
+ * @param commandOptions - An array of command options to be added to the program.
  * @returns An object containing the parsed command-line options.
  *
  * @example
@@ -31,8 +34,10 @@ export const commandOptions: CommandOption[] = [
  * const options = commanderInit();
  * console.log(options.project); // Access the value of the 'project' option
  */
-export function commanderInit() {
-	const program = new commander.Command();
+export function commanderInit(
+	commandOptions: CommandOption[] = [],
+): OptionValues {
+	const program = new Command();
 
 	const name = getCurrentName();
 	const description = getCurrentDescription();
@@ -44,26 +49,4 @@ export function commanderInit() {
 	const options = program.opts();
 
 	return options;
-}
-
-/**
- * Configures a Commander program with specified command options.
- *
- * @param program - The Commander program to configure.
- * @param options - An array of command options to be added to the program.
- *
- * @example
- * // Usage example:
- * const program = new commander.Command();
- * configureCommand(program, commonOptions);
- * program.parse(process.argv);
- */
-export function configureCommand(
-	program: commander.Command,
-	options: CommandOption[],
-): void {
-	for (const opt of options) {
-		program.option(opt.flags, opt.description);
-	}
-	program.parse(process.argv);
 }
