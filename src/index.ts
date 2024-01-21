@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { startCpCli } from "./core/copy";
-import { commanderInit } from "./utils/commands";
+import { commanderInit } from "./core/copy/command";
+import { Project, getProjectsList, selectProject } from "./core/copy/project";
 import { envInit } from "./utils/env";
-import { Project, getProjectsList, selectProject } from "./utils/projects";
 import { getCurrentVersion } from "./utils/version";
 
 (async () => {
