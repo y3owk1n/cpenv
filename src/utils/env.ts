@@ -162,7 +162,6 @@ export async function copyEnvFiles(
 
 		if (await isFsDirectory(sourcePath)) {
 			await mkdir(destinationPathWithFile, { recursive: true });
-			await copyEnvFiles(project, path.join(currentPath, file), autoYes);
 		} else if (file.endsWith(".env")) {
 			// Check if there are any matching .env files in the current project folder
 			const matchingEnvFiles = filesInDestinationPath.filter((f) =>
