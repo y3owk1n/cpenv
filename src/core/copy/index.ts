@@ -1,6 +1,6 @@
 import { copyEnvFiles } from "@/utils/env";
 import { promptForGlobalOverwrite } from "@/utils/prompt";
-import { OptionValues } from "commander";
+import { OptionValues } from "./command";
 
 /**
  * Asynchronously copies .env files from the specified project to the current working directory.

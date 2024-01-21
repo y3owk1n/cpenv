@@ -4,8 +4,13 @@ import {
 	getCurrentName,
 	getCurrentVersion,
 } from "@/utils/version";
-import { OptionValues } from "commander";
+import { OptionValues as CommanderOptionValues } from "commander";
 import { Command } from "commander";
+
+export interface OptionValues extends CommanderOptionValues {
+	project?: string;
+	autoYes?: boolean;
+}
 
 export const commandOptions: CommandOption[] = [
 	{
