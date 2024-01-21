@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { commanderInit } from "./core/copy/command";
 import { startCopy } from "./core/copy";
+import { commandOptions, commanderInit } from "./core/copy/command";
 import { Project, getProjectsList, selectProject } from "./core/copy/project";
 import { envInit } from "./utils/env";
 import { getCurrentVersion } from "./utils/version";
@@ -10,12 +10,12 @@ import { getCurrentVersion } from "./utils/version";
 	try {
 		console.log(`CLI Version: ${getCurrentVersion()}`);
 
+		const options = commanderInit(commandOptions);
+
 		await envInit();
 
 		const projects: Project[] = await getProjectsList();
-		const selectedProject: string = await selectProject(projects);
-
-		const options = commanderInit();
+		const selectedProject: string = await selectProject(projects, options);
 
 		await startCopy(selectedProject, options);
 	} catch (error) {

@@ -1,6 +1,6 @@
 import { getEnvFilesDirectory } from "@/utils/env";
 import { Directory, getDirectories } from "@/utils/directory";
-import { commanderInit } from "./command";
+import { OptionValues } from "./command";
 import { promptToSelectProject } from "./prompt";
 
 export type Project = Directory;
@@ -39,9 +39,10 @@ export async function getProjectsList(): Promise<Directory[]> {
  * const selectedProject = await selectProject(projects);
  * console.log(selectedProject); // 'project1' or 'project2'
  */
-export async function selectProject(projects: Directory[]): Promise<string> {
-	const options = commanderInit();
-
+export async function selectProject(
+	projects: Directory[],
+	options: OptionValues,
+): Promise<string> {
 	if (!options.project) {
 		const { project } = await promptToSelectProject(projects);
 		return project;
