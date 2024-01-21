@@ -46,6 +46,7 @@
   "dependencies": {
     "@inquirer/prompts": "^3.3.0",
     "commander": "^11.1.0",
-    "minimist": "^1.2.8"
+    "minimist": "^1.2.8",
+    "ora": "^8.0.1"
   }
 }
