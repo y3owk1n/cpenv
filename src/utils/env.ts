@@ -4,6 +4,7 @@ import * as fs from "fs/promises";
 import { isFsDirectory, mkdir, readdir } from "./directory";
 import { checkFileExists, copyFile } from "./file";
 import { promptForOverwrite, promptForVaultDir } from "./prompt";
+import ora from "ora";
 
 type ConfigJson = {
 	vaultDir: string;
@@ -60,38 +61,51 @@ export async function getEnvFilesDirectory(): Promise<string> {
  * @throws If there is an issue accessing, creating, or loading the configuration file.
  */
 export async function envInit(): Promise<void> {
+	await loadEnvConfig(envConfigDirectory);
+}
+
+async function envConfigExists(directory: string): Promise<boolean> {
 	try {
-		console.log("Checking config file...");
-
-		try {
-			// Use try-catch block to handle file not found error
-			await fs.access(envConfigDirectory);
-		} catch (error) {
-			// If the file doesn't exist, create a new one with default content
-			console.log(
-				`Config file not found. Creating a new one at ${envConfigDirectory}`,
-			);
-
-			const { vaultDir } = await promptForVaultDir();
-
-			const defaultConfig: ConfigJson = {
-				vaultDir,
-			};
-
-			await fs.writeFile(
-				envConfigDirectory,
-				JSON.stringify(defaultConfig, null, 2),
-				"utf-8",
-			);
-			console.log("Config file created.");
-		}
+		await fs.access(directory);
+		return true;
 	} catch (error) {
-		console.error(
-			"Error while loading config:",
-			error instanceof Error ? error.message : error,
-		);
-		throw error;
+		return false;
 	}
+}
+
+async function createEnvConfigFile(directory: string): Promise<void> {
+	const { vaultDir } = await promptForVaultDir();
+
+	const defaultConfig: ConfigJson = {
+		vaultDir,
+	};
+
+	await fs.writeFile(
+		directory,
+		JSON.stringify(defaultConfig, null, 2),
+		"utf-8",
+	);
+}
+
+async function loadEnvConfig(envConfigDirectory: string): Promise<ConfigJson> {
+	const spinner = ora("Checking if config exists").start();
+	const configExists = await envConfigExists(envConfigDirectory);
+
+	if (!configExists) {
+		spinner.fail(
+			`Config file not found. Creating a new one at ${envConfigDirectory}`,
+		);
+
+		await createEnvConfigFile(envConfigDirectory);
+		spinner.succeed(`Config file created at ${envConfigDirectory}`);
+	}
+	spinner.start("Loading config...");
+	// Load the config (this could be a separate function if needed)
+	const configContent = await fs.readFile(envConfigDirectory, "utf-8");
+	const config: ConfigJson = JSON.parse(configContent);
+	spinner.succeed("Config loaded!");
+
+	return config;
 }
 
 /**
