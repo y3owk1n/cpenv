@@ -63,8 +63,16 @@ export async function selectProject(
 
 	const projectsInStrArr = projects.map((project) => project.value);
 
+	if (projectsInStrArr.length === 0) {
+		ora("No projects found in the vault, add a project first.").fail();
+		ora(
+			"If you indeed have projects but the directory is wrong, reconfigure the vault path at ~/.env-files.json",
+		).fail();
+	}
+
 	if (!projectsInStrArr.includes(options.project)) {
-		console.log("Error: Specified project not found in the directory.");
+		ora("Specified project not found in the directory.").fail();
+		ora(`Available options: ${projectsInStrArr.join(", ")}.`).fail();
 		process.exit(1); // Exit the process with an error code
 	}
 
