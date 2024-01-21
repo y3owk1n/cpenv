@@ -5,6 +5,19 @@ import { promptToSelectProject } from "./prompt";
 
 export type Project = Directory;
 
+/**
+ * Asynchronously retrieves a list of directories within the envFilesDirectory.
+ *
+ * @returns A promise that resolves to an array of directory names.
+ *
+ * @throws If there is an issue reading the directory contents.
+ *
+ * @example
+ * // Usage example:
+ * const projects = await getProjectsList();
+ * console.log(projects);
+ * // [{ name: "project1", value: "project1" }, { name: "project2", value: "project2" }, ...]
+ */
 export async function getProjectsList(): Promise<Directory[]> {
 	const envFilesDirectory = await getEnvFilesDirectory();
 
