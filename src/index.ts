@@ -19,6 +19,14 @@ import { getCurrentVersion } from "./utils/version";
 
 		await startCopy(selectedProject, options);
 	} catch (error) {
-		console.error("Error:", error instanceof Error ? error.message : error);
+		if (error instanceof Error) {
+			if (error.message === "User force closed the prompt with 0 null") {
+				console.log("Exiting...");
+				return;
+			}
+			console.error("Error:", error.message);
+			return;
+		}
+		console.error("Error:", error);
 	}
 })();
