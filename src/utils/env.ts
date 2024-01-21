@@ -27,14 +27,19 @@ export async function createEnvFilesDirectoryIfNotFound(
 ): Promise<string> {
 	const envFilesDirectory = path.join(os.homedir(), vaultDir);
 
+	const spinner = ora("Checking if env files directory exists");
+	spinner.start();
+
 	try {
 		await fs.access(envFilesDirectory);
+		spinner.succeed(`Env files directory exists at ${envFilesDirectory}`);
 	} catch (error) {
-		console.log(
+		spinner.indent = 2;
+		spinner.info(
 			`Env files directory not found. Creating a new one at ${envFilesDirectory}`,
 		);
 		await fs.mkdir(envFilesDirectory, { recursive: true });
-		console.log("Env files directory created.");
+		spinner.succeed(`Env files directory created at ${envFilesDirectory}`);
 	}
 
 	return envFilesDirectory;
@@ -152,6 +157,7 @@ async function loadEnvConfig(envConfigDirectory: string): Promise<ConfigJson> {
 		);
 
 		await createEnvConfigFile(envConfigDirectory);
+		spinner.indent = 2;
 		spinner.succeed(`Config file created at ${envConfigDirectory}`);
 	}
 	spinner.start("Loading config...");
