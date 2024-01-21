@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
+import { startCpCli } from "./core/copy";
 import { commanderInit } from "./utils/commands";
-import { copyEnvFiles, envInit } from "./utils/env";
+import { envInit } from "./utils/env";
 import { Project, getProjectsList, selectProject } from "./utils/projects";
-import { promptForGlobalOverwrite } from "./utils/prompt";
 import { getCurrentVersion } from "./utils/version";
 
 (async () => {
@@ -17,20 +17,7 @@ import { getCurrentVersion } from "./utils/version";
 
 		const options = commanderInit();
 
-		if (!options.autoYes) {
-			const overwriteAllAnswer = await promptForGlobalOverwrite();
-
-			await copyEnvFiles(
-				selectedProject,
-				"",
-				overwriteAllAnswer.overwriteAll,
-			);
-			console.log("Copy completed successfully!");
-			return;
-		}
-
-		await copyEnvFiles(selectedProject, "", options.autoYes);
-		console.log("Copy completed successfully!");
+		await startCpCli(selectedProject, options);
 	} catch (error) {
 		console.error("Error:", error instanceof Error ? error.message : error);
 	}
