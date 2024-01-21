@@ -2,7 +2,7 @@ import * as os from "os";
 import * as path from "path";
 import * as fs from "fs/promises";
 import { isFsDirectory, mkdir, readdir } from "./directory";
-import { copyFile } from "./file";
+import { checkFileExists, copyFile } from "./file";
 import { promptForOverwrite, promptForVaultDir } from "./prompt";
 
 type ConfigJson = {
@@ -157,20 +157,18 @@ export async function copyEnvFiles(
 			file,
 		);
 
-		const filesInDestinationPath: (string | Buffer)[] =
-			await readdir(destinationPath);
-
 		if (await isFsDirectory(sourcePath)) {
 			await mkdir(destinationPathWithFile, { recursive: true });
 		} else if (file.endsWith(".env")) {
-			// Check if there are any matching .env files in the current project folder
-			const matchingEnvFiles = filesInDestinationPath.filter((f) =>
-				f.toString().endsWith(".env"),
-			);
+			// Check if file already exists in the destination path
+			const fileExists = await checkFileExists(destinationPath, file);
 
-			if (matchingEnvFiles.length === 0) {
+			if (!fileExists) {
 				// No matching .env files found, copy the entire .env file to the project
 				await copyFile(sourcePath, destinationPathWithFile);
+				console.log(
+					`Successfully copied ${file} to the ${destinationPathWithFile}.`,
+				);
 			} else {
 				// Matching .env files found, proceed with the regular copy process
 				await handleEnvFileCopy(

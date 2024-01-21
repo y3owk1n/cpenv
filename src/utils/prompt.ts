@@ -46,7 +46,7 @@ export async function promptForGlobalOverwrite(): Promise<{
 }> {
 	const overwriteAll = await confirm({
 		message:
-			"Do you want to overwrite all existing files in the current project if it exists?",
+			"Do you want to overwrite all existing .env(s) in the current project if it exists?",
 		default: false,
 	});
 
