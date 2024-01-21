@@ -1,6 +1,6 @@
-import { input, confirm } from "@inquirer/prompts";
-import * as path from "path";
 import * as os from "os";
+import * as path from "path";
+import { confirm, input } from "@inquirer/prompts";
 
 /**
  * Asynchronously prompts the user for the directory path where the environment files should be stored.

@@ -1,8 +1,8 @@
 import { expect, spyOn, test } from "bun:test";
 
+import { commandOptions, commanderInit } from "@/core/copy/command";
 import * as commander from "commander";
 import { configureCommand } from "../src/utils/command";
-import { commandOptions, commanderInit } from "@/core/copy/command";
 
 test("should configure Commander program with specified command options", () => {
 	const program = new commander.Command();
