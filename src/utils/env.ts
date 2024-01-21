@@ -64,6 +64,24 @@ export async function envInit(): Promise<void> {
 	await loadEnvConfig(envConfigDirectory);
 }
 
+/**
+ * Checks if the environment configuration file exists in the specified directory.
+ *
+ * @param directory - The path to the directory where the environment configuration file is expected.
+ * @returns A Promise that resolves to a boolean indicating whether the configuration file exists.
+ *
+ * @throws Throws an error if there is an issue accessing the file system.
+ *
+ * @example
+ * // Example usage:
+ * const directoryPath = '/path/to/directory';
+ * try {
+ *   const exists = await envConfigExists(directoryPath);
+ *   console.log(`Environment configuration file exists: ${exists}`);
+ * } catch (error) {
+ *   console.error(`Error checking for environment configuration file: ${error.message}`);
+ * }
+ */
 async function envConfigExists(directory: string): Promise<boolean> {
 	try {
 		await fs.access(directory);
@@ -73,6 +91,24 @@ async function envConfigExists(directory: string): Promise<boolean> {
 	}
 }
 
+/**
+ * Creates a new environment configuration file in the specified directory with default content.
+ *
+ * @param directory - The path to the directory where the environment configuration file will be created.
+ * @returns A Promise that resolves when the configuration file is successfully created.
+ *
+ * @throws Throws an error if there is an issue writing to the file system or obtaining user input.
+ *
+ * @example
+ * // Example usage:
+ * const directoryPath = '/path/to/directory';
+ * try {
+ *   await createEnvConfigFile(directoryPath);
+ *   console.log('Environment configuration file created successfully.');
+ * } catch (error) {
+ *   console.error(`Error creating environment configuration file: ${error.message}`);
+ * }
+ */
 async function createEnvConfigFile(directory: string): Promise<void> {
 	const { vaultDir } = await promptForVaultDir();
 
@@ -87,6 +123,25 @@ async function createEnvConfigFile(directory: string): Promise<void> {
 	);
 }
 
+/**
+ * Loads the environment configuration from the specified directory, creating a new one if it doesn't exist.
+ *
+ * @param envConfigDirectory - The path to the directory where the environment configuration file is expected.
+ * @returns A Promise that resolves to the loaded environment configuration.
+ *
+ * @throws Throws an error if there is an issue accessing or creating the configuration file,
+ *                  or if there is an error parsing the file content.
+ *
+ * @example
+ * // Example usage:
+ * const directoryPath = '/path/to/directory';
+ * try {
+ *   const loadedConfig = await loadEnvConfig(directoryPath);
+ *   console.log('Environment configuration loaded:', loadedConfig);
+ * } catch (error) {
+ *   console.error(`Error loading environment configuration: ${error.message}`);
+ * }
+ */
 async function loadEnvConfig(envConfigDirectory: string): Promise<ConfigJson> {
 	const spinner = ora("Checking if config exists").start();
 	const configExists = await envConfigExists(envConfigDirectory);
