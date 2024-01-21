@@ -1,7 +1,4 @@
-import { select } from "@inquirer/prompts";
-import { getEnvFilesDirectory } from "./env";
 import { readdir } from "./file";
-import { commanderInit } from "@/core/copy/command";
 
 export type Directory = {
 	name: string;
