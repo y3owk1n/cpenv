@@ -1,5 +1,6 @@
 import { copyEnvFiles } from "@/utils/env";
 import { promptForGlobalOverwrite } from "@/utils/prompt";
+import ora from "ora";
 import { OptionValues } from "./command";
 
 /**
@@ -27,10 +28,10 @@ export async function startCopy(
 			"",
 			overwriteAllAnswer.overwriteAll,
 		);
-		console.log("Copy completed successfully!");
+		ora("Copy completed successfully!").succeed();
 		return;
 	}
 
 	await copyEnvFiles(selectedProject, "", options.autoYes);
-	console.log("Copy completed successfully!");
+	ora("Copy completed successfully!").succeed();
 }

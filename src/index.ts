@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import ora from "ora";
 import { startCopy } from "./core/copy";
 import { commandOptions, commanderInit } from "./core/copy/command";
 import { Project, getProjectsList, selectProject } from "./core/copy/project";
@@ -24,7 +25,7 @@ import { getCurrentVersion } from "./utils/version";
 				console.log("Exiting...");
 				return;
 			}
-			console.error("Error:", error.message);
+			ora(error.message).fail();
 			return;
 		}
 		console.error("Error:", error);

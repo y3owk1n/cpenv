@@ -1,6 +1,7 @@
 import * as os from "os";
 import * as path from "path";
 import * as fs from "fs/promises";
+import ora from "ora";
 import { isFsDirectory, mkdir, readdir } from "./directory";
 import { checkFileExists, copyFile } from "./file";
 import { promptForOverwrite, promptForVaultDir } from "./prompt";
@@ -26,14 +27,19 @@ export async function createEnvFilesDirectoryIfNotFound(
 ): Promise<string> {
 	const envFilesDirectory = path.join(os.homedir(), vaultDir);
 
+	const spinner = ora("Checking if env files directory exists");
+	spinner.start();
+
 	try {
 		await fs.access(envFilesDirectory);
+		spinner.succeed(`Env files directory exists at ${envFilesDirectory}`);
 	} catch (error) {
-		console.log(
+		spinner.indent = 2;
+		spinner.info(
 			`Env files directory not found. Creating a new one at ${envFilesDirectory}`,
 		);
 		await fs.mkdir(envFilesDirectory, { recursive: true });
-		console.log("Env files directory created.");
+		spinner.succeed(`Env files directory created at ${envFilesDirectory}`);
 	}
 
 	return envFilesDirectory;
@@ -60,38 +66,107 @@ export async function getEnvFilesDirectory(): Promise<string> {
  * @throws If there is an issue accessing, creating, or loading the configuration file.
  */
 export async function envInit(): Promise<void> {
+	await loadEnvConfig(envConfigDirectory);
+}
+
+/**
+ * Checks if the environment configuration file exists in the specified directory.
+ *
+ * @param directory - The path to the directory where the environment configuration file is expected.
+ * @returns A Promise that resolves to a boolean indicating whether the configuration file exists.
+ *
+ * @throws Throws an error if there is an issue accessing the file system.
+ *
+ * @example
+ * // Example usage:
+ * const directoryPath = '/path/to/directory';
+ * try {
+ *   const exists = await envConfigExists(directoryPath);
+ *   console.log(`Environment configuration file exists: ${exists}`);
+ * } catch (error) {
+ *   console.error(`Error checking for environment configuration file: ${error.message}`);
+ * }
+ */
+async function envConfigExists(directory: string): Promise<boolean> {
 	try {
-		console.log("Checking config file...");
-
-		try {
-			// Use try-catch block to handle file not found error
-			await fs.access(envConfigDirectory);
-		} catch (error) {
-			// If the file doesn't exist, create a new one with default content
-			console.log(
-				`Config file not found. Creating a new one at ${envConfigDirectory}`,
-			);
-
-			const { vaultDir } = await promptForVaultDir();
-
-			const defaultConfig: ConfigJson = {
-				vaultDir,
-			};
-
-			await fs.writeFile(
-				envConfigDirectory,
-				JSON.stringify(defaultConfig, null, 2),
-				"utf-8",
-			);
-			console.log("Config file created.");
-		}
+		await fs.access(directory);
+		return true;
 	} catch (error) {
-		console.error(
-			"Error while loading config:",
-			error instanceof Error ? error.message : error,
-		);
-		throw error;
+		return false;
 	}
+}
+
+/**
+ * Creates a new environment configuration file in the specified directory with default content.
+ *
+ * @param directory - The path to the directory where the environment configuration file will be created.
+ * @returns A Promise that resolves when the configuration file is successfully created.
+ *
+ * @throws Throws an error if there is an issue writing to the file system or obtaining user input.
+ *
+ * @example
+ * // Example usage:
+ * const directoryPath = '/path/to/directory';
+ * try {
+ *   await createEnvConfigFile(directoryPath);
+ *   console.log('Environment configuration file created successfully.');
+ * } catch (error) {
+ *   console.error(`Error creating environment configuration file: ${error.message}`);
+ * }
+ */
+async function createEnvConfigFile(directory: string): Promise<void> {
+	const { vaultDir } = await promptForVaultDir();
+
+	const defaultConfig: ConfigJson = {
+		vaultDir,
+	};
+
+	await fs.writeFile(
+		directory,
+		JSON.stringify(defaultConfig, null, 2),
+		"utf-8",
+	);
+}
+
+/**
+ * Loads the environment configuration from the specified directory, creating a new one if it doesn't exist.
+ *
+ * @param envConfigDirectory - The path to the directory where the environment configuration file is expected.
+ * @returns A Promise that resolves to the loaded environment configuration.
+ *
+ * @throws Throws an error if there is an issue accessing or creating the configuration file,
+ *                  or if there is an error parsing the file content.
+ *
+ * @example
+ * // Example usage:
+ * const directoryPath = '/path/to/directory';
+ * try {
+ *   const loadedConfig = await loadEnvConfig(directoryPath);
+ *   console.log('Environment configuration loaded:', loadedConfig);
+ * } catch (error) {
+ *   console.error(`Error loading environment configuration: ${error.message}`);
+ * }
+ */
+async function loadEnvConfig(envConfigDirectory: string): Promise<ConfigJson> {
+	const spinner = ora("Checking if config exists").start();
+	const configExists = await envConfigExists(envConfigDirectory);
+
+	if (!configExists) {
+		spinner.fail(
+			`Config file not found. Creating a new one at ${envConfigDirectory}`,
+		);
+
+		await createEnvConfigFile(envConfigDirectory);
+		spinner.indent = 2;
+		spinner.succeed(`Config file created at ${envConfigDirectory}`);
+	}
+	spinner.start("Loading config...");
+	// Load the config (this could be a separate function if needed)
+	const configContent = await fs.readFile(envConfigDirectory, "utf-8");
+	const config: ConfigJson = JSON.parse(configContent);
+	spinner.succeed("Config loaded!");
+
+	return config;
 }
 
 /**
@@ -164,9 +239,12 @@ export async function copyEnvFiles(
 			const fileExists = await checkFileExists(destinationPath, file);
 
 			if (!fileExists) {
+				const spinner = ora(
+					`Copying ${file} to ${destinationPathWithFile}`,
+				).start();
 				// No matching .env files found, copy the entire .env file to the project
 				await copyFile(sourcePath, destinationPathWithFile);
-				console.log(
+				spinner.succeed(
 					`Successfully copied ${file} to the ${destinationPathWithFile}.`,
 				);
 			} else {
@@ -208,8 +286,13 @@ export async function handleEnvFileCopy(
 	const shouldOverwrite = autoYesForRemainingFiles;
 
 	if (shouldOverwrite) {
+		const spinner = ora(`Copying ${file} to ${destinationPath}`);
+		spinner.indent = 2;
+		spinner.start();
 		await copyFile(sourcePath, destinationPath);
-		console.log(`Successfully copied ${file} to the ${destinationPath}.`);
+		spinner.succeed(
+			`Successfully copied ${file} to the ${destinationPath}.`,
+		);
 	} else {
 		if (!autoYesForRemainingFiles) {
 			const overwriteAnswer = await promptForOverwrite(
@@ -217,17 +300,20 @@ export async function handleEnvFileCopy(
 				destinationPath,
 			);
 
+			const spinner = ora(`Copying ${file} to ${destinationPath}`);
+			spinner.indent = 2;
+			spinner.start();
 			if (overwriteAnswer.overwrite) {
 				await copyFile(sourcePath, destinationPath);
-				console.log(
+				spinner.succeed(
 					`Successfully copied ${file} to ${destinationPath}.`,
 				);
 			} else {
-				console.log(`Skipped copying ${file} to ${destinationPath}.`);
+				spinner.info(`Skipped copying ${file} to ${destinationPath}.`);
 				autoYesForRemainingFiles = false;
 			}
 		} else {
-			console.log(`Skipped copying ${file} to ${destinationPath}.`);
+			ora(`Skipped copying ${file} to ${destinationPath}.`).info();
 		}
 	}
 }
