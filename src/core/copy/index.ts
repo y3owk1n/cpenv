@@ -15,7 +15,7 @@ import { OptionValues } from "./command";
  * // Usage example:
  * await copyEnvFiles("myProject");
  */
-export async function startCpCli(
+export async function startCopy(
 	selectedProject: string,
 	options: OptionValues,
 ): Promise<void> {

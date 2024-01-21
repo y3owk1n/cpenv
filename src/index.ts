@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { startCpCli } from "./core/copy";
 import { commanderInit } from "./core/copy/command";
+import { startCopy } from "./core/copy";
 import { Project, getProjectsList, selectProject } from "./core/copy/project";
 import { envInit } from "./utils/env";
 import { getCurrentVersion } from "./utils/version";
@@ -17,7 +17,7 @@ import { getCurrentVersion } from "./utils/version";
 
 		const options = commanderInit();
 
-		await startCpCli(selectedProject, options);
+		await startCopy(selectedProject, options);
 	} catch (error) {
 		console.error("Error:", error instanceof Error ? error.message : error);
 	}
