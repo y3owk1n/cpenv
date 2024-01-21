@@ -34,7 +34,9 @@ export async function selectProject(projects: Directory[]): Promise<string> {
 		return project;
 	}
 
-	if (!projects.includes(options.project)) {
+	const projectsInStrArr = projects.map((project) => project.value);
+
+	if (!projectsInStrArr.includes(options.project)) {
 		console.log("Error: Specified project not found in the directory.");
 		process.exit(1); // Exit the process with an error code
 	}
