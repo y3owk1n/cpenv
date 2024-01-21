@@ -67,10 +67,10 @@ export async function promptForGlobalOverwrite(): Promise<{
  */
 export async function promptForOverwrite(
 	file: string,
-	currentPath: string,
+	destinationPath: string,
 ): Promise<{ overwrite: boolean }> {
 	const overwrite = await confirm({
-		message: `Warning: ${file} already exists in ${currentPath}. Do you want to overwrite it?`,
+		message: `Warning: ${file} already exists in ${destinationPath}. Do you want to overwrite it?`,
 		default: false,
 	});
 

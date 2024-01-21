@@ -162,7 +162,6 @@ export async function copyEnvFiles(
 
 		if (await isFsDirectory(sourcePath)) {
 			await mkdir(destinationPathWithFile, { recursive: true });
-			await copyEnvFiles(project, path.join(currentPath, file), autoYes);
 		} else if (file.endsWith(".env")) {
 			// Check if there are any matching .env files in the current project folder
 			const matchingEnvFiles = filesInDestinationPath.filter((f) =>
@@ -178,7 +177,6 @@ export async function copyEnvFiles(
 					file,
 					sourcePath,
 					destinationPathWithFile,
-					currentPath,
 					autoYes,
 				);
 			}
@@ -192,7 +190,6 @@ export async function copyEnvFiles(
  * @param file - The name of the .env file to copy.
  * @param sourcePath - The source path of the .env file.
  * @param destinationPath - The destination path for the .env file.
- * @param currentPath - The current path within the project.
  * @param autoYes - Whether to automatically overwrite files without prompting.
  * @returns A promise that resolves once the copying process is complete.
  *
@@ -206,7 +203,6 @@ export async function handleEnvFileCopy(
 	file: string,
 	sourcePath: string,
 	destinationPath: string,
-	currentPath: string,
 	autoYes: boolean,
 ): Promise<void> {
 	let autoYesForRemainingFiles = autoYes;
@@ -215,20 +211,25 @@ export async function handleEnvFileCopy(
 
 	if (shouldOverwrite) {
 		await copyFile(sourcePath, destinationPath);
-		console.log(`Successfully copied ${file} to the ${currentPath}.`);
+		console.log(`Successfully copied ${file} to the ${destinationPath}.`);
 	} else {
 		if (!autoYesForRemainingFiles) {
-			const overwriteAnswer = await promptForOverwrite(file, currentPath);
+			const overwriteAnswer = await promptForOverwrite(
+				file,
+				destinationPath,
+			);
 
 			if (overwriteAnswer.overwrite) {
 				await copyFile(sourcePath, destinationPath);
-				console.log(`Successfully copied ${file} to ${currentPath}.`);
+				console.log(
+					`Successfully copied ${file} to ${destinationPath}.`,
+				);
 			} else {
-				console.log(`Skipped copying ${file} to ${currentPath}.`);
+				console.log(`Skipped copying ${file} to ${destinationPath}.`);
 				autoYesForRemainingFiles = false;
 			}
 		} else {
-			console.log(`Skipped copying ${file} to ${currentPath}.`);
+			console.log(`Skipped copying ${file} to ${destinationPath}.`);
 		}
 	}
 }
