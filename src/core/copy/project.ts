@@ -1,7 +1,7 @@
 import { getEnvFilesDirectory } from "@/utils/env";
 import { Directory, getDirectories } from "@/utils/projects";
 import { commanderInit } from "./command";
-import { select } from "@inquirer/prompts";
+import { promptToSelectProject } from "./prompt";
 
 export type Project = Directory;
 
@@ -30,10 +30,7 @@ export async function selectProject(projects: Directory[]): Promise<string> {
 	const options = commanderInit();
 
 	if (!options.project) {
-		const project = await select({
-			message: "Select a project to copy .env files:",
-			choices: projects,
-		});
+		const { project } = await promptToSelectProject(projects);
 		return project;
 	}
 
