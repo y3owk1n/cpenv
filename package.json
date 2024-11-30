@@ -15,7 +15,7 @@
 		"build": "tsup",
 		"dev": "tsup --watch",
 		"clean": "rm -rf dist",
-		"release": "pnpm clean && pnpm build && pnpm run np",
+		"release": "pnpm clean && pnpm build && pnpm np",
 		"format": "biome check --write . && biome format --write .",
 		"lint": "biome lint .",
 		"bump:latest": "pnpm up -i -latest"
