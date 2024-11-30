@@ -1,5 +1,5 @@
 import type { Directory } from "@/utils/directory";
-import { select } from "@inquirer/prompts";
+import { search } from "@inquirer/prompts";
 
 /**
  * Asynchronously prompts the user to select a project from the available list.
@@ -18,9 +18,17 @@ import { select } from "@inquirer/prompts";
 export async function promptToSelectProject(projects: Directory[]): Promise<{
 	project: string;
 }> {
-	const project = await select({
-		message: "Select a project to copy .env files:",
-		choices: projects,
+	const project = await search({
+		message: "Select a project to copy .env files",
+		source: async (input) => {
+			if (!input) {
+				return projects;
+			}
+
+			return projects.filter((project) =>
+				project.value.toLocaleLowerCase().includes(input.toLowerCase()),
+			);
+		},
 	});
 
 	return { project };
