@@ -1,52 +1,44 @@
 {
-  "name": "cpenv",
-  "version": "0.3.0",
-  "description": "A CLI for copy and paste your local .env to right projects faster",
-  "type": "module",
-  "exports": "./dist/index.js",
-  "files": [
-    "dist/*",
-    "README.md",
-    "LICENSE",
-    "package.json"
-  ],
-  "bin": {
-    "cpenv": "./dist/index.js"
-  },
-  "engines": {
-    "node": ">=18.17.0"
-  },
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "clean": "rm -rf dist",
-    "release": "bun run clean && bun run build && bun run np",
-    "test": "echo \"No test specified\"",
-    "format": "biome check --apply . && biome format --write ."
-  },
-  "keywords": [
-    "cli",
-    "env",
-    "node",
-    "bun"
-  ],
-  "author": "Kyle Wong",
-  "license": "ISC",
-  "devDependencies": {
-    "@biomejs/biome": "1.5.2",
-    "@types/inquirer": "^9.0.7",
-    "@types/minimist": "^1.2.5",
-    "bun-types": "latest",
-    "np": "^9.2.0",
-    "tsup": "^8.0.1"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@inquirer/prompts": "^3.3.0",
-    "commander": "^11.1.0",
-    "minimist": "^1.2.8",
-    "ora": "^8.0.1"
-  }
+	"name": "cpenv",
+	"version": "0.3.0",
+	"description": "A CLI for copy and paste your local .env to right projects faster",
+	"type": "module",
+	"exports": "./dist/index.js",
+	"files": ["dist/*", "README.md", "LICENSE", "package.json"],
+	"bin": {
+		"cpenv": "./dist/index.js"
+	},
+	"engines": {
+		"node": ">=18.17.0"
+	},
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"clean": "rm -rf dist",
+		"release": "pnpm clean && pnpm build && pnpm run np",
+		"format": "biome check --write . && biome format --write .",
+		"lint": "biome lint .",
+		"bump:latest": "pnpm up -i -latest"
+	},
+	"keywords": ["cli", "env", "node", "bun"],
+	"author": "Kyle Wong",
+	"license": "ISC",
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/inquirer": "^9.0.7",
+		"@types/minimist": "^1.2.5",
+		"bun-types": "latest",
+		"np": "^10.1.0",
+		"tsup": "^8.3.5"
+	},
+	"peerDependencies": {
+		"typescript": "^5.3.3"
+	},
+	"dependencies": {
+		"@inquirer/prompts": "^7.1.0",
+		"commander": "^12.1.0",
+		"minimist": "^1.2.8",
+		"ora": "^8.1.1"
+	},
+	"packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab"
 }
