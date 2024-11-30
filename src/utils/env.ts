@@ -206,7 +206,7 @@ export async function getEnvConfigJsonData(): Promise<ConfigJson> {
  * // Usage example:
  * await copyEnvFiles("myProject");
  */
-export async function copyEnvFiles(
+export async function copyEnvFilesToProject(
 	project: string,
 	currentPath = "",
 	autoYes = false,
