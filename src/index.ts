@@ -1,15 +1,11 @@
 #!/usr/bin/env node
 
 import ora from "ora";
-import { startCopy } from "./core/copy";
+import { prepareBackup } from "./core/backup";
+import { prepareCopy } from "./core/copy";
 import { commandOptions, commanderInit } from "./core/copy/command";
-import {
-	type Project,
-	getProjectsList,
-	selectProject,
-} from "./core/copy/project";
-import { confirmCwd, promptToSelectAction } from "./core/init/prompt";
-import { copyEnvFilesToVault, envInit } from "./utils/env";
+import { promptToSelectAction } from "./core/init/prompt";
+import { envInit } from "./utils/env";
 import { getCurrentVersion } from "./utils/version";
 
 (async () => {
@@ -20,21 +16,21 @@ import { getCurrentVersion } from "./utils/version";
 
 		await envInit();
 
+		if (options.project || options.autoYes) {
+			await prepareCopy(options);
+			return;
+		}
+
 		const { action } = await promptToSelectAction();
 
 		if (action === "copy") {
-			const projects: Project[] = await getProjectsList();
-			const selectedProject: string = await selectProject(
-				projects,
-				options,
-			);
-
-			await startCopy(selectedProject, options);
+			await prepareCopy(options);
+			return;
 		}
 
 		if (action === "backup") {
-			await confirmCwd();
-			await copyEnvFilesToVault();
+			await prepareBackup();
+			return;
 		}
 	} catch (error) {
 		if (error instanceof Error) {
