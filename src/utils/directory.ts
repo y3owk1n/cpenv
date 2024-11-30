@@ -1,6 +1,6 @@
-import * as fs from "fs";
-import * as url from "url";
-import * as util from "util";
+import * as fs from "node:fs";
+import * as url from "node:url";
+import * as util from "node:util";
 
 export type Directory = {
 	name: string;

@@ -1,7 +1,7 @@
-import { Directory, getDirectories } from "@/utils/directory";
+import { type Directory, getDirectories } from "@/utils/directory";
 import { getEnvFilesDirectory } from "@/utils/env";
 import ora from "ora";
-import { OptionValues } from "./command";
+import type { OptionValues } from "./command";
 import { promptToSelectProject } from "./prompt";
 
 export type Project = Directory;

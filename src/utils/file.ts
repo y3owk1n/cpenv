@@ -1,7 +1,7 @@
-import * as fs from "fs";
-import * as path from "path";
-import * as util from "util";
-import * as fsPromise from "fs/promises";
+import * as fs from "node:fs";
+import * as fsPromise from "node:fs/promises";
+import * as path from "node:path";
+import * as util from "node:util";
 
 export const copyFile = util.promisify(fs.copyFile);
 

@@ -1,10 +1,10 @@
-import { CommandOption, configureCommand } from "@/utils/command";
+import { type CommandOption, configureCommand } from "@/utils/command";
 import {
 	getCurrentDescription,
 	getCurrentName,
 	getCurrentVersion,
 } from "@/utils/version";
-import { OptionValues as CommanderOptionValues } from "commander";
+import type { OptionValues as CommanderOptionValues } from "commander";
 import { Command } from "commander";
 
 export interface OptionValues extends CommanderOptionValues {

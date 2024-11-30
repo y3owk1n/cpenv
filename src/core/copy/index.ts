@@ -1,7 +1,7 @@
 import { copyEnvFiles } from "@/utils/env";
 import { promptForGlobalOverwrite } from "@/utils/prompt";
 import ora from "ora";
-import { OptionValues } from "./command";
+import type { OptionValues } from "./command";
 
 /**
  * Asynchronously copies .env files from the specified project to the current working directory.

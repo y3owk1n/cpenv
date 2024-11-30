@@ -3,7 +3,11 @@
 import ora from "ora";
 import { startCopy } from "./core/copy";
 import { commandOptions, commanderInit } from "./core/copy/command";
-import { Project, getProjectsList, selectProject } from "./core/copy/project";
+import {
+	type Project,
+	getProjectsList,
+	selectProject,
+} from "./core/copy/project";
 import { envInit } from "./utils/env";
 import { getCurrentVersion } from "./utils/version";
 
