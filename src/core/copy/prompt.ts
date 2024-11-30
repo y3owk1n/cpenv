@@ -1,4 +1,4 @@
-import { Directory } from "@/utils/directory";
+import type { Directory } from "@/utils/directory";
 import { select } from "@inquirer/prompts";
 
 /**
