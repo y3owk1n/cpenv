@@ -8,7 +8,8 @@ import {
 	getProjectsList,
 	selectProject,
 } from "./core/copy/project";
-import { envInit } from "./utils/env";
+import { confirmCwd, promptToSelectAction } from "./core/init/prompt";
+import { copyEnvFilesToVault, envInit } from "./utils/env";
 import { getCurrentVersion } from "./utils/version";
 
 (async () => {
@@ -19,10 +20,22 @@ import { getCurrentVersion } from "./utils/version";
 
 		await envInit();
 
-		const projects: Project[] = await getProjectsList();
-		const selectedProject: string = await selectProject(projects, options);
+		const { action } = await promptToSelectAction();
 
-		await startCopy(selectedProject, options);
+		if (action === "copy") {
+			const projects: Project[] = await getProjectsList();
+			const selectedProject: string = await selectProject(
+				projects,
+				options,
+			);
+
+			await startCopy(selectedProject, options);
+		}
+
+		if (action === "backup") {
+			await confirmCwd();
+			await copyEnvFilesToVault();
+		}
 	} catch (error) {
 		if (error instanceof Error) {
 			if (error.message === "User force closed the prompt with 0 null") {

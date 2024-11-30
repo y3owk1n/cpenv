@@ -2,6 +2,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import ora from "ora";
+import { getBackupTimestamp } from "./date";
 import { isFsDirectory, mkdir, readdir } from "./directory";
 import { checkFileExists, copyFile } from "./file";
 import { promptForOverwrite, promptForVaultDir } from "./prompt";
@@ -256,6 +257,60 @@ export async function copyEnvFilesToProject(
 					autoYes,
 				);
 			}
+		}
+	}
+}
+
+export async function copyEnvFilesToVault(): Promise<void> {
+	const envFilesDirectory = await getEnvFilesDirectory();
+
+	const currentDir = process.cwd();
+
+	const currentProjectFolderName = currentDir.split("/").at(-1);
+
+	if (!currentProjectFolderName) {
+		console.error("failed to parse the folder name, try again...");
+		process.exit(1);
+	}
+
+	const currentProjectFolderNameWithTimestamp = `${currentProjectFolderName}-${getBackupTimestamp()}`;
+
+	const filesInProject: (string | Buffer)[] = await readdir(currentDir, {
+		recursive: true,
+	});
+
+	const destinationPath: string = path.join(
+		envFilesDirectory,
+		currentProjectFolderNameWithTimestamp,
+	);
+
+	await mkdir(destinationPath);
+
+	for (const entry of filesInProject) {
+		const file = entry.toString(); // Convert buffer entry to string
+		const sourcePath: string = path.join(currentDir, file);
+
+		if (
+			file.includes("node_modules") ||
+			file.includes(".template") ||
+			file.includes(".example")
+		) {
+			continue;
+		}
+
+		const destinationPathWithFile: string = path.join(
+			destinationPath,
+			file,
+		);
+
+		if (file.includes(".env")) {
+			const spinner = ora(
+				`Copying ${file} to ${destinationPathWithFile}`,
+			).start();
+			await copyFile(sourcePath, destinationPathWithFile);
+			spinner.succeed(
+				`Successfully copied ${file} to the ${destinationPathWithFile}.`,
+			);
 		}
 	}
 }
