@@ -2,6 +2,14 @@ import { copyEnvFilesToProject } from "@/utils/env";
 import { promptForGlobalOverwrite } from "@/utils/prompt";
 import ora from "ora";
 import type { OptionValues } from "./command";
+import { type Project, getProjectsList, selectProject } from "./project";
+
+export async function prepareCopy(options: OptionValues): Promise<void> {
+	const projects: Project[] = await getProjectsList();
+	const selectedProject: string = await selectProject(projects, options);
+
+	await startCopy(selectedProject, options);
+}
 
 /**
  * Asynchronously copies .env files from the specified project to the current working directory.
