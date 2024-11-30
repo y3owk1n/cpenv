@@ -1,10 +1,15 @@
 {
 	"name": "cpenv",
-	"version": "0.3.0",
+	"version": "1.0.0",
 	"description": "A CLI for copy and paste your local .env to right projects faster",
 	"type": "module",
 	"exports": "./dist/index.js",
-	"files": ["dist/*", "README.md", "LICENSE", "package.json"],
+	"files": [
+		"dist/*",
+		"README.md",
+		"LICENSE",
+		"package.json"
+	],
 	"bin": {
 		"cpenv": "./dist/index.js"
 	},
@@ -20,7 +25,12 @@
 		"lint": "biome lint .",
 		"bump:latest": "pnpm up -i -latest"
 	},
-	"keywords": ["cli", "env", "node", "bun"],
+	"keywords": [
+		"cli",
+		"env",
+		"node",
+		"bun"
+	],
 	"author": "Kyle Wong",
 	"license": "ISC",
 	"devDependencies": {
