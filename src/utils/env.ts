@@ -228,14 +228,13 @@ export async function copyEnvFilesToProject(
 		const sourcePath: string = path.join(projectPath, file);
 		const destinationPath: string = path.join(process.cwd(), currentPath);
 		const destinationPathWithFile: string = path.join(
-			process.cwd(),
-			currentPath,
+			destinationPath,
 			file,
 		);
 
 		if (await isFsDirectory(sourcePath)) {
 			await mkdir(destinationPathWithFile, { recursive: true });
-		} else if (file.endsWith(".env")) {
+		} else if (file.includes(".env")) {
 			// Check if file already exists in the destination path
 			const fileExists = await checkFileExists(destinationPath, file);
 
