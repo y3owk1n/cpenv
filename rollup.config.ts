@@ -17,8 +17,9 @@ export default defineConfig({
 		resolve(), // Helps Rollup find external modules
 		typescript({
 			tsconfig: "./tsconfig.json", // Ensure this matches your TypeScript configuration
-			noForceEmit: true,
 			rootDir: "./src",
+			declaration: true,
+			outDir: "./dist/types",
 		}),
 		terser(), // Minification
 	],

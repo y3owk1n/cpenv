@@ -11,6 +11,7 @@
 		"noEmit": true,
 		"strict": true,
 		"declaration": false,
+		"emitDeclarationOnly": true,
 		"downlevelIteration": true,
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
