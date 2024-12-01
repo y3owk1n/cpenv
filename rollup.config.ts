@@ -4,6 +4,12 @@ import json from "@rollup/plugin-json";
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
+import replace from "@rollup/plugin-replace";
+import {
+	getCurrentDescription,
+	getCurrentName,
+	getCurrentVersion,
+} from "./src/utils/version";
 
 export default defineConfig({
 	input: "./src/index.ts",
@@ -23,5 +29,11 @@ export default defineConfig({
 			outDir: "./dist/types",
 		}),
 		terser(), // Minification
+		replace({
+			"process.env.VERSION": () => JSON.stringify(getCurrentVersion()),
+			"process.env.NAME": () => JSON.stringify(getCurrentName()),
+			"process.env.DESCRIPTION": () =>
+				JSON.stringify(getCurrentDescription()),
+		}),
 	],
 });
