@@ -1,6 +1,8 @@
 on:
   pull_request:
     branches: ["*"]
+    tags-ignore:
+      - "release-please--*" # Exclude tags containing "staging"
 
 name: test build
 
