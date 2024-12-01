@@ -3,16 +3,6 @@
 	"version": "1.2.0",
 	"description": "A CLI for copy and paste your local .env to right projects faster",
 	"type": "module",
-	"exports": "./dist/index.js",
-	"files": [
-		"dist/*",
-		"README.md",
-		"LICENSE",
-		"package.json"
-	],
-	"bin": {
-		"cpenv": "./dist/index.js"
-	},
 	"engines": {
 		"node": ">=18.17.0"
 	},
@@ -24,12 +14,6 @@
 		"lint": "biome lint .",
 		"bump:latest": "pnpm up -i -latest"
 	},
-	"keywords": [
-		"cli",
-		"env",
-		"node",
-		"bun"
-	],
 	"author": "Kyle Wong",
 	"license": "ISC",
 	"devDependencies": {
@@ -41,8 +25,6 @@
 		"@rollup/plugin-typescript": "^12.1.1",
 		"@types/inquirer": "^9.0.7",
 		"@types/minimist": "^1.2.5",
-		"bun-types": "latest",
-		"np": "^10.1.0",
 		"rollup": "^4.28.0",
 		"typescript": "^5.7.2"
 	},
