@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/y3owk1n/cpenv/compare/v1.3.0...v1.3.1) (2024-12-01)
+
+
+### Bug Fixes
+
+* add release id to gh action ([#37](https://github.com/y3owk1n/cpenv/issues/37)) ([13a09f4](https://github.com/y3owk1n/cpenv/commit/13a09f4dcc6d9f21faee17bf235ae2329a48f861))
+
 ## [1.3.0](https://github.com/y3owk1n/cpenv/compare/v1.2.0...v1.3.0) (2024-12-01)
 
 
