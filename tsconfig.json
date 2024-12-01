@@ -1,4 +1,6 @@
 {
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"display": "Default",
 	"compilerOptions": {
 		"lib": ["ESNext"],
 		"module": "esnext",
@@ -8,9 +10,10 @@
 		"allowImportingTsExtensions": true,
 		"noEmit": true,
 		"strict": true,
+		"declaration": false,
+		"emitDeclarationOnly": true,
 		"downlevelIteration": true,
 		"skipLibCheck": true,
-		"jsx": "react-jsx",
 		"allowSyntheticDefaultImports": true,
 		"forceConsistentCasingInFileNames": true,
 		"allowJs": true,
@@ -19,5 +22,7 @@
 		"paths": {
 			"@/*": ["./src/*"]
 		}
-	}
+	},
+	"include": ["**/*.ts"],
+	"exclude": ["node_modules"]
 }
