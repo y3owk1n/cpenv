@@ -17,6 +17,7 @@ export default {
 		typescript({
 			tsconfig: "./tsconfig.json", // Ensure this matches your TypeScript configuration
 			noForceEmit: true,
+			rootDir: "./src",
 		}),
 		terser(), // Minification
 	],
