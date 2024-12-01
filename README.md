@@ -10,11 +10,11 @@ This is useful when it comes to working within git worktrees, and you need the s
 
 ## Simple Project Demo
 
-https://github.com/y3owk1n/cpenv/assets/62775956/a61b0944-1507-4291-a81f-2fd4d198a572
+<https://github.com/y3owk1n/cpenv/assets/62775956/a61b0944-1507-4291-a81f-2fd4d198a572>
 
 ## Monorepo Project Demo
 
-https://github.com/y3owk1n/cpenv/assets/62775956/d36b733d-a222-46ff-befe-bac8b6fd73ea
+<https://github.com/y3owk1n/cpenv/assets/62775956/d36b733d-a222-46ff-befe-bac8b6fd73ea>
 
 <!--toc:start-->
 
@@ -34,13 +34,11 @@ https://github.com/y3owk1n/cpenv/assets/62775956/d36b733d-a222-46ff-befe-bac8b6f
 
 Before using EnvCopy CLI, ensure you have the following prerequisites:
 
-1. **Node.js:** Make sure you have Node.js installed on your machine.
-
-2. Running `cpenv` for the first time will prompt you to setup your `env-files` folder.
+1. Running `cpenv` for the first time will prompt you to setup your `env-files` folder.
 
 - You can set it to any folder you like, but the default is `~/.env-files`
 
-3. Organize your projects within your chosen directory. Each project should have its own subdirectory.
+2. Organize your projects within your chosen directory. Each project should have its own subdirectory.
 
 ```plaintext
   ~/.env-files
@@ -66,40 +64,28 @@ Before using EnvCopy CLI, ensure you have the following prerequisites:
 
 - **Global Overwrite Option:** Opt for a global overwrite to replace all existing files in the current project with a single confirmation.
 
+- **Backup Env(s) To Vault:** Back up your project env files to vault and ignore `*.template` and `*.example`.
+
 ## Getting Started
 
 ### Installation
 
-Install cpenv globally:
+Install via brew:
 
 ```bash
-npm install -g cpenv
-```
-
-or locally:
-
-```bash
-npm install --save-dev cpenv
-yarn add --dev cpenv
-pnpm add -D cpenv
-bun add -d cpenv
+brew tap y3owk1n/tap
+brew install y3owk1n/tap/cpenv
 ```
 
 ### Usage
 
-If you install globally, go to your project directory and run the following command in your terminal:
+Go to your project directory and run the following command in your terminal:
 
 ```bash
 cpenv
 ```
 
-If you install locally within a project, you can run the following command in your terminal:
-
-```bash
-pnpm cpenv # whatever package manager you are using
-```
-
-This will launch the interactive mode, guiding you through project selection and file copying.
+This will launch the interactive mode, guiding you through project selection, file copying and backups.
 
 ### Options
 
@@ -111,19 +97,19 @@ This will launch the interactive mode, guiding you through project selection and
 Interactive Mode
 
 ```bash
-cpenv # pnpm cpenv if running locally
+cpenv
 ```
 
 Specify Project
 
 ```bash
-cpenv -p single-env-project # pnpm cpenv if running locally
+cpenv -p single-env-project
 ```
 
 Specify Project and Enable Auto-Overwrite
 
 ```bash
-cpenv -p multi-env-project --auto-yes # pnpm cpenv if running locally
+cpenv -p multi-env-project --auto-yes
 ```
 
 ## Troubleshooting
@@ -136,6 +122,6 @@ Feel free to contribute by opening issues, suggesting enhancements, or submittin
 
 ## License
 
-This plugin is licensed under the MIT License. Feel free to use, modify, and distribute it as you see fit.
+This project is licensed under the MIT License. Feel free to use, modify, and distribute it as you see fit.
 
 Happy coding!
