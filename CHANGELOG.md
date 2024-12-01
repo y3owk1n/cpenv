@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/y3owk1n/cpenv/compare/v1.3.1...v1.4.0) (2024-12-01)
+
+
+### Features
+
+* add action to test the build ([#39](https://github.com/y3owk1n/cpenv/issues/39)) ([82472f5](https://github.com/y3owk1n/cpenv/commit/82472f5730036cc2b173c8219186e103359ab3a4))
+
 ## [1.3.1](https://github.com/y3owk1n/cpenv/compare/v1.3.0...v1.3.1) (2024-12-01)
 
 
