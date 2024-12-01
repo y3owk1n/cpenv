@@ -6,10 +6,11 @@ import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
 
 export default defineConfig({
-	input: "src/index.ts",
+	input: "./src/index.ts",
 	output: {
-		dir: "dist",
+		dir: "./dist",
 		format: "cjs",
+		entryFileNames: "[name].cjs", // This ensures the output file has .cjs extension
 	},
 	plugins: [
 		json(),
