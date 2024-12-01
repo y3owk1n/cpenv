@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/y3owk1n/cpenv/compare/v1.4.1...v1.4.2) (2024-12-01)
+
+
+### Bug Fixes
+
+* version bug causes binary to not run ([#45](https://github.com/y3owk1n/cpenv/issues/45)) ([3d6bc98](https://github.com/y3owk1n/cpenv/commit/3d6bc98c40c2321620aac6085e27be94a6df5b14))
+
 ## [1.4.1](https://github.com/y3owk1n/cpenv/compare/v1.4.0...v1.4.1) (2024-12-01)
 
 
