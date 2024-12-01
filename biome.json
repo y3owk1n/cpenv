@@ -4,6 +4,7 @@
 		"ignoreUnknown": true,
 		"ignore": [
 			"node_modules/**",
+			".rollup.cache/**",
 			".turbo/**",
 			".next/**",
 			"public/**",
