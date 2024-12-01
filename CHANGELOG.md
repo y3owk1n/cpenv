@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/y3owk1n/cpenv/compare/v1.4.0...v1.4.1) (2024-12-01)
+
+
+### Bug Fixes
+
+* make sure to use cjs instead of js ([#41](https://github.com/y3owk1n/cpenv/issues/41)) ([500e716](https://github.com/y3owk1n/cpenv/commit/500e7160e4d0636f504874a9e8ebb7a6a23918e0))
+
 ## [1.4.0](https://github.com/y3owk1n/cpenv/compare/v1.3.1...v1.4.0) (2024-12-01)
 
 
