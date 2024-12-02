@@ -82,34 +82,54 @@ brew install y3owk1n/tap/cpenv
 Go to your project directory and run the following command in your terminal:
 
 ```bash
-cpenv
+cpenv // without any subcommands will go into interactive mode
 ```
 
 This will launch the interactive mode, guiding you through project selection, file copying and backups.
 
+By supplying subcommands, you can skip the action flow
+
+```bash
+cpenv copy [options] // start copy interactive flow
+cpenv backup // start backup interactive flow
+```
+
 ### Options
+
+#### For root
+
+- -V, --version: Output the version number
+- -h, --help: Display help for command
+
+#### For `cpenv copy`
 
 - -p, --project <project>: Specify the project for which you want to copy environment files.
 - -y, --auto-yes: Automatically overwrite files without prompting for confirmation.
+
+#### For `cpenv backup`
+
+- No options for now
 
 ### Examples
 
 Interactive Mode
 
 ```bash
-cpenv
+cpenv // choose action flow
+cpenv copy [options] // start copy flow
+cpenv backup // start backup flow
 ```
 
 Specify Project
 
 ```bash
-cpenv -p single-env-project
+cpenv copy -p single-env-project
 ```
 
 Specify Project and Enable Auto-Overwrite
 
 ```bash
-cpenv -p multi-env-project --auto-yes
+cpenv copy -p multi-env-project --auto-yes
 ```
 
 ## Troubleshooting
