@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/y3owk1n/cpenv/compare/v1.4.2...v1.5.0) (2024-12-02)
+
+
+### Features
+
+* handle exit error globally ([#49](https://github.com/y3owk1n/cpenv/issues/49)) ([8018475](https://github.com/y3owk1n/cpenv/commit/8018475aea283490961aee17eac2051e591df18a))
+* use exact bun version to build ([#51](https://github.com/y3owk1n/cpenv/issues/51)) ([72ed67b](https://github.com/y3owk1n/cpenv/commit/72ed67bbcf75647b420665ef05310d2467f462e3))
+
 ## [1.4.2](https://github.com/y3owk1n/cpenv/compare/v1.4.1...v1.4.2) (2024-12-01)
 
 
