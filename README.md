@@ -36,7 +36,7 @@ Before using EnvCopy CLI, ensure you have the following prerequisites:
 
 1. Running `cpenv` for the first time will prompt you to setup your `env-files` folder.
 
-- You can set it to any folder you like, but the default is `~/.env-files`
+- You can set it to any folder you like, but the default is `~/.env-files`. I personally set it to an icloud drive path.
 
 2. Organize your projects within your chosen directory. Each project should have its own subdirectory.
 
@@ -82,17 +82,11 @@ brew install y3owk1n/tap/cpenv
 Go to your project directory and run the following command in your terminal:
 
 ```bash
-cpenv // without any subcommands will go into interactive mode
-```
-
-This will launch the interactive mode, guiding you through project selection, file copying and backups.
-
-By supplying subcommands, you can skip the action flow
-
-```bash
 cpenv copy [options] // start copy interactive flow
 cpenv backup // start backup interactive flow
 ```
+
+This will launch the interactive mode, guiding you through project selection, file copying and backups.
 
 ### Options
 
@@ -115,7 +109,6 @@ cpenv backup // start backup interactive flow
 Interactive Mode
 
 ```bash
-cpenv // choose action flow
 cpenv copy [options] // start copy flow
 cpenv backup // start backup flow
 ```
