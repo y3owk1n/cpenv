@@ -8,16 +8,6 @@ type PackageJson = {
 	description: string;
 };
 
-/**
- * Retrieves the data from the package.json file.
- *
- * @returns The current data from the package.json file.
- * @throws If there is an issue reading or parsing the package.json file.
- *
- * @example
- * const jsonData = getCurrentPackageJsonData();
- * console.log(`Current data: ${jsonData}`);
- */
 export function getCurrentPackageJsonData(): PackageJson {
 	const packageJsonPath: string = path.join(process.cwd(), "package.json");
 	const packageJsonContent: string = fs.readFileSync(
