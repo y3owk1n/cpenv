@@ -1,10 +1,10 @@
-import { defineConfig } from "rollup";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import resolve from "@rollup/plugin-node-resolve";
+import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
-import replace from "@rollup/plugin-replace";
+import { defineConfig } from "rollup";
 import {
 	getCurrentDescription,
 	getCurrentName,

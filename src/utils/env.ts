@@ -16,13 +16,6 @@ export const envConfigDirectory: string = path.join(
 	".env-files.json",
 );
 
-/**
- * Asynchronously creates the environment files directory if not found.
- *
- * @param vaultDir - The directory within the user's home directory where the environment files directory will be created.
- * @returns A Promise that resolves to the path of the environment files directory.
- * @throws If there is an issue accessing or creating the directory.
- */
 export async function createEnvFilesDirectoryIfNotFound(
 	vaultDir: string,
 ): Promise<string> {
@@ -46,12 +39,6 @@ export async function createEnvFilesDirectoryIfNotFound(
 	return envFilesDirectory;
 }
 
-/**
- * Asynchronously retrieves the path to the environment files directory.
- *
- * @returns A Promise that resolves to the path of the environment files directory.
- * @throws If there is an issue obtaining the environment configuration data or creating the directory.
- */
 export async function getEnvFilesDirectory(): Promise<string> {
 	const { vaultDir } = await getEnvConfigJsonData();
 
@@ -60,34 +47,10 @@ export async function getEnvFilesDirectory(): Promise<string> {
 	return envFilesDirectory;
 }
 
-/**
- * Asynchronously initializes the environment by checking and creating the configuration file if not found.
- *
- * @returns A Promise that resolves when the initialization is complete.
- * @throws If there is an issue accessing, creating, or loading the configuration file.
- */
 export async function envInit(): Promise<void> {
 	await loadEnvConfig(envConfigDirectory);
 }
 
-/**
- * Checks if the environment configuration file exists in the specified directory.
- *
- * @param directory - The path to the directory where the environment configuration file is expected.
- * @returns A Promise that resolves to a boolean indicating whether the configuration file exists.
- *
- * @throws Throws an error if there is an issue accessing the file system.
- *
- * @example
- * // Example usage:
- * const directoryPath = '/path/to/directory';
- * try {
- *   const exists = await envConfigExists(directoryPath);
- *   console.log(`Environment configuration file exists: ${exists}`);
- * } catch (error) {
- *   console.error(`Error checking for environment configuration file: ${error.message}`);
- * }
- */
 async function envConfigExists(directory: string): Promise<boolean> {
 	try {
 		await fs.access(directory);
@@ -97,24 +60,6 @@ async function envConfigExists(directory: string): Promise<boolean> {
 	}
 }
 
-/**
- * Creates a new environment configuration file in the specified directory with default content.
- *
- * @param directory - The path to the directory where the environment configuration file will be created.
- * @returns A Promise that resolves when the configuration file is successfully created.
- *
- * @throws Throws an error if there is an issue writing to the file system or obtaining user input.
- *
- * @example
- * // Example usage:
- * const directoryPath = '/path/to/directory';
- * try {
- *   await createEnvConfigFile(directoryPath);
- *   console.log('Environment configuration file created successfully.');
- * } catch (error) {
- *   console.error(`Error creating environment configuration file: ${error.message}`);
- * }
- */
 async function createEnvConfigFile(directory: string): Promise<void> {
 	const { vaultDir } = await promptForVaultDir();
 
@@ -129,25 +74,6 @@ async function createEnvConfigFile(directory: string): Promise<void> {
 	);
 }
 
-/**
- * Loads the environment configuration from the specified directory, creating a new one if it doesn't exist.
- *
- * @param envConfigDirectory - The path to the directory where the environment configuration file is expected.
- * @returns A Promise that resolves to the loaded environment configuration.
- *
- * @throws Throws an error if there is an issue accessing or creating the configuration file,
- *                  or if there is an error parsing the file content.
- *
- * @example
- * // Example usage:
- * const directoryPath = '/path/to/directory';
- * try {
- *   const loadedConfig = await loadEnvConfig(directoryPath);
- *   console.log('Environment configuration loaded:', loadedConfig);
- * } catch (error) {
- *   console.error(`Error loading environment configuration: ${error.message}`);
- * }
- */
 async function loadEnvConfig(envConfigDirectory: string): Promise<ConfigJson> {
 	const spinner = ora("Checking if config exists").start();
 	const configExists = await envConfigExists(envConfigDirectory);
@@ -170,12 +96,6 @@ async function loadEnvConfig(envConfigDirectory: string): Promise<ConfigJson> {
 	return config;
 }
 
-/**
- * Asynchronously reads and parses the environment configuration file content.
- *
- * @returns A Promise that resolves to the parsed content of the environment configuration file.
- * @throws If there is an issue reading or parsing the configuration file.
- */
 export async function getEnvConfigJsonData(): Promise<ConfigJson> {
 	try {
 		const envConfigJsonContent: string = await fs.readFile(
@@ -193,20 +113,6 @@ export async function getEnvConfigJsonData(): Promise<ConfigJson> {
 	}
 }
 
-/**
- * Asynchronously copies .env files from the specified project to the current working directory.
- *
- * @param project - The name of the project containing .env files.
- * @param [currentPath=""] - The current path within the project (used for recursive copying).
- * @param [autoYes=false] - Whether to automatically overwrite files without prompting.
- * @returns A promise that resolves once the copying process is complete.
- *
- * @throws If there is an issue reading or copying files.
- *
- * @example
- * // Usage example:
- * await copyEnvFiles("myProject");
- */
 export async function copyEnvFilesToProject(
 	project: string,
 	currentPath = "",
@@ -314,21 +220,6 @@ export async function copyEnvFilesToVault(): Promise<void> {
 	}
 }
 
-/**
- * Asynchronously handles the copying of an .env file, considering overwrite options.
- *
- * @param file - The name of the .env file to copy.
- * @param sourcePath - The source path of the .env file.
- * @param destinationPath - The destination path for the .env file.
- * @param autoYes - Whether to automatically overwrite files without prompting.
- * @returns A promise that resolves once the copying process is complete.
- *
- * @throws If there is an issue reading or copying files.
- *
- * @example
- * // Usage example:
- * await handleEnvFileCopy("example.env", "/path/to/source", "/path/to/destination", "/current/path", false);
- */
 export async function handleEnvFileCopy(
 	file: string,
 	sourcePath: string,

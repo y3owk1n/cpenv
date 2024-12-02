@@ -1,9 +1,5 @@
-import { prepareBackup } from "./core/backup";
-import { prepareCopy } from "./core/copy";
-import { commandOptions, commanderInit } from "./core/copy/command";
-import { promptToSelectAction } from "./core/init/prompt";
-import { envInit } from "./utils/env";
-import { getCurrentVersion } from "./utils/version";
+import { Command } from "commander";
+import { commanderInit } from "./core/init/command";
 
 process.on("uncaughtException", (error) => {
 	if (error instanceof Error && error.name === "ExitPromptError") {
@@ -14,27 +10,10 @@ process.on("uncaughtException", (error) => {
 	}
 });
 
+const program = new Command();
+
 (async () => {
-	console.log(`CLI Version: ${getCurrentVersion()}`);
+	commanderInit(program);
 
-	const options = commanderInit(commandOptions);
-
-	await envInit();
-
-	if (options.project || options.autoYes) {
-		await prepareCopy(options);
-		return;
-	}
-
-	const { action } = await promptToSelectAction();
-
-	if (action === "copy") {
-		await prepareCopy(options);
-		return;
-	}
-
-	if (action === "backup") {
-		await prepareBackup();
-		return;
-	}
+	await program.parseAsync(process.argv);
 })();
