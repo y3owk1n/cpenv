@@ -11,7 +11,6 @@ process.on("uncaughtException", (error) => {
 });
 
 function handleSigTerm() {
-	console.log("👋 until next time!");
 	process.stdout.write("\x1B[?25h");
 	process.stdout.write("\n");
 	process.exit(0);
