@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.6.0](https://github.com/y3owk1n/cpenv/compare/v1.5.0...v1.6.0) (2024-12-02)
+
+
+### Features
+
+* add subcommand for copy & backup ([#52](https://github.com/y3owk1n/cpenv/issues/52)) ([d724bfd](https://github.com/y3owk1n/cpenv/commit/d724bfd0bc2ab7bbe1949eb46473104c9d10b7b4))
+
+
+### Bug Fixes
+
+* make sure to handle exit event properly ([#54](https://github.com/y3owk1n/cpenv/issues/54)) ([50ede4f](https://github.com/y3owk1n/cpenv/commit/50ede4f378e5637efa6508aa818011049a0b050b))
+
 ## [1.5.0](https://github.com/y3owk1n/cpenv/compare/v1.4.2...v1.5.0) (2024-12-02)
 
 
