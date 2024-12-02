@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/y3owk1n/cpenv/compare/v1.6.0...v1.6.1) (2024-12-02)
+
+
+### Bug Fixes
+
+* do not log silly thing on sigTerm ([#56](https://github.com/y3owk1n/cpenv/issues/56)) ([a965974](https://github.com/y3owk1n/cpenv/commit/a9659745832348a1f0cd396450b3b8c3685a641d))
+
 ## [1.6.0](https://github.com/y3owk1n/cpenv/compare/v1.5.0...v1.6.0) (2024-12-02)
 
 
