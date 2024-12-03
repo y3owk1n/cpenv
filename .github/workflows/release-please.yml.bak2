@@ -22,7 +22,7 @@ jobs:
           token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
           # this is a built-in strategy in release-please, see "Action Inputs"
           # for more options
-          release-type: go
+          release-type: node
 
       - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
@@ -30,16 +30,38 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.head_ref }}
 
-      - uses: actions/setup-go@v5
+      - name: Install Just
+        if: ${{ steps.release.outputs.release_created }}
+        uses: extractions/setup-just@v1
+
+      - uses: pnpm/action-setup@v4
+        if: ${{ steps.release.outputs.release_created }}
+      - uses: actions/setup-node@v4
         if: ${{ steps.release.outputs.release_created }}
         with:
-          go-version: "^1.23.3"
+          node-version: 22
+          cache: "pnpm"
+
+      - uses: oven-sh/setup-bun@v2
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          bun-version: 1.1.34
+
+      - uses: actions/cache@v4
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - shell: bash
+        if: ${{ steps.release.outputs.release_created }}
+        run: pnpm install
 
       - name: Build project and prepare release artifact
         if: ${{ steps.release.outputs.release_created }}
-        run: |
-          env GOOS=darwin GOARCH=amd64 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-arm64 ./main.go
-          env GOOS=darwin GOARCH=amd64 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-amd64 ./main.go
+        run: just compile
 
       - name: Upload Release Artifact
         if: ${{ steps.release.outputs.release_created }}
@@ -47,4 +69,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
         run: |
           gh release upload ${{ steps.release.outputs.tag_name }} ./compile/cpenv-darwin-arm64
-          gh release upload ${{ steps.release.outputs.tag_name }} ./compile/cpenv-darwin-amd64
+          gh release upload ${{ steps.release.outputs.tag_name }} ./compile/cpenv-darwin-x64
