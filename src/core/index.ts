@@ -4,8 +4,8 @@ import {
 	getCurrentVersion,
 } from "@/utils/version";
 import type { Command } from "commander";
-import { backupCommanderInit } from "../backup/command";
-import { copyCommanderInit } from "../copy/command";
+import { backupCommanderInit } from "./backup/command";
+import { copyCommanderInit } from "./copy/command";
 
 export function commanderInit(program: Command) {
 	const name = getCurrentName();
