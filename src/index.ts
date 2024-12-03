@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import { Command } from "@commander-js/extra-typings";
 import { commanderInit } from "./core";
 
 process.on("uncaughtException", (error) => {

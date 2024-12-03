@@ -1,5 +1,5 @@
 import { envInit } from "@/utils/env";
-import type { Command } from "commander";
+import type { Command } from "@commander-js/extra-typings";
 
 export function setupCommanderInit(program: Command): void {
 	program
