@@ -38,7 +38,7 @@ jobs:
       - name: Build project and prepare release artifact
         if: ${{ steps.release.outputs.release_created }}
         run: |
-          env GOOS=darwin GOARCH=amd64 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-arm64 ./main.go
+          env GOOS=darwin GOARCH=arm64 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-arm64 ./main.go
           env GOOS=darwin GOARCH=amd64 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-amd64 ./main.go
 
       - name: Upload Release Artifact
