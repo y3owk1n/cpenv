@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.2](https://github.com/y3owk1n/cpenv/compare/v1.8.1...v1.8.2) (2024-12-03)
+
+
+### Bug Fixes
+
+* set log level to default, debug is for local dev ([#69](https://github.com/y3owk1n/cpenv/issues/69)) ([43f9314](https://github.com/y3owk1n/cpenv/commit/43f931426257700255c2ffbd09a5b30a8a8d45a7))
+
 ## [1.8.1](https://github.com/y3owk1n/cpenv/compare/v1.8.0...v1.8.1) (2024-12-03)
 
 
