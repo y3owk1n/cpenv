@@ -8,5 +8,5 @@ import (
 
 var Logger = log.NewWithOptions(os.Stderr, log.Options{
 	ReportTimestamp: false,
-	Level:           log.DebugLevel,
+	// Level:           log.DebugLevel,
 })
