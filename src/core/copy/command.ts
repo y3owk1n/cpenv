@@ -1,5 +1,6 @@
 import { envInit } from "@/utils/env";
-import type { Command, OptionValues as CommanderOptionValues } from "commander";
+import type { Command } from "@commander-js/extra-typings";
+import type { OptionValues as CommanderOptionValues } from "commander";
 import { prepareCopy } from ".";
 
 export interface CopyCommandOptionValues extends CommanderOptionValues {
@@ -19,7 +20,7 @@ export function copyCommanderInit(program: Command): void {
 			"-y, --auto-yes",
 			"Automatically overwrite files without prompting",
 		)
-		.action(async (options: CopyCommandOptionValues) => {
+		.action(async (options) => {
 			await envInit();
 			await prepareCopy(options);
 		});

@@ -1,5 +1,5 @@
 import { envInit } from "@/utils/env";
-import type { Command } from "commander";
+import type { Command } from "@commander-js/extra-typings";
 import { prepareBackup } from ".";
 
 export function backupCommanderInit(program: Command): void {

@@ -3,7 +3,7 @@ import {
 	getCurrentName,
 	getCurrentVersion,
 } from "@/utils/version";
-import type { Command } from "commander";
+import type { Command } from "@commander-js/extra-typings";
 import { backupCommanderInit } from "./backup/command";
 import { copyCommanderInit } from "./copy/command";
 import { setupCommanderInit } from "./init/command";
