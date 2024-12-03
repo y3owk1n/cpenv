@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/y3owk1n/cpenv/compare/v1.8.0...v1.8.1) (2024-12-03)
+
+
+### Bug Fixes
+
+* wrong build for arm64 ([#67](https://github.com/y3owk1n/cpenv/issues/67)) ([933f132](https://github.com/y3owk1n/cpenv/commit/933f132adf43b74f6664ebd69ee1a74169e7469e))
+
 ## [1.8.0](https://github.com/y3owk1n/cpenv/compare/v1.7.0...v1.8.0) (2024-12-03)
 
 
