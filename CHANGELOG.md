@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/y3owk1n/cpenv/compare/v1.6.1...v1.7.0) (2024-12-03)
+
+
+### Features
+
+* add setup command ([#61](https://github.com/y3owk1n/cpenv/issues/61)) ([f5f2035](https://github.com/y3owk1n/cpenv/commit/f5f203505fedc807761b2ce287704431e5688cd7))
+
+
+### Bug Fixes
+
+* revert root call for interactive actions ([#58](https://github.com/y3owk1n/cpenv/issues/58)) ([9f14d72](https://github.com/y3owk1n/cpenv/commit/9f14d72584f717664a1fd719bcd8023e63ff11b7))
+
 ## [1.6.1](https://github.com/y3owk1n/cpenv/compare/v1.6.0...v1.6.1) (2024-12-02)
 
 
