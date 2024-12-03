@@ -34,7 +34,7 @@ This is useful when it comes to working within git worktrees, and you need the s
 
 Before using EnvCopy CLI, ensure you have the following prerequisites:
 
-1. Running `cpenv setup` for the first time will prompt you to setup your `env-files` folder.
+1. Running `cpenv config init` for the first time will prompt you to setup your `env-files` folder.
 
 - You can set it to any folder you like, but the default is `~/.env-files`. I personally set it to an icloud drive path.
 
@@ -60,10 +60,6 @@ Before using EnvCopy CLI, ensure you have the following prerequisites:
 
 - **Interactive Project Selection:** Easily choose the project for which you want to copy environment files using a user-friendly interactive prompt or specify it directly through command-line options.
 
-- **Automatic Overwrite:** Use the --auto-yes option to automatically overwrite existing files without prompting for confirmation.
-
-- **Global Overwrite Option:** Opt for a global overwrite to replace all existing files in the current project with a single confirmation.
-
 - **Backup Env(s) To Vault:** Back up your project env files to vault and ignore `*.template` and `*.example`.
 
 ## Getting Started
@@ -82,9 +78,11 @@ brew install y3owk1n/tap/cpenv
 Go to your project directory and run the following command in your terminal:
 
 ```bash
-cpenv setup // initialize configurations for vault
-cpenv copy [options] // start copy interactive flow
+cpenv config init // initialize configurations for vault
+cpenv config edit // edit configurations for vault
+cpenv copy // start copy interactive flow
 cpenv backup // start backup interactive flow
+cpenv version // get the version number
 ```
 
 This will launch the interactive mode, guiding you through project selection, file copying and backups.
@@ -93,19 +91,17 @@ This will launch the interactive mode, guiding you through project selection, fi
 
 #### For root
 
-- -V, --version: Output the version number
 - -h, --help: Display help for command
 
 #### For `cpenv copy`
 
-- -p, --project <project>: Specify the project for which you want to copy environment files.
-- -y, --auto-yes: Automatically overwrite files without prompting for confirmation.
+- No options for now
 
 #### For `cpenv backup`
 
 - No options for now
 
-#### For `cpenv setup`
+#### For `cpenv config`
 
 - No options for now
 
@@ -114,20 +110,8 @@ This will launch the interactive mode, guiding you through project selection, fi
 Interactive Mode
 
 ```bash
-cpenv copy [options] // start copy flow
+cpenv copy // start copy flow
 cpenv backup // start backup flow
-```
-
-Specify Project
-
-```bash
-cpenv copy -p single-env-project
-```
-
-Specify Project and Enable Auto-Overwrite
-
-```bash
-cpenv copy -p multi-env-project --auto-yes
 ```
 
 ## Troubleshooting
