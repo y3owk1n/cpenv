@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/y3owk1n/cpenv/compare/v1.7.0...v1.8.0) (2024-12-03)
+
+
+### Features
+
+* migrate to golang ([#63](https://github.com/y3owk1n/cpenv/issues/63)) ([7eed464](https://github.com/y3owk1n/cpenv/commit/7eed464ac4366443e3e74f557d63bb36f438f8e0))
+
 ## [1.7.0](https://github.com/y3owk1n/cpenv/compare/v1.6.1...v1.7.0) (2024-12-03)
 
 
