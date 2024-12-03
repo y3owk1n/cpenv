@@ -15,28 +15,20 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.head_ref }}
 
-      - name: Install Just
-        uses: extractions/setup-just@v1
-
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
         with:
-          node-version: 22
-          cache: "pnpm"
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.head_ref }}
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-go@v5
+        if: ${{ steps.release.outputs.release_created }}
         with:
-          bun-version: 1.1.34
-
-      - uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
-
-      - shell: bash
-        run: pnpm install
+          go-version: "^1.23.3"
 
       - name: Build project and prepare release artifact
-        run: just compile
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          env GOOS=darwin GOARCH=amd64 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-arm64 ./main.go
+          env GOOS=darwin GOARCH=amd64 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-amd64 ./main.go
+          env GOOS=darwin GOARCH=386 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-386 ./main.go
