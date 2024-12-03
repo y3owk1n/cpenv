@@ -91,7 +91,7 @@ async function loadEnvConfig(envConfigDirectory: string): Promise<ConfigJson> {
 	// Load the config (this could be a separate function if needed)
 	const configContent = await fs.readFile(envConfigDirectory, "utf-8");
 	const config: ConfigJson = JSON.parse(configContent);
-	spinner.succeed("Config loaded!");
+	spinner.succeed("Config exists! Good to go.");
 
 	return config;
 }

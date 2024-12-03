@@ -34,7 +34,7 @@ This is useful when it comes to working within git worktrees, and you need the s
 
 Before using EnvCopy CLI, ensure you have the following prerequisites:
 
-1. Running `cpenv` for the first time will prompt you to setup your `env-files` folder.
+1. Running `cpenv setup` for the first time will prompt you to setup your `env-files` folder.
 
 - You can set it to any folder you like, but the default is `~/.env-files`. I personally set it to an icloud drive path.
 
@@ -82,6 +82,7 @@ brew install y3owk1n/tap/cpenv
 Go to your project directory and run the following command in your terminal:
 
 ```bash
+cpenv setup // initialize configurations for vault
 cpenv copy [options] // start copy interactive flow
 cpenv backup // start backup interactive flow
 ```
@@ -101,6 +102,10 @@ This will launch the interactive mode, guiding you through project selection, fi
 - -y, --auto-yes: Automatically overwrite files without prompting for confirmation.
 
 #### For `cpenv backup`
+
+- No options for now
+
+#### For `cpenv setup`
 
 - No options for now
 
