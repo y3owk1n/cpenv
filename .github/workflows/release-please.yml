@@ -40,7 +40,6 @@ jobs:
         run: |
           env GOOS=darwin GOARCH=amd64 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-arm64 ./main.go
           env GOOS=darwin GOARCH=amd64 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-amd64 ./main.go
-          env GOOS=darwin GOARCH=386 go build -ldflags "-X cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-386 ./main.go
 
       - name: Upload Release Artifact
         if: ${{ steps.release.outputs.release_created }}
@@ -49,4 +48,3 @@ jobs:
         run: |
           gh release upload ${{ steps.release.outputs.tag_name }} ./compile/cpenv-darwin-arm64
           gh release upload ${{ steps.release.outputs.tag_name }} ./compile/cpenv-darwin-amd64
-          gh release upload ${{ steps.release.outputs.tag_name }} ./compile/cpenv-darwin-386
