@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
@@ -93,6 +94,7 @@ func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
 			"suggestion", "Please run `cpenv config init`",
 		)
 		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init`"))
+		os.Exit(0)
 		return err
 	}
 
