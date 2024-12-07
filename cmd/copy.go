@@ -44,7 +44,6 @@ var copyCmd = &cobra.Command{
 			utils.Logger.Error("Failed to copy env files to project", "message", err)
 			return
 		}
-		fmt.Println(utils.SuccessMessage.Render(" Copy completed successfully"))
 	},
 }
 
