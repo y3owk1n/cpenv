@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.1](https://github.com/y3owk1n/cpenv/compare/v1.12.0...v1.12.1) (2024-12-07)
+
+
+### Bug Fixes
+
+* log "user aborted" as debug level ([#97](https://github.com/y3owk1n/cpenv/issues/97)) ([98db947](https://github.com/y3owk1n/cpenv/commit/98db947e0ee688549d350acb3af688fd74d6de9a))
+* remove debugLevel for prod ([#95](https://github.com/y3owk1n/cpenv/issues/95)) ([b2a3c1d](https://github.com/y3owk1n/cpenv/commit/b2a3c1dab2d732f1a0dd27409f013645c59de3c5))
+
 ## [1.12.0](https://github.com/y3owk1n/cpenv/compare/v1.11.2...v1.12.0) (2024-12-07)
 
 
