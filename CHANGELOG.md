@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.11.1](https://github.com/y3owk1n/cpenv/compare/v1.11.0...v1.11.1) (2024-12-07)
+
+
+### Bug Fixes
+
+* refactor messages icon ([#85](https://github.com/y3owk1n/cpenv/issues/85)) ([51ce119](https://github.com/y3owk1n/cpenv/commit/51ce1198f95dd75faf978939a20567cc8fd4c38a))
+* remove unnecssary println for copy & backup completed ([#84](https://github.com/y3owk1n/cpenv/issues/84)) ([295b08f](https://github.com/y3owk1n/cpenv/commit/295b08f65f11a416cc9b954e03bb7b102484c6fc))
+* update namespace to url style ([#87](https://github.com/y3owk1n/cpenv/issues/87)) ([81edfaa](https://github.com/y3owk1n/cpenv/commit/81edfaad8a712228e4a60fbdde67ff1d692027ef))
+* use form and inline catppuccin theme ([#82](https://github.com/y3owk1n/cpenv/issues/82)) ([8423869](https://github.com/y3owk1n/cpenv/commit/8423869cfd289f4eaa3fef5d99debc0acdf64643))
+
 ## [1.11.0](https://github.com/y3owk1n/cpenv/compare/v1.10.0...v1.11.0) (2024-12-07)
 
 
