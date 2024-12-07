@@ -42,13 +42,23 @@ func SaveConfig(config *Config) error {
 	return nil
 }
 
-func CreateEnvFilesDirectoryIfNotFound(vaultDir string) (string, error) {
+func GetEnvFilesDirectory(vaultDir string) (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return "", fmt.Errorf("failed to get home directory: %w", err)
+		return "", err
 	}
 
 	envFilesDirectory := filepath.Join(homeDir, vaultDir)
+
+	return envFilesDirectory, nil
+}
+
+func CreateEnvFilesDirectoryIfNotFound(vaultDir string) (string, error) {
+	envFilesDirectory, err := GetEnvFilesDirectory(vaultDir)
+	if err != nil {
+		utils.Logger.Error("failed to get home directory", "message", err)
+		return envFilesDirectory, nil
+	}
 
 	// Check if the directory exists
 	_, err = os.Stat(envFilesDirectory)

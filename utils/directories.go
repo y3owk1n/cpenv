@@ -3,7 +3,9 @@ package utils
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 )
 
 type Directory struct {
@@ -68,4 +70,22 @@ func ReadDirRecursive(dirPath string) ([]string, error) {
 		return nil
 	})
 	return files, err
+}
+
+func OpenInFinder(dirPath string) error {
+	// Check if the current OS is macOS
+	if runtime.GOOS != "darwin" {
+		return fmt.Errorf("this function is only supported on macOS")
+	}
+
+	// Use the 'open' command to open the directory in Finder
+	cmd := exec.Command("open", dirPath)
+
+	// Run the command
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to open directory in Finder: %v", err)
+	}
+
+	return nil
 }
