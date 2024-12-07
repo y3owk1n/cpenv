@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.0](https://github.com/y3owk1n/cpenv/compare/v1.8.3...v1.9.0) (2024-12-07)
+
+
+### Features
+
+* add vault command to open in finder ([#75](https://github.com/y3owk1n/cpenv/issues/75)) ([adf17b2](https://github.com/y3owk1n/cpenv/commit/adf17b23e296fc6026687085b2c202cdaf4af226))
+
+
+### Bug Fixes
+
+* gracefully exit huh form when user aborted ([#73](https://github.com/y3owk1n/cpenv/issues/73)) ([e5eeafd](https://github.com/y3owk1n/cpenv/commit/e5eeafdf335ad0047fc9af7d5b9d38442ea419e7))
+
 ## [1.8.3](https://github.com/y3owk1n/cpenv/compare/v1.8.2...v1.8.3) (2024-12-03)
 
 
