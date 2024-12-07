@@ -9,6 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var Version = "v0.0.0"
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cpenv",
@@ -17,6 +19,7 @@ var rootCmd = &cobra.Command{
 		cmd.Help()
 		os.Exit(0) // Exit after showing help
 	},
+	Version: Version,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
