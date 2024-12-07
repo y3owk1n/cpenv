@@ -49,9 +49,7 @@ func SelectProject(projects []utils.Directory) (string, error) {
 				Title("Choose a project").
 				Options(generateProjectOptions(projects)...).
 				Value(&selectedProject), // store the chosen project in the "selectedProject" variable
-		))
-
-	form.WithTheme(catppuccin)
+		)).WithTheme(catppuccin)
 
 	err := form.Run()
 	if err != nil {
@@ -140,13 +138,11 @@ func CopyEnvFilesToProject(project string, currentPath string) error {
 
 				catppuccin := huh.ThemeCatppuccin()
 
-				form := huh.NewConfirm().
+				form := huh.NewForm(huh.NewGroup(huh.NewConfirm().
 					Title(fmt.Sprintf("%s exists, do you want to overwrite?", destinationPathWithFile)).
 					Affirmative("Yes!").
 					Negative("No.").
-					Value(&confirm)
-
-				form.WithTheme(catppuccin)
+					Value(&confirm))).WithTheme(catppuccin)
 
 				err := form.Run()
 				if err != nil {
@@ -186,13 +182,11 @@ func ConfirmCwd() error {
 
 	catppuccin := huh.ThemeCatppuccin()
 
-	form := huh.NewConfirm().
+	form := huh.NewForm(huh.NewGroup(huh.NewConfirm().
 		Title(fmt.Sprintf("Is this your root directory to perform the backup? (%s)", dir)).
 		Affirmative("Yes!").
 		Negative("No.").
-		Value(&confirm)
-
-	form.WithTheme(catppuccin)
+		Value(&confirm))).WithTheme(catppuccin)
 
 	err := form.Run()
 	if err != nil {
