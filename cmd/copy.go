@@ -6,57 +6,77 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 	"github.com/y3owk1n/cpenv/core"
 	"github.com/y3owk1n/cpenv/utils"
 )
 
-// copyCmd represents the copy command
-var copyCmd = &cobra.Command{
-	Use:   "copy",
-	Short: "Copy env file(s) to your current project",
-	Run: func(cmd *cobra.Command, args []string) {
-		config, err := core.LoadConfig()
-		if err != nil {
-			utils.Logger.Debug("Failed to load config", "message", err)
-			fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init`"))
-			return
-		}
-
-		utils.Logger.Debug("Running copyCmd", "Vault Directory", config.VaultDir)
-
-		_, err = core.CreateEnvFilesDirectoryIfNotFound(config.VaultDir)
-		if err != nil {
-			utils.Logger.Error("Failed to create env file directory", "message", err)
-			return
-		}
-
-		directories, err := core.GetProjectsList()
-
-		directory, err := core.SelectProject(directories)
-		if err != nil {
-			utils.Logger.Error("Failed to select project", "message", err)
-			return
-		}
-
-		err = core.CopyEnvFilesToProject(directory, "")
-		if err != nil {
-			utils.Logger.Error("Failed to copy env files to project", "message", err)
-			return
-		}
-	},
+func init() {
+	rootCmd.AddCommand(newCopyCommand())
 }
 
-func init() {
-	rootCmd.AddCommand(copyCmd)
+type copyCommand struct {
+	logger *log.Logger
+}
 
-	// Here you will define your flags and configuration settings.
+func newCopyCommand() *cobra.Command {
+	cc := &copyCommand{
+		logger: utils.Logger, // Use the existing logger
+	}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// copyCmd.PersistentFlags().String("foo", "", "A help for foo")
+	return &cobra.Command{
+		Use:   "copy",
+		Short: "Copy env file(s) to your current project",
+		RunE:  cc.run,
+	}
+}
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// copyCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func (cc *copyCommand) run(cmd *cobra.Command, args []string) error {
+	config, err := core.LoadConfig()
+	if err != nil {
+		cc.logger.Debug("Failed to load config",
+			"error", err,
+			"suggestion", "Please run `cpenv config init`",
+		)
+		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init`"))
+		return err
+	}
+
+	cc.logger.Debug("Running copyCmd",
+		"vaultDirectory", config.VaultDir,
+	)
+
+	_, err = core.CreateEnvFilesDirectoryIfNotFound(config.VaultDir)
+	if err != nil {
+		cc.logger.Error("Failed to create env file directory",
+			"error", err,
+		)
+		return err
+	}
+
+	directories, err := core.GetProjectsList()
+	if err != nil {
+		cc.logger.Error("Failed to get project lists",
+			"error", err,
+		)
+		return err
+	}
+
+	directory, err := core.SelectProject(directories)
+	if err != nil {
+		cc.logger.Error("Failed to select project",
+			"error", err,
+		)
+		return err
+	}
+
+	if err := core.CopyEnvFilesToProject(directory, ""); err != nil {
+		cc.logger.Error("Failed to copy env files to project",
+			"error", err,
+		)
+		return err
+	}
+
+	return nil
 }
