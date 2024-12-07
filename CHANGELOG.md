@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.2](https://github.com/y3owk1n/cpenv/compare/v1.11.1...v1.11.2) (2024-12-07)
+
+
+### Bug Fixes
+
+* use the right namespace to build for version to show ([#88](https://github.com/y3owk1n/cpenv/issues/88)) ([49e29ce](https://github.com/y3owk1n/cpenv/commit/49e29ce2f8042b0f7f266ba35998e8c61188e5d5))
+
 ## [1.11.1](https://github.com/y3owk1n/cpenv/compare/v1.11.0...v1.11.1) (2024-12-07)
 
 
