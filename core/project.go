@@ -51,6 +51,11 @@ func SelectProject(projects []utils.Directory) (string, error) {
 
 	err := form.Run()
 	if err != nil {
+		if err.Error() == "user aborted" {
+			fmt.Println("Until next time!")
+			os.Exit(0)
+		}
+
 		return "", fmt.Errorf("error starting the selection form: %w", err)
 	}
 
@@ -137,6 +142,10 @@ func CopyEnvFilesToProject(project string, currentPath string) error {
 
 				err := form.Run()
 				if err != nil {
+					if err.Error() == "user aborted" {
+						fmt.Println("Until next time!")
+						os.Exit(0)
+					}
 					return fmt.Errorf("error confirming cwd form: %w", err)
 				}
 
@@ -175,6 +184,10 @@ func ConfirmCwd() error {
 
 	err := form.Run()
 	if err != nil {
+		if err.Error() == "user aborted" {
+			fmt.Println("Until next time!")
+			os.Exit(0)
+		}
 		return fmt.Errorf("error confirming cwd form: %w", err)
 	}
 
