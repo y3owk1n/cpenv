@@ -1,4 +1,4 @@
-module cpenv
+module github.com/y3owk1n/cpenv
 
 go 1.23.3
 

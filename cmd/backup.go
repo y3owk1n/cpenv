@@ -4,11 +4,11 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"cpenv/core"
-	"cpenv/utils"
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/y3owk1n/cpenv/core"
+	"github.com/y3owk1n/cpenv/utils"
 )
 
 // backupCmd represents the backup command

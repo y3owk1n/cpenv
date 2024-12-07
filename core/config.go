@@ -1,11 +1,12 @@
 package core
 
 import (
-	"cpenv/utils"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/y3owk1n/cpenv/utils"
 )
 
 type Config struct {
