@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/y3owk1n/cpenv/compare/v1.9.0...v1.10.0) (2024-12-07)
+
+
+### Features
+
+* move version command to flag instead ([#77](https://github.com/y3owk1n/cpenv/issues/77)) ([5ba7d78](https://github.com/y3owk1n/cpenv/commit/5ba7d78e73239c3728abde6387553ecfc05ef1be))
+
 ## [1.9.0](https://github.com/y3owk1n/cpenv/compare/v1.8.3...v1.9.0) (2024-12-07)
 
 
