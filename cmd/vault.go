@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"cpenv/core"
-	"cpenv/utils"
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/y3owk1n/cpenv/core"
+	"github.com/y3owk1n/cpenv/utils"
 )
 
 func init() {

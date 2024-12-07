@@ -1,11 +1,12 @@
 package core
 
 import (
-	"cpenv/utils"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/y3owk1n/cpenv/utils"
 
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/huh/spinner"

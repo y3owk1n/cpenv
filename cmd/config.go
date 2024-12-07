@@ -4,12 +4,12 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"cpenv/core"
-	"cpenv/utils"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/y3owk1n/cpenv/core"
+	"github.com/y3owk1n/cpenv/utils"
 )
 
 // configCmd represents the init command
