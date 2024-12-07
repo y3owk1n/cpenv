@@ -1,17 +1,28 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 )
 
 func OpenInEditor(filePath string) error {
-	editor := os.Getenv("EDITOR")
-	if editor == "" {
-		editor = "nano"
+	if filePath == "" {
+		return fmt.Errorf("file path cannot be empty")
 	}
 
-	// Construct the command to open the file in the editor
+	if _, err := os.Stat(filePath); err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Errorf("file does not exist: %s", filePath)
+		}
+		return fmt.Errorf("error checking file %s: %w", filePath, err)
+	}
+
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		editor = "vim"
+	}
+
 	cmd := exec.Command(editor, filePath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

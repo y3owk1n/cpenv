@@ -58,15 +58,13 @@ func newConfigEditCommand() *cobra.Command {
 }
 
 func (cic *configInitCommand) run(cmd *cobra.Command, args []string) error {
-	config, err := core.LoadConfig()
+	_, err := core.LoadConfig()
 	if err != nil {
 		cic.logger.Debug("Failed to load config",
 			"error", err,
 		)
 
-		cic.logger.Debug("Running configInitCmd",
-			"vaultDirectory", config.VaultDir,
-		)
+		cic.logger.Debug("Running configInitCmd")
 
 		toInitConfig := &core.Config{VaultDir: ".env-files"}
 
