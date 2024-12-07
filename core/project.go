@@ -132,7 +132,7 @@ func CopyEnvFilesToProject(project string, currentPath string) error {
 				}
 				_ = spinner.New().Title(fmt.Sprintf("Copying %s to %s", file, destinationPathWithFile)).Action(action).Run()
 
-				fmt.Println(utils.SuccessMessage.Render(" Copied", file, "", destinationPathWithFile))
+				fmt.Println(utils.SuccessMessage.Render("Copied", file, "", destinationPathWithFile))
 			} else {
 				var confirm bool
 
@@ -167,7 +167,7 @@ func CopyEnvFilesToProject(project string, currentPath string) error {
 						utils.Logger.Error("Failed to copy file", "message", err)
 					}
 
-					fmt.Println(utils.SuccessMessage.Render(" Copied", file, "", destinationPathWithFile))
+					fmt.Println(utils.SuccessMessage.Render("Copied", file, "", destinationPathWithFile))
 				}
 			}
 		}
@@ -271,7 +271,7 @@ func CopyEnvFilesToVault() error {
 			}
 			_ = spinner.New().Title(fmt.Sprintf("Copying %s to %s", file, destinationPathWithFile)).Action(action).Run()
 
-			fmt.Println(utils.SuccessMessage.Render(" Copied", file, "", destinationPathWithFile))
+			fmt.Println(utils.SuccessMessage.Render("Copied", file, "", destinationPathWithFile))
 		}
 
 	}
