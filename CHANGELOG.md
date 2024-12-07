@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.12.0](https://github.com/y3owk1n/cpenv/compare/v1.11.2...v1.12.0) (2024-12-07)
+
+
+### Features
+
+* refactor cmd commands for better handling ([#90](https://github.com/y3owk1n/cpenv/issues/90)) ([734eed0](https://github.com/y3owk1n/cpenv/commit/734eed0da2bec82d41ecb82119c34a28e7316eaf))
+* refactor core and utils for better maintainence ([#92](https://github.com/y3owk1n/cpenv/issues/92)) ([97a26d8](https://github.com/y3owk1n/cpenv/commit/97a26d8b909a816fb832b320540487ad85d00112))
+
+
+### Bug Fixes
+
+* index not found, should append instead ([#93](https://github.com/y3owk1n/cpenv/issues/93)) ([3f108ee](https://github.com/y3owk1n/cpenv/commit/3f108ee19436e2652ee2282f346f9e5b4e9f4042))
+* make sure to exit the os if no env configuration ([#94](https://github.com/y3owk1n/cpenv/issues/94)) ([c7c24d4](https://github.com/y3owk1n/cpenv/commit/c7c24d472f853a2489a4583724be8e838dcea355))
+
 ## [1.11.2](https://github.com/y3owk1n/cpenv/compare/v1.11.1...v1.11.2) (2024-12-07)
 
 
