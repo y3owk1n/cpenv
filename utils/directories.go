@@ -31,12 +31,12 @@ func GetDirectories(directory string) ([]Directory, error) {
 	}
 
 	directories := []Directory{}
-	for i, entry := range entries {
+	for _, entry := range entries {
 		if entry.IsDir() {
-			directories[i] = Directory{
+			directories = append(directories, Directory{
 				Name:  entry.Name(),
 				Value: entry.Name(),
-			}
+			})
 		}
 	}
 	return directories, nil
