@@ -40,6 +40,8 @@ func SelectProject(projects []utils.Directory) (string, error) {
 		return "", fmt.Errorf("no projects found in the vault")
 	}
 
+	catppuccin := huh.ThemeCatppuccin()
+
 	form := huh.NewForm(
 		huh.NewGroup(
 			// Ask the user for a base burger and toppings.
@@ -48,6 +50,8 @@ func SelectProject(projects []utils.Directory) (string, error) {
 				Options(generateProjectOptions(projects)...).
 				Value(&selectedProject), // store the chosen project in the "selectedProject" variable
 		))
+
+	form.WithTheme(catppuccin)
 
 	err := form.Run()
 	if err != nil {
@@ -134,11 +138,15 @@ func CopyEnvFilesToProject(project string, currentPath string) error {
 			} else {
 				var confirm bool
 
+				catppuccin := huh.ThemeCatppuccin()
+
 				form := huh.NewConfirm().
 					Title(fmt.Sprintf("%s exists, do you want to overwrite?", destinationPathWithFile)).
 					Affirmative("Yes!").
 					Negative("No.").
 					Value(&confirm)
+
+				form.WithTheme(catppuccin)
 
 				err := form.Run()
 				if err != nil {
@@ -176,11 +184,15 @@ func ConfirmCwd() error {
 
 	var confirm bool
 
+	catppuccin := huh.ThemeCatppuccin()
+
 	form := huh.NewConfirm().
 		Title(fmt.Sprintf("Is this your root directory to perform the backup? (%s)", dir)).
 		Affirmative("Yes!").
 		Negative("No.").
 		Value(&confirm)
+
+	form.WithTheme(catppuccin)
 
 	err := form.Run()
 	if err != nil {
