@@ -78,11 +78,11 @@ brew install y3owk1n/tap/cpenv
 Go to your project directory and run the following command in your terminal:
 
 ```bash
-cpenv config init // initialize configurations for vault
-cpenv config edit // edit configurations for vault
-cpenv copy // start copy interactive flow
-cpenv backup // start backup interactive flow
-cpenv version // get the version number
+cpenv config init -> initialize configurations for vault
+cpenv config edit -> edit configurations for vault
+cpenv copy -> start copy interactive flow
+cpenv backup -> start backup interactive flow
+cpenv vault -> open your vault in finder
 ```
 
 This will launch the interactive mode, guiding you through project selection, file copying and backups.
@@ -92,6 +92,7 @@ This will launch the interactive mode, guiding you through project selection, fi
 #### For root
 
 - -h, --help: Display help for command
+- -v, --version: Display current version
 
 #### For `cpenv copy`
 
@@ -104,15 +105,6 @@ This will launch the interactive mode, guiding you through project selection, fi
 #### For `cpenv config`
 
 - No options for now
-
-### Examples
-
-Interactive Mode
-
-```bash
-cpenv copy // start copy flow
-cpenv backup // start backup flow
-```
 
 ## Troubleshooting
 
