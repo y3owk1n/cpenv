@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.0](https://github.com/y3owk1n/cpenv/compare/v1.10.0...v1.11.0) (2024-12-07)
+
+
+### Features
+
+* add catppuccin theme for huh forms ([#81](https://github.com/y3owk1n/cpenv/issues/81)) ([5624a54](https://github.com/y3owk1n/cpenv/commit/5624a54ac21c1da45fdc9f03cd0a074e91840a53))
+* bump go deps ([#79](https://github.com/y3owk1n/cpenv/issues/79)) ([c41215b](https://github.com/y3owk1n/cpenv/commit/c41215b489cb39cea721552d4f4616e644c22eec))
+
 ## [1.10.0](https://github.com/y3owk1n/cpenv/compare/v1.9.0...v1.10.0) (2024-12-07)
 
 
