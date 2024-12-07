@@ -36,7 +36,7 @@ var vaultCmd = &cobra.Command{
 		if err := utils.OpenInFinder(envFilesDirectory); err != nil {
 			utils.Logger.Error("Failed to open the directory", "message", err)
 		} else {
-			fmt.Println(utils.SuccessMessage.Render(" Successfully opened the dir in finder."))
+			fmt.Println(utils.SuccessMessage.Render("Successfully opened the dir in finder."))
 		}
 	},
 }

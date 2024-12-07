@@ -32,7 +32,7 @@ var configInitCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
-			fmt.Println(utils.SuccessMessage.Render(" Configuration initialized successfully!"))
+			fmt.Println(utils.SuccessMessage.Render("Configuration initialized successfully!"))
 		} else {
 			fmt.Println(utils.ErrorMessage.Render("Configuration exists! Use `cpenv config edit` to edit it"))
 		}
@@ -53,7 +53,7 @@ var configEditCmd = &cobra.Command{
 		if err := utils.OpenInEditor(core.ConfigPath); err != nil {
 			utils.Logger.Error("Failed to open the file in editor", "message", err)
 		} else {
-			fmt.Println(utils.SuccessMessage.Render(" Successfully opened the file in editor."))
+			fmt.Println(utils.SuccessMessage.Render("Successfully opened the file in editor."))
 		}
 	},
 }
