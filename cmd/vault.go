@@ -3,40 +3,62 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 	"github.com/y3owk1n/cpenv/core"
 	"github.com/y3owk1n/cpenv/utils"
 )
 
 func init() {
-	rootCmd.AddCommand(vaultCmd)
+	rootCmd.AddCommand(newVaultCmd())
 }
 
-var vaultCmd = &cobra.Command{
-	Use:   "vault",
-	Short: "Open vault in finder",
-	Run: func(cmd *cobra.Command, args []string) {
-		config, err := core.LoadConfig()
-		if err != nil {
-			utils.Logger.Debug("Failed to load config", "message", err)
-			fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init`"))
-			return
-		}
+type vaultCommand struct {
+	logger *log.Logger
+}
 
-		utils.Logger.Debug("Running vauldCmd", "Vault Directory", config.VaultDir)
+func newVaultCmd() *cobra.Command {
+	vc := &vaultCommand{
+		logger: utils.Logger, // Use the existing logger
+	}
 
-		envFilesDirectory, err := core.GetEnvFilesDirectory(config.VaultDir)
-		if err != nil {
-			utils.Logger.Error("Failed to create env file directory", "message", err)
-			return
-		}
+	return &cobra.Command{
+		Use:   "vault",
+		Short: "Open vault in finder",
+		RunE:  vc.run,
+	}
+}
 
-		utils.Logger.Debugf("Opening vault in finder: %s", envFilesDirectory)
+func (vc *vaultCommand) run(cmd *cobra.Command, args []string) error {
+	config, err := core.LoadConfig()
+	if err != nil {
+		vc.logger.Debug("Failed to load config",
+			"error", err,
+			"suggestion", "Please run `cpenv config init`",
+		)
+		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init`"))
+		return err
+	}
 
-		if err := utils.OpenInFinder(envFilesDirectory); err != nil {
-			utils.Logger.Error("Failed to open the directory", "message", err)
-		} else {
-			fmt.Println(utils.SuccessMessage.Render("Successfully opened the dir in finder."))
-		}
-	},
+	vc.logger.Debug("Running vaultCmd",
+		"vaultDirectory", config.VaultDir,
+	)
+
+	envFilesDirectory, err := core.GetEnvFilesDirectory(config.VaultDir)
+	if err != nil {
+		vc.logger.Error("Failed to create env file directory",
+			"error", err,
+		)
+		return err
+	}
+
+	if err := utils.OpenInFinder(envFilesDirectory); err != nil {
+		vc.logger.Error("Failed to open the directory",
+			"error", err,
+		)
+		return err
+	}
+
+	fmt.Println(utils.SuccessMessage.Render("Successfully opened the dir in finder."))
+	return nil
 }
