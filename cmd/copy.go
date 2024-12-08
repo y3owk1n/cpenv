@@ -10,6 +10,7 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/y3owk1n/cpenv/core"
 	"github.com/y3owk1n/cpenv/utils"
 )
@@ -20,7 +21,7 @@ type copyCommand struct {
 
 func newCopyCommand() *cobra.Command {
 	cc := &copyCommand{
-		logger: utils.Logger, // Use the existing logger
+		logger: utils.Logger,
 	}
 
 	return &cobra.Command{
@@ -33,46 +34,44 @@ func newCopyCommand() *cobra.Command {
 }
 
 func (cc *copyCommand) preRun(cmd *cobra.Command, args []string) error {
-	config, err := core.LoadConfig()
-	if err != nil {
-		cc.logger.Debug("Failed to load config",
-			"error", err,
-			"suggestion", "Please run `cpenv config init`",
-		)
-		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init`"))
+	configPath := viper.ConfigFileUsed()
+	if configPath == "" {
+		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init` first"))
 		os.Exit(0)
-		return err
 	}
 
-	cmd.SetContext(context.WithValue(cmd.Context(), "config", config))
+	vaultDir := viper.GetString("vault_dir")
+
+	vaultDirFull, err := core.GetFullVaultDir(vaultDir)
+	if err != nil {
+		cc.logger.Error("Failed to get env file directory",
+			"error", err,
+		)
+		os.Exit(1)
+	}
+
+	cmd.SetContext(context.WithValue(cmd.Context(), "config", configPath))
+	cmd.SetContext(context.WithValue(cmd.Context(), "vault", vaultDirFull))
 
 	return nil
 }
 
 func (cc *copyCommand) run(cmd *cobra.Command, args []string) error {
-	config, ok := cmd.Context().Value("config").(*core.Config)
+	vaultDir, ok := cmd.Context().Value("vault").(string)
 	if !ok {
 		return fmt.Errorf("config not found in context")
 	}
 
 	cc.logger.Debug("Running copyCmd",
-		"vaultDirectory", config.VaultDir,
+		"vaultDirectory", vaultDir,
 	)
 
-	_, err := core.CreateEnvFilesDirectoryIfNotFound(config.VaultDir)
-	if err != nil {
-		cc.logger.Error("Failed to create env file directory",
-			"error", err,
-		)
-		return err
-	}
-
-	directories, err := core.GetProjectsList()
+	directories, err := core.GetProjectsList(vaultDir)
 	if err != nil {
 		cc.logger.Error("Failed to get project lists",
 			"error", err,
 		)
-		return err
+		os.Exit(1)
 	}
 
 	directory, err := core.SelectProject(directories)
@@ -80,14 +79,14 @@ func (cc *copyCommand) run(cmd *cobra.Command, args []string) error {
 		cc.logger.Error("Failed to select project",
 			"error", err,
 		)
-		return err
+		os.Exit(1)
 	}
 
-	if err := core.CopyEnvFilesToProject(directory, ""); err != nil {
+	if err := core.CopyEnvFilesToProject(directory, "", vaultDir); err != nil {
 		cc.logger.Error("Failed to copy env files to project",
 			"error", err,
 		)
-		return err
+		os.Exit(1)
 	}
 
 	return nil

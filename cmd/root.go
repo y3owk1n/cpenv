@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/spf13/cobra"
+	"github.com/y3owk1n/cpenv/core"
 )
 
 var Version = "v0.0.0"
@@ -21,6 +22,10 @@ func Execute() error {
 			cmd.Help()
 			return nil
 		},
+	}
+
+	if err := core.InitViper(); err != nil {
+		return err
 	}
 
 	rootCmd.AddCommand(newVaultCmd())

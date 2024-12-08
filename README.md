@@ -38,6 +38,8 @@ Before using EnvCopy CLI, ensure you have the following prerequisites:
 
 - You can set it to any folder you like, but the default is `~/.env-files`. I personally set it to an icloud drive path.
 
+- The config file will be at `$HOME/.config/cpenv/cpenv.yaml`
+
 2. Organize your projects within your chosen directory. Each project should have its own subdirectory.
 
 ```plaintext
@@ -103,6 +105,10 @@ This will launch the interactive mode, guiding you through project selection, fi
 - No options for now
 
 #### For `cpenv config`
+
+- No options for now
+
+#### For `cpenv vault`
 
 - No options for now
 
