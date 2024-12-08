@@ -93,7 +93,7 @@ func SelectProject(projects []utils.Directory) (string, error) {
 
 	var selectedProject string
 
-	catppuccin := huh.ThemeCatppuccin()
+	baseTheme := huh.ThemeBase()
 
 	form := huh.NewForm(
 		huh.NewGroup(
@@ -101,7 +101,7 @@ func SelectProject(projects []utils.Directory) (string, error) {
 				Title("Choose a project").
 				Options(generateProjectOptions(projects)...).
 				Value(&selectedProject),
-		)).WithTheme(catppuccin)
+		)).WithTheme(baseTheme)
 
 	err := form.Run()
 	if err != nil {
@@ -215,7 +215,7 @@ func copyFileWithSpinner(sourcePath, destinationPath string) error {
 
 func handleExistingFile(sourcePath, destinationPath string) error {
 	var confirm bool
-	catppuccin := huh.ThemeCatppuccin()
+	baseTheme := huh.ThemeBase()
 
 	form := huh.NewForm(huh.NewGroup(
 		huh.NewConfirm().
@@ -223,7 +223,7 @@ func handleExistingFile(sourcePath, destinationPath string) error {
 			Affirmative("Yes!").
 			Negative("No.").
 			Value(&confirm),
-	)).WithTheme(catppuccin)
+	)).WithTheme(baseTheme)
 
 	err := form.Run()
 	if err != nil {
@@ -248,13 +248,13 @@ func ConfirmCwd() error {
 
 	var confirm bool
 
-	catppuccin := huh.ThemeCatppuccin()
+	baseTheme := huh.ThemeBase()
 
 	form := huh.NewForm(huh.NewGroup(huh.NewConfirm().
 		Title(fmt.Sprintf("Is this your root directory to perform the backup? (%s)", dir)).
 		Affirmative("Yes!").
 		Negative("No.").
-		Value(&confirm))).WithTheme(catppuccin)
+		Value(&confirm))).WithTheme(baseTheme)
 
 	err := form.Run()
 	if err != nil {
