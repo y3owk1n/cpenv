@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -20,14 +21,15 @@ func newVaultCmd() *cobra.Command {
 	}
 
 	return &cobra.Command{
-		Use:     "vault",
-		Short:   "Open vault in finder",
-		Aliases: []string{"v", "vault"},
-		RunE:    vc.run,
+		Use:               "vault",
+		Short:             "Open vault in finder",
+		Aliases:           []string{"v", "vault"},
+		PersistentPreRunE: vc.preRun,
+		RunE:              vc.run,
 	}
 }
 
-func (vc *vaultCommand) run(cmd *cobra.Command, args []string) error {
+func (vc *vaultCommand) preRun(cmd *cobra.Command, args []string) error {
 	config, err := core.LoadConfig()
 	if err != nil {
 		vc.logger.Debug("Failed to load config",
@@ -37,6 +39,17 @@ func (vc *vaultCommand) run(cmd *cobra.Command, args []string) error {
 		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init`"))
 		os.Exit(0)
 		return err
+	}
+
+	cmd.SetContext(context.WithValue(cmd.Context(), "config", config))
+
+	return nil
+}
+
+func (vc *vaultCommand) run(cmd *cobra.Command, args []string) error {
+	config, ok := cmd.Context().Value("config").(*core.Config)
+	if !ok {
+		return fmt.Errorf("config not found in context")
 	}
 
 	vc.logger.Debug("Running vaultCmd",

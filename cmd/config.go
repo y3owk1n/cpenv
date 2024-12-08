@@ -4,6 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -47,10 +48,11 @@ func newConfigEditCommand() *cobra.Command {
 	}
 
 	return &cobra.Command{
-		Use:     "edit",
-		Short:   "Edit the cpenv config with $EDITOR",
-		Aliases: []string{"e", "edit"},
-		RunE:    cec.run,
+		Use:               "edit",
+		Short:             "Edit the cpenv config with $EDITOR",
+		Aliases:           []string{"e", "edit"},
+		PersistentPreRunE: cec.preRun,
+		RunE:              cec.run,
 	}
 }
 
@@ -82,8 +84,8 @@ func (cic *configInitCommand) run(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
-	_, err := core.LoadConfig()
+func (cec *configEditCommand) preRun(cmd *cobra.Command, args []string) error {
+	config, err := core.LoadConfig()
 	if err != nil {
 		cec.logger.Debug("Failed to load config",
 			"error", err,
@@ -93,6 +95,21 @@ func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
 		os.Exit(0)
 		return err
 	}
+
+	cmd.SetContext(context.WithValue(cmd.Context(), "config", config))
+
+	return nil
+}
+
+func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
+	config, ok := cmd.Context().Value("config").(*core.Config)
+	if !ok {
+		return fmt.Errorf("config not found in context")
+	}
+
+	cec.logger.Debug("Running configEditCommand",
+		"vaultDirectory", config.VaultDir,
+	)
 
 	if err := utils.OpenInEditor(core.ConfigPath); err != nil {
 		cec.logger.Error("Failed to open configuration file in editor",
