@@ -23,9 +23,10 @@ func newBackupCommand() *cobra.Command {
 	}
 
 	return &cobra.Command{
-		Use:   "backup",
-		Short: "Backup env file(s) to your vault",
-		RunE:  bc.run,
+		Use:     "backup",
+		Short:   "Backup env file(s) to your vault",
+		Aliases: []string{"bk", "backup"},
+		RunE:    bc.run,
 	}
 }
 

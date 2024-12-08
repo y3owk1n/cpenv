@@ -23,9 +23,10 @@ func newCopyCommand() *cobra.Command {
 	}
 
 	return &cobra.Command{
-		Use:   "copy",
-		Short: "Copy env file(s) to your current project",
-		RunE:  cc.run,
+		Use:     "copy",
+		Short:   "Copy env file(s) to your current project",
+		Aliases: []string{"cp", "copy"},
+		RunE:    cc.run,
 	}
 }
 

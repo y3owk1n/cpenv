@@ -23,8 +23,9 @@ type configEditCommand struct {
 
 // configCmd represents the init command
 var configCmd = &cobra.Command{
-	Use:   "config",
-	Short: "Config management for cpenv",
+	Use:     "config",
+	Short:   "Config management for cpenv",
+	Aliases: []string{"c", "config"},
 }
 
 func newConfigInitCommand() *cobra.Command {
@@ -33,9 +34,10 @@ func newConfigInitCommand() *cobra.Command {
 	}
 
 	return &cobra.Command{
-		Use:   "init",
-		Short: "Initialize a config for cpenv to work",
-		RunE:  cic.run,
+		Use:     "init",
+		Short:   "Initialize a config for cpenv to work",
+		Aliases: []string{"i", "init"},
+		RunE:    cic.run,
 	}
 }
 
@@ -45,9 +47,10 @@ func newConfigEditCommand() *cobra.Command {
 	}
 
 	return &cobra.Command{
-		Use:   "edit",
-		Short: "Edit the cpenv config with $EDITOR",
-		RunE:  cec.run,
+		Use:     "edit",
+		Short:   "Edit the cpenv config with $EDITOR",
+		Aliases: []string{"e", "edit"},
+		RunE:    cec.run,
 	}
 }
 
