@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.14.0](https://github.com/y3owk1n/cpenv/compare/v1.13.0...v1.14.0) (2024-12-08)
+
+
+### Features
+
+* move config logic to viper ([#108](https://github.com/y3owk1n/cpenv/issues/108)) ([9a40fb1](https://github.com/y3owk1n/cpenv/commit/9a40fb1fae5b018ce77c23ac27338cf19b31ab03))
+* refactor config check to persistentPreRun ([#106](https://github.com/y3owk1n/cpenv/issues/106)) ([1e5e6da](https://github.com/y3owk1n/cpenv/commit/1e5e6da325a8862dc3c398812ede04511f291897))
+
 ## [1.13.0](https://github.com/y3owk1n/cpenv/compare/v1.12.1...v1.13.0) (2024-12-08)
 
 
