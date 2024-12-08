@@ -22,7 +22,7 @@ func newVaultCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:     "vault",
 		Short:   "Open vault in finder",
-		Aliases: []string{"vc", "vault"},
+		Aliases: []string{"v", "vault"},
 		RunE:    vc.run,
 	}
 }
