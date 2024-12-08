@@ -268,6 +268,7 @@ func ConfirmCwd() error {
 
 	if !confirm {
 		fmt.Println(utils.WarningMessage.Render("cd to your desired directory and restart the backup."))
+		os.Exit(0)
 		return nil
 	}
 
