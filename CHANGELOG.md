@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.13.0](https://github.com/y3owk1n/cpenv/compare/v1.12.1...v1.13.0) (2024-12-08)
+
+
+### Features
+
+* add short aliases for commands ([#100](https://github.com/y3owk1n/cpenv/issues/100)) ([9595a16](https://github.com/y3owk1n/cpenv/commit/9595a165092f5599c0690d9a9381a4ad6b574587))
+* better description and title for prompts ([#105](https://github.com/y3owk1n/cpenv/issues/105)) ([b4148f9](https://github.com/y3owk1n/cpenv/commit/b4148f9d2e6538f6f14a9f22c5dadf1e657794ff))
+* change alias from vc to v ([#102](https://github.com/y3owk1n/cpenv/issues/102)) ([b1d5534](https://github.com/y3owk1n/cpenv/commit/b1d553447f0eb4a072570ec93e1fea19661b6a81))
+* remove init function ([#98](https://github.com/y3owk1n/cpenv/issues/98)) ([b321578](https://github.com/y3owk1n/cpenv/commit/b32157843d23ea5d2c987816a129c73d3dd8d60a))
+* use base theme instead of colored theme ([#103](https://github.com/y3owk1n/cpenv/issues/103)) ([17d01e3](https://github.com/y3owk1n/cpenv/commit/17d01e3823cfde2ed41b43e9fd9ed8cf4342ff0c))
+* use built-in ErrUserAborted instead of == check ([#104](https://github.com/y3owk1n/cpenv/issues/104)) ([244ccad](https://github.com/y3owk1n/cpenv/commit/244ccad70b6ded73c15b5ae0cdfb35bcd4a28884))
+
+
+### Bug Fixes
+
+* exit if not confirm cwd for backup ([#101](https://github.com/y3owk1n/cpenv/issues/101)) ([5a80c67](https://github.com/y3owk1n/cpenv/commit/5a80c67dd0439024b5d274394289586cf1976c3a))
+
 ## [1.12.1](https://github.com/y3owk1n/cpenv/compare/v1.12.0...v1.12.1) (2024-12-07)
 
 
