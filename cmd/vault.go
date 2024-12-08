@@ -10,10 +10,6 @@ import (
 	"github.com/y3owk1n/cpenv/utils"
 )
 
-func init() {
-	rootCmd.AddCommand(newVaultCmd())
-}
-
 type vaultCommand struct {
 	logger *log.Logger
 }
