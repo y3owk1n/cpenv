@@ -13,10 +13,6 @@ import (
 	"github.com/y3owk1n/cpenv/utils"
 )
 
-func init() {
-	rootCmd.AddCommand(newBackupCommand())
-}
-
 type backupCommand struct {
 	logger *log.Logger
 }

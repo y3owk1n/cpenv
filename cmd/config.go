@@ -13,13 +13,6 @@ import (
 	"github.com/y3owk1n/cpenv/utils"
 )
 
-func init() {
-	rootCmd.AddCommand(configCmd)
-
-	configCmd.AddCommand(newConfigInitCommand())
-	configCmd.AddCommand(newConfigEditCommand())
-}
-
 type configInitCommand struct {
 	logger *log.Logger
 }

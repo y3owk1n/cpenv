@@ -13,10 +13,6 @@ import (
 	"github.com/y3owk1n/cpenv/utils"
 )
 
-func init() {
-	rootCmd.AddCommand(newCopyCommand())
-}
-
 type copyCommand struct {
 	logger *log.Logger
 }
