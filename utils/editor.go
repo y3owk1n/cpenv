@@ -27,6 +27,5 @@ func OpenInEditor(filePath string) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	// Run the command and return any error
 	return cmd.Run()
 }

@@ -7,9 +7,11 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/y3owk1n/cpenv/core"
 	"github.com/y3owk1n/cpenv/utils"
 )
@@ -22,7 +24,6 @@ type configEditCommand struct {
 	logger *log.Logger
 }
 
-// configCmd represents the init command
 var configCmd = &cobra.Command{
 	Use:     "config",
 	Short:   "Config management for cpenv",
@@ -31,7 +32,7 @@ var configCmd = &cobra.Command{
 
 func newConfigInitCommand() *cobra.Command {
 	cic := &configInitCommand{
-		logger: utils.Logger, // Use the existing logger
+		logger: utils.Logger,
 	}
 
 	return &cobra.Command{
@@ -44,7 +45,7 @@ func newConfigInitCommand() *cobra.Command {
 
 func newConfigEditCommand() *cobra.Command {
 	cec := &configEditCommand{
-		logger: utils.Logger, // Use the existing logger
+		logger: utils.Logger,
 	}
 
 	return &cobra.Command{
@@ -57,68 +58,98 @@ func newConfigEditCommand() *cobra.Command {
 }
 
 func (cic *configInitCommand) run(cmd *cobra.Command, args []string) error {
-	_, err := core.LoadConfig()
+	if viper.ConfigFileUsed() != "" {
+		fmt.Println(utils.ErrorMessage.Render("Configuration exists! Use `cpenv config edit` to edit it"))
+		return nil
+	}
+
+	home, err := os.UserHomeDir()
 	if err != nil {
-		cic.logger.Debug("Failed to load config",
-			"error", err,
-		)
-
-		cic.logger.Debug("Running configInitCmd")
-
-		toInitConfig := &core.Config{VaultDir: ".env-files"}
-
-		err := core.SaveConfig(toInitConfig)
-		if err != nil {
-			cic.logger.Error("Failed to save config",
-				"error", err,
-			)
-			return err
-		}
-
-		fmt.Println(utils.SuccessMessage.Render("Configuration initialized successfully!"))
 		return err
 	}
 
-	fmt.Println(utils.ErrorMessage.Render("Configuration exists! Use `cpenv config edit` to edit it"))
+	configPath := filepath.Join(home, ".config", "cpenv", "cpenv.yaml")
+
+	defaultVaultDir := ".env-files"
+
+	viper.Set("vault_dir", defaultVaultDir)
+
+	if err := viper.WriteConfigAs(configPath); err != nil {
+		cic.logger.Error("Failed to save config",
+			"error", err,
+		)
+		return err
+	}
+
+	fmt.Println(utils.SuccessMessage.Render("Configuration initialized successfully!"))
+
+	if _, err := core.CreateVaultIfNotFound(defaultVaultDir); err != nil {
+		cic.logger.Error("Failed to create vault directory",
+			"error", err,
+		)
+		return err
+	}
 
 	return nil
 }
 
 func (cec *configEditCommand) preRun(cmd *cobra.Command, args []string) error {
-	config, err := core.LoadConfig()
-	if err != nil {
-		cec.logger.Debug("Failed to load config",
-			"error", err,
-			"suggestion", "Please run `cpenv config init`",
-		)
-		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init`"))
+	configPath := viper.ConfigFileUsed()
+	if configPath == "" {
+		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init` first"))
 		os.Exit(0)
-		return err
 	}
 
-	cmd.SetContext(context.WithValue(cmd.Context(), "config", config))
+	vaultDir := viper.GetString("vault_dir")
+
+	vaultDirFull, err := core.GetFullVaultDir(vaultDir)
+	if err != nil {
+		cec.logger.Error("Failed to get env file directory",
+			"error", err,
+		)
+		os.Exit(1)
+	}
+
+	cmd.SetContext(context.WithValue(cmd.Context(), "config", configPath))
+	cmd.SetContext(context.WithValue(cmd.Context(), "vault", vaultDirFull))
 
 	return nil
 }
 
 func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
-	config, ok := cmd.Context().Value("config").(*core.Config)
+	configPath, ok := cmd.Context().Value("config").(string)
 	if !ok {
 		return fmt.Errorf("config not found in context")
 	}
 
 	cec.logger.Debug("Running configEditCommand",
-		"vaultDirectory", config.VaultDir,
+		"configPath", configPath,
 	)
 
-	if err := utils.OpenInEditor(core.ConfigPath); err != nil {
+	if err := utils.OpenInEditor(configPath); err != nil {
 		cec.logger.Error("Failed to open configuration file in editor",
 			"error", err,
 		)
-		return err
+		os.Exit(1)
 	}
 
 	fmt.Println(utils.SuccessMessage.Render("Successfully opened the configuration file in editor."))
+
+	if err := viper.ReadInConfig(); err != nil {
+		cec.logger.Error("Failed to reload config",
+			"error", err,
+		)
+		os.Exit(1)
+	}
+
+	vaultDir := viper.GetString("vault_dir")
+
+	if _, err := core.CreateVaultIfNotFound(vaultDir); err != nil {
+		cec.logger.Error("Failed to create vault directory",
+			"error", err,
+		)
+		os.Exit(1)
+	}
 
 	return nil
 }

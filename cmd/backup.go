@@ -10,6 +10,7 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/y3owk1n/cpenv/core"
 	"github.com/y3owk1n/cpenv/utils"
 )
@@ -20,7 +21,7 @@ type backupCommand struct {
 
 func newBackupCommand() *cobra.Command {
 	bc := &backupCommand{
-		logger: utils.Logger, // Use the existing logger
+		logger: utils.Logger,
 	}
 
 	return &cobra.Command{
@@ -33,53 +34,51 @@ func newBackupCommand() *cobra.Command {
 }
 
 func (bc *backupCommand) preRun(cmd *cobra.Command, args []string) error {
-	config, err := core.LoadConfig()
-	if err != nil {
-		bc.logger.Debug("Failed to load config",
-			"error", err,
-			"suggestion", "Please run `cpenv config init`",
-		)
-		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init`"))
+	configPath := viper.ConfigFileUsed()
+	if configPath == "" {
+		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init` first"))
 		os.Exit(0)
-		return err
 	}
 
-	cmd.SetContext(context.WithValue(cmd.Context(), "config", config))
+	vaultDir := viper.GetString("vault_dir")
+
+	vaultDirFull, err := core.GetFullVaultDir(vaultDir)
+	if err != nil {
+		bc.logger.Error("Failed to get env file directory",
+			"error", err,
+		)
+		os.Exit(1)
+	}
+
+	cmd.SetContext(context.WithValue(cmd.Context(), "config", configPath))
+	cmd.SetContext(context.WithValue(cmd.Context(), "vault", vaultDirFull))
 
 	return nil
 }
 
 func (bc *backupCommand) run(cmd *cobra.Command, args []string) error {
-	config, ok := cmd.Context().Value("config").(*core.Config)
+	vaultDir, ok := cmd.Context().Value("vault").(string)
 	if !ok {
 		return fmt.Errorf("config not found in context")
 	}
 
 	bc.logger.Debug("Running backupCmd",
-		"vaultDirectory", config.VaultDir,
+		"vaultDirectory", vaultDir,
 	)
 
-	_, err := core.CreateEnvFilesDirectoryIfNotFound(config.VaultDir)
-	if err != nil {
-		bc.logger.Error("Failed to create env file directory",
-			"error", err,
-		)
-		return err
-	}
-
-	err = core.ConfirmCwd()
+	err := core.ConfirmCwd()
 	if err != nil {
 		bc.logger.Error("Failed to confirm cwd",
 			"error", err,
 		)
-		return err
+		os.Exit(1)
 	}
 
-	if err := core.CopyEnvFilesToVault(); err != nil {
+	if err := core.CopyEnvFilesToVault(vaultDir); err != nil {
 		bc.logger.Error("Failed to copy env files to vault",
 			"error", err,
 		)
-		return err
+		os.Exit(1)
 	}
 
 	return nil

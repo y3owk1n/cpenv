@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
-	"runtime"
 	"strings"
 
 	"github.com/y3owk1n/cpenv/utils"
@@ -14,60 +13,22 @@ import (
 	"github.com/charmbracelet/huh/spinner"
 )
 
-func ProjectManagementFunctions() map[string]interface{} {
-	return map[string]interface{}{
-		"GetProjectsList":       getFunctionInfo(GetProjectsList),
-		"SelectProject":         getFunctionInfo(SelectProject),
-		"CopyEnvFilesToProject": getFunctionInfo(CopyEnvFilesToProject),
-		"ConfirmCwd":            getFunctionInfo(ConfirmCwd),
-		"CopyEnvFilesToVault":   getFunctionInfo(CopyEnvFilesToVault),
-	}
-}
-
-func getFunctionInfo(fn interface{}) map[string]interface{} {
-	fnType := reflect.TypeOf(fn)
-
-	info := map[string]interface{}{
-		"name":         runtime.FuncForPC(reflect.ValueOf(fn).Pointer()).Name(),
-		"input_count":  fnType.NumIn(),
-		"output_count": fnType.NumOut(),
-		"input_types":  make([]string, fnType.NumIn()),
-		"output_types": make([]string, fnType.NumOut()),
-	}
-
-	for i := 0; i < fnType.NumIn(); i++ {
-		info["input_types"].([]string)[i] = fnType.In(i).String()
-	}
-
-	for i := 0; i < fnType.NumOut(); i++ {
-		info["output_types"].([]string)[i] = fnType.Out(i).String()
-	}
-
-	return info
-}
-
-func GetProjectsList() ([]utils.Directory, error) {
+func GetProjectsList(vaultDir string) ([]utils.Directory, error) {
 	utils.Logger.Debug("Entering GetProjectsList",
 		"function_type", reflect.TypeOf(GetProjectsList),
 	)
 
-	config, err := LoadConfig()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load config: %w", err)
-	}
-
 	utils.Logger.Debug("Vault directory details",
-		"vault_dir", config.VaultDir,
+		"vault_dir", vaultDir,
 	)
 
-	dir, err := CreateEnvFilesDirectoryIfNotFound(config.VaultDir)
-	if err != nil {
-		return nil, fmt.Errorf("error creating directory: %w", err)
-	}
-
-	directories, err := utils.GetDirectories(dir)
+	directories, err := utils.GetDirectories(vaultDir)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving directories: %w", err)
+	}
+
+	if len(directories) == 0 {
+		return nil, fmt.Errorf("no projects found in the vault")
 	}
 
 	utils.Logger.Debug("Projects retrieved",
@@ -134,25 +95,14 @@ func generateProjectOptions(projects []utils.Directory) []huh.Option[string] {
 	return options
 }
 
-func CopyEnvFilesToProject(project string, currentPath string) error {
-	config, err := LoadConfig()
-	if err != nil {
-		return fmt.Errorf("failed to load config: %w", err)
-	}
-
+func CopyEnvFilesToProject(project string, currentPath string, vaultDir string) error {
 	utils.Logger.Debug("Vault directory details",
-		"vault_dir", config.VaultDir,
+		"vault_dir", vaultDir,
 		"project", project,
 		"current_path", currentPath,
 	)
 
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get home directory: %w", err)
-	}
-
-	envFilesDirectory := filepath.Join(homeDir, config.VaultDir)
-	projectPath := filepath.Join(envFilesDirectory, project, currentPath)
+	projectPath := filepath.Join(vaultDir, project, currentPath)
 
 	filesInProject, err := utils.ReadDirRecursive(projectPath)
 	if err != nil {
@@ -277,14 +227,9 @@ func ConfirmCwd() error {
 	return nil
 }
 
-func CopyEnvFilesToVault() error {
-	config, err := LoadConfig()
-	if err != nil {
-		return fmt.Errorf("failed to load config: %w", err)
-	}
-
+func CopyEnvFilesToVault(vaultDir string) error {
 	utils.Logger.Debug("Vault directory details",
-		"vault_dir", config.VaultDir,
+		"vault_dir", vaultDir,
 	)
 
 	dir := utils.GetCurrentWorkingDirectory()
@@ -296,16 +241,9 @@ func CopyEnvFilesToVault() error {
 
 	currentProjectFolderNameWithTimestamp := fmt.Sprintf("%s-%s", currentProjectFolderName, utils.GetBackupTimestamp())
 
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get home directory: %w", err)
-	}
+	destinationPath := filepath.Join(vaultDir, currentProjectFolderNameWithTimestamp)
 
-	envFilesDirectory := filepath.Join(homeDir, config.VaultDir)
-	destinationPath := filepath.Join(envFilesDirectory, currentProjectFolderNameWithTimestamp)
-
-	err = os.MkdirAll(destinationPath, os.ModePerm)
-	if err != nil {
+	if err := os.MkdirAll(destinationPath, os.ModePerm); err != nil {
 		return fmt.Errorf("failed to create destination path: %w", err)
 	}
 
