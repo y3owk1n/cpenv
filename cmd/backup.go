@@ -4,6 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -23,14 +24,15 @@ func newBackupCommand() *cobra.Command {
 	}
 
 	return &cobra.Command{
-		Use:     "backup",
-		Short:   "Backup env file(s) to your vault",
-		Aliases: []string{"bk", "backup"},
-		RunE:    bc.run,
+		Use:               "backup",
+		Short:             "Backup env file(s) to your vault",
+		Aliases:           []string{"bk", "backup"},
+		PersistentPreRunE: bc.preRun,
+		RunE:              bc.run,
 	}
 }
 
-func (bc *backupCommand) run(cmd *cobra.Command, args []string) error {
+func (bc *backupCommand) preRun(cmd *cobra.Command, args []string) error {
 	config, err := core.LoadConfig()
 	if err != nil {
 		bc.logger.Debug("Failed to load config",
@@ -42,11 +44,22 @@ func (bc *backupCommand) run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	cmd.SetContext(context.WithValue(cmd.Context(), "config", config))
+
+	return nil
+}
+
+func (bc *backupCommand) run(cmd *cobra.Command, args []string) error {
+	config, ok := cmd.Context().Value("config").(*core.Config)
+	if !ok {
+		return fmt.Errorf("config not found in context")
+	}
+
 	bc.logger.Debug("Running backupCmd",
 		"vaultDirectory", config.VaultDir,
 	)
 
-	_, err = core.CreateEnvFilesDirectoryIfNotFound(config.VaultDir)
+	_, err := core.CreateEnvFilesDirectoryIfNotFound(config.VaultDir)
 	if err != nil {
 		bc.logger.Error("Failed to create env file directory",
 			"error", err,
