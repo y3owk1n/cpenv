@@ -98,7 +98,7 @@ func SelectProject(projects []utils.Directory) (string, error) {
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title("Choose a project").
+				Title("Choose a project to copy from").
 				Options(generateProjectOptions(projects)...).
 				Value(&selectedProject),
 		)).WithTheme(baseTheme)
@@ -219,7 +219,8 @@ func handleExistingFile(sourcePath, destinationPath string) error {
 
 	form := huh.NewForm(huh.NewGroup(
 		huh.NewConfirm().
-			Title(fmt.Sprintf("%s exists, do you want to overwrite?", destinationPath)).
+			Title("File exists! Do you want to overwrite?").
+			Description(fmt.Sprintf("File: %s", destinationPath)).
 			Affirmative("Yes!").
 			Negative("No.").
 			Value(&confirm),
@@ -251,7 +252,8 @@ func ConfirmCwd() error {
 	baseTheme := huh.ThemeBase()
 
 	form := huh.NewForm(huh.NewGroup(huh.NewConfirm().
-		Title(fmt.Sprintf("Is this your root directory to perform the backup? (%s)", dir)).
+		Title("Is this your root directory to perform the backup?").
+		Description(fmt.Sprintf("Current Root Directory: %s", dir)).
 		Affirmative("Yes!").
 		Negative("No.").
 		Value(&confirm))).WithTheme(baseTheme)
