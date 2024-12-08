@@ -105,7 +105,7 @@ func SelectProject(projects []utils.Directory) (string, error) {
 
 	err := form.Run()
 	if err != nil {
-		if err.Error() == "user aborted" {
+		if err == huh.ErrUserAborted {
 			utils.Logger.Debug("User aborted project selection")
 			fmt.Println("Until next time!")
 			os.Exit(0)
@@ -227,7 +227,7 @@ func handleExistingFile(sourcePath, destinationPath string) error {
 
 	err := form.Run()
 	if err != nil {
-		if err.Error() == "user aborted" {
+		if err == huh.ErrUserAborted {
 			utils.Logger.Debug("User aborted project selection")
 			fmt.Println("Until next time!")
 			os.Exit(0)
@@ -258,7 +258,7 @@ func ConfirmCwd() error {
 
 	err := form.Run()
 	if err != nil {
-		if err.Error() == "user aborted" {
+		if err == huh.ErrUserAborted {
 			utils.Logger.Debug("User aborted project selection")
 			fmt.Println("Until next time!")
 			os.Exit(0)
