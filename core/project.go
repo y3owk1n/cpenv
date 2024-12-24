@@ -265,8 +265,9 @@ func CopyEnvFilesToVault(vaultDir string) error {
 
 func processCopyEnvFileToVault(file, cwd, destinationPath string) error {
 	fileName := filepath.Base(file)
+	fullPath, _ := filepath.Abs(file)
 
-	if strings.Contains(fileName, "node_modules") || strings.Contains(fileName, ".template") || strings.Contains(fileName, ".example") {
+	if strings.Contains(fullPath, "node_modules") || strings.Contains(fileName, ".template") || strings.Contains(fileName, ".example") {
 		return nil
 	}
 
