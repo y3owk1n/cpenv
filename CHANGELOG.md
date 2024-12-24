@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.1](https://github.com/y3owk1n/cpenv/compare/v1.14.0...v1.14.1) (2024-12-24)
+
+
+### Bug Fixes
+
+* check node_modules on fullPath, not fileName ([#109](https://github.com/y3owk1n/cpenv/issues/109)) ([8ef1486](https://github.com/y3owk1n/cpenv/commit/8ef1486f9b938c1fa344177b346aeb06b4f53a0a))
+
 ## [1.14.0](https://github.com/y3owk1n/cpenv/compare/v1.13.0...v1.14.0) (2024-12-08)
 
 
