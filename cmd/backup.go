@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/charmbracelet/huh/spinner"
 	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -74,12 +75,19 @@ func (bc *backupCommand) run(cmd *cobra.Command, args []string) error {
 		os.Exit(1)
 	}
 
-	if err := core.CopyEnvFilesToVault(vaultDir); err != nil {
-		bc.logger.Error("Failed to copy env files to vault",
-			"error", err,
-		)
-		os.Exit(1)
+	action := func() {
+		if err := core.CopyEnvFilesToVault(vaultDir); err != nil {
+			bc.logger.Error("Failed to copy env files to vault",
+				"error", err,
+			)
+			os.Exit(1)
+		}
 	}
+
+	_ = spinner.New().
+		Title(fmt.Sprintf("Backing up to %s", vaultDir)).
+		Action(action).
+		Run()
 
 	return nil
 }
