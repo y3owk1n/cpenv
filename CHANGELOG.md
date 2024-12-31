@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.0](https://github.com/y3owk1n/cpenv/compare/v1.14.1...v1.15.0) (2024-12-31)
+
+
+### Features
+
+* add loading spinner during backup ([#112](https://github.com/y3owk1n/cpenv/issues/112)) ([bd0abfc](https://github.com/y3owk1n/cpenv/commit/bd0abfcfc6d4445ba903ec9cae802b9b4c9c656c))
+
 ## [1.14.1](https://github.com/y3owk1n/cpenv/compare/v1.14.0...v1.14.1) (2024-12-24)
 
 
