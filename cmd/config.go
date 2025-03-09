@@ -110,17 +110,14 @@ func (cec *configEditCommand) preRun(cmd *cobra.Command, args []string) error {
 		os.Exit(1)
 	}
 
-	configKey := contextKey("config")
-	vaultKey := contextKey("vault")
-
-	cmd.SetContext(context.WithValue(cmd.Context(), configKey, configPath))
-	cmd.SetContext(context.WithValue(cmd.Context(), vaultKey, vaultDirFull))
+	cmd.SetContext(context.WithValue(cmd.Context(), ConfigKey, configPath))
+	cmd.SetContext(context.WithValue(cmd.Context(), VaultKey, vaultDirFull))
 
 	return nil
 }
 
 func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
-	configPath, ok := cmd.Context().Value("config").(string)
+	configPath, ok := cmd.Context().Value(ConfigKey).(string)
 	if !ok {
 		return fmt.Errorf("config not found in context")
 	}
@@ -155,4 +152,10 @@ func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
 	}
 
 	return nil
+}
+
+func init() {
+	rootCmd.AddCommand(configCmd)
+	configCmd.AddCommand(newConfigInitCommand())
+	configCmd.AddCommand(newConfigEditCommand())
 }
