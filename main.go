@@ -3,8 +3,14 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 */
 package main
 
-import "github.com/y3owk1n/cpenv/cmd"
+import (
+	"os"
+
+	"github.com/y3owk1n/cpenv/cmd"
+)
 
 func main() {
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		os.Exit(1)
+	}
 }

@@ -1,50 +1,66 @@
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 permissions:
-  contents: write
-  pull-requests: write
+    contents: write
+    pull-requests: write
 
 name: release-please
 
 jobs:
-  release-please:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: googleapis/release-please-action@v4
-        id: release
-        with:
-          # this assumes that you have created a personal access token
-          # (PAT) and configured it as a GitHub action secret named
-          # `MY_RELEASE_PLEASE_TOKEN` (this secret name is not important).
-          token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
-          # this is a built-in strategy in release-please, see "Action Inputs"
-          # for more options
-          release-type: go
+    release-please:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: googleapis/release-please-action@v4
+              id: release
+              with:
+                  # this assumes that you have created a personal access token
+                  # (PAT) and configured it as a GitHub action secret named
+                  # `MY_RELEASE_PLEASE_TOKEN` (this secret name is not important).
+                  token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+                  # this is a built-in strategy in release-please, see "Action Inputs"
+                  # for more options
+                  release-type: go
 
-      - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs.release_created }}
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.head_ref }}
+            - uses: actions/checkout@v4
+              if: ${{ steps.release.outputs.release_created }}
+              with:
+                  repository: ${{ github.event.pull_request.head.repo.full_name }}
+                  ref: ${{ github.head_ref }}
 
-      - uses: actions/setup-go@v5
-        if: ${{ steps.release.outputs.release_created }}
-        with:
-          go-version: "^1.23.3"
+            - uses: actions/setup-go@v5
+              if: ${{ steps.release.outputs.release_created }}
+              with:
+                  go-version: "^1.23.3"
 
-      - name: Build project and prepare release artifact
-        if: ${{ steps.release.outputs.release_created }}
-        run: |
-          env GOOS=darwin GOARCH=arm64 go build -ldflags "-X github.com/y3owk1n/cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-arm64 ./main.go
-          env GOOS=darwin GOARCH=amd64 go build -ldflags "-X github.com/y3owk1n/cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -o ./compile/cpenv-darwin-amd64 ./main.go
+            - name: Build project and prepare release artifact
+              if: ${{ steps.release.outputs.release_created }}
+              run: |
+                  mkdir -p build
+                  # Build for darwin-arm64
+                  env GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/y3owk1n/cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -trimpath -o ./build/cpenv-darwin-arm64 ./main.go
 
-      - name: Upload Release Artifact
-        if: ${{ steps.release.outputs.release_created }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
-        run: |
-          gh release upload ${{ steps.release.outputs.tag_name }} ./compile/cpenv-darwin-arm64
-          gh release upload ${{ steps.release.outputs.tag_name }} ./compile/cpenv-darwin-amd64
+                  # Build for darwin-amd64
+                  env GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/y3owk1n/cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -trimpath -o ./build/cpenv-darwin-amd64 ./main.go
+
+                  # Build for linux-arm64
+                  env GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/y3owk1n/cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -trimpath -o ./build/cpenv-linux-arm64 ./main.go
+
+                  # Build for linux-amd64
+                  env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/y3owk1n/cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -trimpath -o ./build/cpenv-linux-amd64 ./main.go
+
+                  # Build for windows-amd64
+                  env GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/y3owk1n/cpenv/cmd.Version=${{ steps.release.outputs.tag_name }}" -trimpath -o ./build/cpenv-windows64.exe ./main.go
+
+            - name: Upload Release Artifact
+              if: ${{ steps.release.outputs.release_created }}
+              env:
+                  GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+              run: |
+                  gh release upload "${{ steps.release.outputs.tag_name }}" ./build/cpenv-darwin-arm64
+                  gh release upload "${{ steps.release.outputs.tag_name }}" ./build/cpenv-darwin-amd64
+                  gh release upload "${{ steps.release.outputs.tag_name }}" ./build/cpenv-linux-arm64
+                  gh release upload "${{ steps.release.outputs.tag_name }}" ./build/cpenv-linux-amd64
+                  gh release upload "${{ steps.release.outputs.tag_name }}" ./build/cpenv-windows64.exe
