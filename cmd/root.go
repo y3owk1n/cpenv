@@ -10,6 +10,8 @@ import (
 	"github.com/y3owk1n/cpenv/core"
 )
 
+type contextKey string
+
 var Version = "v0.0.0"
 
 func Execute() error {
@@ -19,7 +21,9 @@ func Execute() error {
 		Short:   "A CLI for copy and paste your local .env to right projects faster",
 		Example: "cpenv",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cmd.Help()
+			if err := cmd.Help(); err != nil {
+				return err
+			}
 			return nil
 		},
 	}

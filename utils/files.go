@@ -42,6 +42,9 @@ func CopyFile(source, destination string) error {
 	defer destFile.Close()
 
 	_, err = io.Copy(destFile, srcFile)
+	if err != nil {
+		return fmt.Errorf("failed to copy file %s to %s: %w", destFile.Name(), srcFile.Name(), err)
+	}
 
 	if _, err := io.Copy(destFile, srcFile); err != nil {
 		return fmt.Errorf("failed to copy contents from %s to %s: %w", source, destination, err)

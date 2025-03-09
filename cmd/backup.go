@@ -51,8 +51,11 @@ func (bc *backupCommand) preRun(cmd *cobra.Command, args []string) error {
 		os.Exit(1)
 	}
 
-	cmd.SetContext(context.WithValue(cmd.Context(), "config", configPath))
-	cmd.SetContext(context.WithValue(cmd.Context(), "vault", vaultDirFull))
+	configKey := contextKey("config")
+	vaultKey := contextKey("vault")
+
+	cmd.SetContext(context.WithValue(cmd.Context(), configKey, configPath))
+	cmd.SetContext(context.WithValue(cmd.Context(), vaultKey, vaultDirFull))
 
 	return nil
 }

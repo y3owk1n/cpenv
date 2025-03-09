@@ -236,7 +236,7 @@ func CopyEnvFilesToVault(vaultDir string) error {
 
 	currentProjectFolderName := filepath.Base(dir)
 	if currentProjectFolderName == "" {
-		return fmt.Errorf("failed to parse the folder name, try again...")
+		return fmt.Errorf("failed to parse the folder name, try again")
 	}
 
 	currentProjectFolderNameWithTimestamp := fmt.Sprintf("%s-%s", currentProjectFolderName, utils.GetBackupTimestamp())
