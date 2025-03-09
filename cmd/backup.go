@@ -51,17 +51,14 @@ func (bc *backupCommand) preRun(cmd *cobra.Command, args []string) error {
 		os.Exit(1)
 	}
 
-	configKey := contextKey("config")
-	vaultKey := contextKey("vault")
-
-	cmd.SetContext(context.WithValue(cmd.Context(), configKey, configPath))
-	cmd.SetContext(context.WithValue(cmd.Context(), vaultKey, vaultDirFull))
+	cmd.SetContext(context.WithValue(cmd.Context(), ConfigKey, configPath))
+	cmd.SetContext(context.WithValue(cmd.Context(), VaultKey, vaultDirFull))
 
 	return nil
 }
 
 func (bc *backupCommand) run(cmd *cobra.Command, args []string) error {
-	vaultDir, ok := cmd.Context().Value("vault").(string)
+	vaultDir, ok := cmd.Context().Value(VaultKey).(string)
 	if !ok {
 		return fmt.Errorf("config not found in context")
 	}
@@ -93,4 +90,8 @@ func (bc *backupCommand) run(cmd *cobra.Command, args []string) error {
 		Run()
 
 	return nil
+}
+
+func init() {
+	rootCmd.AddCommand(newBackupCommand())
 }
