@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.15.1](https://github.com/y3owk1n/cpenv/compare/v1.15.0...v1.15.1) (2025-03-09)
+
+
+### Bug Fixes
+
+* handle verbose mode properly ([#116](https://github.com/y3owk1n/cpenv/issues/116)) ([1dcb18d](https://github.com/y3owk1n/cpenv/commit/1dcb18dc494bfdd93b650bf6dcff2431830896a7))
+* linting & err checks ([#114](https://github.com/y3owk1n/cpenv/issues/114)) ([c7b9741](https://github.com/y3owk1n/cpenv/commit/c7b974188427d8d590a7d2d23061b7b498656225))
+
 ## [1.15.0](https://github.com/y3owk1n/cpenv/compare/v1.14.1...v1.15.0) (2024-12-31)
 
 
