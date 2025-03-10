@@ -66,8 +66,11 @@ func TestOpenInEditorDefaultEditor(t *testing.T) {
 
 // TestOpenInEditorFakeEditorSuccess verifies that OpenInEditor succeeds when the fake editor exits with code 0.
 func TestOpenInEditorFakeEditorSuccess(t *testing.T) {
-	tempFile, err := os.CreateTemp(t.TempDir(), "testfile")
+	tempDir := t.TempDir()
+	tempFile, err := os.CreateTemp(tempDir, "testfile")
 	assert.NoError(t, err)
+	// Close the file so Windows doesn't lock it
+	tempFile.Close()
 	defer os.Remove(tempFile.Name())
 
 	oldEditor := os.Getenv("EDITOR")
