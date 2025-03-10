@@ -7,13 +7,15 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
-	"github.com/charmbracelet/huh/spinner"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/y3owk1n/cpenv/core"
 	"github.com/y3owk1n/cpenv/utils"
+
+	"github.com/briandowns/spinner"
 )
 
 type backupCommand struct{}
@@ -22,20 +24,20 @@ func newBackupCommand() *cobra.Command {
 	bc := &backupCommand{}
 
 	return &cobra.Command{
-		Use:               "backup",
-		Short:             "Backup env file(s) to your vault",
-		Aliases:           []string{"bk", "backup"},
-		PersistentPreRunE: bc.preRun,
-		RunE:              bc.run,
+		Use:              "backup",
+		Short:            "Backup env file(s) to your vault",
+		Aliases:          []string{"bk", "backup"},
+		PersistentPreRun: bc.preRun,
+		Run:              bc.run,
 	}
 }
 
-func (bc *backupCommand) preRun(cmd *cobra.Command, args []string) error {
+func (bc *backupCommand) preRun(cmd *cobra.Command, args []string) {
 	logrus.WithField("args", args).Debug("Starting backup command preRun")
 
 	configPath := viper.ConfigFileUsed()
 	if configPath == "" {
-		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init` first"))
+		fmt.Printf("%s %s\n", utils.ErrorIcon(), utils.WhiteText("Please run `cpenv config init` first"))
 		os.Exit(0)
 	}
 	logrus.Debugf("Using config file: %s", configPath)
@@ -56,17 +58,15 @@ func (bc *backupCommand) preRun(cmd *cobra.Command, args []string) error {
 	ctx = context.WithValue(ctx, VaultKey, vaultDirFull)
 	cmd.SetContext(ctx)
 	logrus.Debugf("Context set with ConfigKey=%s and VaultKey=%s", configPath, vaultDirFull)
-
-	return nil
 }
 
-func (bc *backupCommand) run(cmd *cobra.Command, args []string) error {
+func (bc *backupCommand) run(cmd *cobra.Command, args []string) {
 	logrus.WithField("args", args).Debug("Starting backup command run")
 
 	vaultDir, ok := cmd.Context().Value(VaultKey).(string)
 	if !ok {
 		logrus.Error("Vault directory not found in context")
-		return fmt.Errorf("config not found in context")
+		fmt.Printf("%s %s\n", utils.ErrorIcon(), utils.WhiteText("vault config not found in context"))
 	}
 	logrus.Debugf("Retrieved vault directory from context: %s", vaultDir)
 
@@ -77,24 +77,20 @@ func (bc *backupCommand) run(cmd *cobra.Command, args []string) error {
 	}
 	logrus.Debug("Current working directory confirmed")
 
-	action := func() {
-		logrus.Debugf("Starting backup action: copying env files to vault at %s", vaultDir)
-		if err := core.CopyEnvFilesToVault(vaultDir); err != nil {
-			logrus.Errorf("Failed to copy env files to vault: %v", err)
-			os.Exit(1)
-		}
-		logrus.Debug("Env files successfully backed up to vault")
+	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+	s.Prefix = fmt.Sprintf("Backing up to %s", vaultDir)
+	s.Start()
+
+	logrus.Debugf("Starting backup action: copying env files to vault at %s", vaultDir)
+	if err := core.CopyEnvFilesToVault(vaultDir); err != nil {
+		logrus.Errorf("Failed to copy env files to vault: %v", err)
+		os.Exit(1)
 	}
+	logrus.Debug("Env files successfully backed up to vault")
 
-	spinnerMessage := fmt.Sprintf("Backing up to %s", vaultDir)
-	logrus.Debugf("Starting spinner with message: %s", spinnerMessage)
-	_ = spinner.New().
-		Title(spinnerMessage).
-		Action(action).
-		Run()
+	s.Stop()
+
 	logrus.Debug("Spinner action completed")
-
-	return nil
 }
 
 func init() {

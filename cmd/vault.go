@@ -18,21 +18,21 @@ func newVaultCmd() *cobra.Command {
 	vc := &vaultCommand{}
 
 	return &cobra.Command{
-		Use:               "vault",
-		Short:             "Open vault in finder",
-		Aliases:           []string{"v", "vault"},
-		PersistentPreRunE: vc.preRun,
-		RunE:              vc.run,
+		Use:              "vault",
+		Short:            "Open vault in finder",
+		Aliases:          []string{"v", "vault"},
+		PersistentPreRun: vc.preRun,
+		Run:              vc.run,
 	}
 }
 
-func (vc *vaultCommand) preRun(cmd *cobra.Command, args []string) error {
+func (vc *vaultCommand) preRun(cmd *cobra.Command, args []string) {
 	logrus.WithField("args", args).Debug("Starting vault preRun command")
 
 	// Check if the config file is used and log it.
 	configPath := viper.ConfigFileUsed()
 	if configPath == "" {
-		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init` first"))
+		fmt.Printf("%s %s\n", utils.ErrorIcon(), utils.WhiteText("Please run `cpenv config init` first"))
 		os.Exit(0)
 	}
 	logrus.Debugf("Using config file: %s", configPath)
@@ -55,18 +55,17 @@ func (vc *vaultCommand) preRun(cmd *cobra.Command, args []string) error {
 	ctx = context.WithValue(ctx, VaultKey, vaultDirFull)
 	cmd.SetContext(ctx)
 	logrus.Debugf("Context set with ConfigKey=%s and VaultKey=%s", configPath, vaultDirFull)
-
-	return nil
 }
 
-func (vc *vaultCommand) run(cmd *cobra.Command, args []string) error {
+func (vc *vaultCommand) run(cmd *cobra.Command, args []string) {
 	logrus.WithField("args", args).Debug("Starting vault run command")
 
 	// Retrieve the vault directory from context and log it.
 	vaultDir, ok := cmd.Context().Value(VaultKey).(string)
 	if !ok {
 		logrus.Error("Vault directory not found in context")
-		return fmt.Errorf("vault config not found in context")
+		fmt.Printf("%s %s\n", utils.ErrorIcon(), utils.WhiteText("vault config not found in context"))
+		return
 	}
 	logrus.Debugf("Retrieved vault directory from context: %s", vaultDir)
 
@@ -77,8 +76,7 @@ func (vc *vaultCommand) run(cmd *cobra.Command, args []string) error {
 	}
 	logrus.Debugf("Vault directory opened in finder successfully: %s", vaultDir)
 
-	fmt.Println(utils.SuccessMessage.Render("Successfully opened vault in finder."))
-	return nil
+	fmt.Printf("%s %s\n", utils.SuccessIcon(), utils.WhiteText("Successfully opened vault in finder."))
 }
 
 func init() {

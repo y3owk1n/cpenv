@@ -77,7 +77,6 @@ func CreateVaultIfNotFound(vaultDir string) (string, error) {
 	_, err = os.Stat(fullVaultDir)
 	if err == nil {
 		logrus.Debugf("Vault already exists at: %s", fullVaultDir)
-		fmt.Println(utils.WarningMessage.Render("Skipping creating vault, exists at", fullVaultDir))
 		return fullVaultDir, nil
 	}
 
@@ -92,7 +91,7 @@ func CreateVaultIfNotFound(vaultDir string) (string, error) {
 		return "", fmt.Errorf("failed to create vault: %w", err)
 	}
 
-	fmt.Println(utils.SuccessMessage.Render("Created vault directory at", fullVaultDir))
+	fmt.Printf("%s %s %s\n", utils.SuccessIcon(), utils.WhiteText("Created vault directory at"), utils.CyanText(fullVaultDir))
 	logrus.Debugf("Vault directory created at: %s", fullVaultDir)
 
 	return fullVaultDir, nil
