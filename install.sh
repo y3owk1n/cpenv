@@ -1,6 +1,37 @@
 #!/usr/bin/env bash
 set -e
 
+# ANSI color codes for styling output
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+BLUE='\033[1;34m'
+CYAN='\033[1;36m'
+YELLOW='\033[1;33m'
+RESET='\033[0m'
+
+# Function to display a header banner.
+function header() {
+	echo -e "${CYAN}========================================${RESET}"
+	echo -e "${CYAN}          CPENV Installer             ${RESET}"
+	echo -e "${CYAN}========================================${RESET}"
+}
+
+# Functions for printing messages with colors.
+function info() {
+	echo -e "${BLUE}[INFO]${RESET} $1"
+}
+
+function success() {
+	echo -e "${GREEN}[SUCCESS]${RESET} $1"
+}
+
+function error() {
+	echo -e "${RED}[ERROR]${RESET} $1"
+}
+
+# Display the header.
+header
+
 REPO="y3owk1n/cpenv"
 BIN_NAME="cpenv" # Base name for the binary
 
@@ -10,6 +41,7 @@ ARCH="$(uname -m)"
 ASSET=""
 INSTALL_DIR=""
 
+info "Detecting operating system and architecture..."
 case "$OS" in
 Linux)
 	INSTALL_DIR="/usr/local/bin"
@@ -21,7 +53,7 @@ Linux)
 		ASSET="${BIN_NAME}-linux-arm64"
 		;;
 	*)
-		echo "Unsupported architecture: $ARCH"
+		error "Unsupported architecture: $ARCH"
 		exit 1
 		;;
 	esac
@@ -36,7 +68,7 @@ Darwin)
 		ASSET="${BIN_NAME}-darwin-arm64"
 		;;
 	*)
-		echo "Unsupported architecture: $ARCH"
+		error "Unsupported architecture: $ARCH"
 		exit 1
 		;;
 	esac
@@ -48,31 +80,34 @@ MINGW* | CYGWIN* | MSYS*)
 	ASSET="${BIN_NAME}-windows64.exe"
 	;;
 *)
-	echo "Unsupported OS: $OS"
+	error "Unsupported OS: $OS"
 	exit 1
 	;;
 esac
 
-# Function to check for a download tool.
+info "Detected OS: ${YELLOW}${OS}${RESET}"
+info "Detected Architecture: ${YELLOW}${ARCH}${RESET}"
+info "Preparing to download asset: ${YELLOW}${ASSET}${RESET}"
+
+# Construct the download URL for the latest release asset.
+DOWNLOAD_URL="https://github.com/${REPO}/releases/latest/download/${ASSET}"
+info "Download URL: ${YELLOW}${DOWNLOAD_URL}${RESET}"
+
+# Function to check for a download tool and perform the download.
 download_file() {
 	local url=$1
 	local output=$2
 	if command -v curl >/dev/null 2>&1; then
-		curl -L -o "$output" "$url"
+		info "Using curl for download..."
+		curl -L --progress-bar -o "$output" "$url"
 	elif command -v wget >/dev/null 2>&1; then
+		info "Using wget for download..."
 		wget -O "$output" "$url"
 	else
-		echo "Error: Please install curl or wget to download files."
+		error "Please install curl or wget to download files."
 		exit 1
 	fi
 }
-
-# Construct the download URL for the latest release asset.
-DOWNLOAD_URL="https://github.com/${REPO}/releases/latest/download/${ASSET}"
-echo "Detected OS: $OS"
-echo "Detected Architecture: $ARCH"
-echo "Downloading asset: $ASSET"
-echo "Download URL: $DOWNLOAD_URL"
 
 # Download the asset to a temporary file.
 TMP_FILE=$(mktemp)
@@ -89,12 +124,13 @@ if [[ "$OS" == MINGW* || "$OS" == CYGWIN* || "$OS" == MSYS* ]]; then
 	TARGET_PATH="${INSTALL_DIR}/${BIN_NAME}.exe"
 fi
 
-echo "Installing to ${TARGET_PATH}"
+info "Installing to ${YELLOW}${TARGET_PATH}${RESET}"
 if [ ! -w "$INSTALL_DIR" ]; then
-	echo "Elevated privileges are required to install to ${INSTALL_DIR}. Prompting for sudo..."
+	info "Elevated privileges required to install to ${INSTALL_DIR}. Prompting for sudo..."
 	sudo mv "$TMP_FILE" "$TARGET_PATH"
 else
 	mv "$TMP_FILE" "$TARGET_PATH"
 fi
 
-echo "Installation complete."
+success "Installation complete!"
+echo -e "${CYAN}You can now run: ${YELLOW}cpenv help${RESET}"
