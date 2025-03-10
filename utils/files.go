@@ -78,6 +78,9 @@ func CopyFile(source, destination string) error {
 	return nil
 }
 
+// CopyFileFunc is a variable that can be overridden in tests.
+var CopyFileFunc = CopyFile
+
 func GetBackupTimestamp() string {
 	timestamp := time.Now().Format("2006-01-02_15-04-05")
 	logrus.Debugf("Generated backup timestamp: %s", timestamp)

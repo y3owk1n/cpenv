@@ -1,6 +1,3 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -107,7 +104,6 @@ func (cec *configEditCommand) preRun(cmd *cobra.Command, args []string) {
 	}
 	logrus.Debugf("Resolved full vault directory: %s", vaultDirFull)
 
-	// Set context values
 	ctx := cmd.Context()
 	ctx = context.WithValue(ctx, ConfigKey, configPath)
 	ctx = context.WithValue(ctx, VaultKey, vaultDirFull)

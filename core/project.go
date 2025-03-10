@@ -41,6 +41,10 @@ func directoriesToStringSlice(dirs []utils.Directory) []string {
 	return names
 }
 
+var selectProjectRun = func(prompt promptui.Select) (int, string, error) {
+	return prompt.Run()
+}
+
 func SelectProject(projects []utils.Directory) (string, error) {
 	if len(projects) == 0 {
 		return "", fmt.Errorf("no projects found in the vault")
@@ -51,12 +55,12 @@ func SelectProject(projects []utils.Directory) (string, error) {
 		Items: generateProjectOptions(projects),
 	}
 
-	_, selectedProject, err := prompt.Run()
+	_, selectedProject, err := selectProjectRun(prompt)
 	if err != nil {
 		if err == promptui.ErrInterrupt {
 			logrus.Debug("User aborted project selection")
 			fmt.Printf("%s %s\n", utils.WarningIcon(), utils.WhiteText("Selection cancelled."))
-			os.Exit(0)
+			exitFunc(0)
 		}
 		return "", fmt.Errorf("error starting the selection form: %w", err)
 	}
@@ -82,7 +86,7 @@ func CopyEnvFilesToProject(project string, currentPath string, vaultDir string) 
 	logrus.Debugf("Vault directory details: vault_dir: %s, project: %s, current_path: %s", vaultDir, project, currentPath)
 
 	projectPath := filepath.Join(vaultDir, project, currentPath)
-	filesInProject, err := utils.ReadDirRecursive(projectPath)
+	filesInProject, err := utils.ReadDirRecursiveFunc(projectPath)
 	if err != nil {
 		return fmt.Errorf("error reading project path: %w", err)
 	}
@@ -94,6 +98,8 @@ func CopyEnvFilesToProject(project string, currentPath string, vaultDir string) 
 	}
 	return nil
 }
+
+var copyFileWithSpinnerFunc = copyFileWithSpinner
 
 func processCopyEnvFileToProject(file, projectPath, currentPath string) error {
 	relativePath := strings.TrimPrefix(file, projectPath+"/")
@@ -107,7 +113,7 @@ func processCopyEnvFileToProject(file, projectPath, currentPath string) error {
 
 	if !fileExists {
 		logrus.Debugf("File does not exist, proceeding to copy: %s", file)
-		return copyFileWithSpinner(file, destinationPathWithFile)
+		return copyFileWithSpinnerFunc(file, destinationPathWithFile)
 	}
 
 	logrus.Debugf("File exists, prompting for overwrite: %s", destinationPathWithFile)
@@ -126,7 +132,7 @@ func copyFileWithSpinner(sourcePath, destinationPath string) error {
 	}
 
 	logrus.Debugf("Copying file from %s to %s", sourcePath, destinationPath)
-	if err := utils.CopyFile(sourcePath, destinationPath); err != nil {
+	if err := utils.CopyFileFunc(sourcePath, destinationPath); err != nil {
 		logrus.Errorf("Failed to copy file from %s to %s: %v", sourcePath, destinationPath, err)
 	}
 	logrus.Debugf("File copied successfully: %s", destinationPath)
@@ -153,8 +159,10 @@ func handleExistingFile(sourcePath, destinationPath string) error {
 		return nil
 	}
 
-	return copyFileWithSpinner(sourcePath, destinationPath)
+	return copyFileWithSpinnerFunc(sourcePath, destinationPath)
 }
+
+var exitFunc = os.Exit
 
 func ConfirmCwd() error {
 	dir := utils.GetCurrentWorkingDirectory()
@@ -172,7 +180,7 @@ func ConfirmCwd() error {
 	if strings.ToLower(input) != "y" {
 		logrus.Debugf("User chose not to backup to: %s", dir)
 		fmt.Printf("%s %s\n", utils.WarningIcon(), utils.WhiteText("Aborted... cd to your desired directory and restart the backup again."))
-		os.Exit(0)
+		exitFunc(0)
 		return nil
 	}
 
@@ -203,7 +211,7 @@ func CopyEnvFilesToVault(vaultDir string) error {
 	}
 	logrus.Debugf("Destination path created: %s", destinationPath)
 
-	filesInProject, err := utils.ReadDirRecursive(dir)
+	filesInProject, err := utils.ReadDirRecursiveFunc(dir)
 	if err != nil {
 		return fmt.Errorf("error reading project path: %w", err)
 	}
@@ -235,5 +243,5 @@ func processCopyEnvFileToVault(file, cwd, destinationPath string) error {
 	destinationPathWithFile := filepath.Join(destinationPath, relativePath)
 
 	logrus.Debugf("Copying env file to vault: source: %s, destination: %s", sourcePath, destinationPathWithFile)
-	return copyFileWithSpinner(sourcePath, destinationPathWithFile)
+	return copyFileWithSpinnerFunc(sourcePath, destinationPathWithFile)
 }
