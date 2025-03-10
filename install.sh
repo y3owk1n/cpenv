@@ -1,7 +1,18 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-# ANSI color codes for styling output
+# Global variable for temporary file.
+TMP_FILE=""
+
+# Cleanup function to remove temporary files.
+cleanup() {
+	if [[ -n "${TMP_FILE:-}" && -f "$TMP_FILE" ]]; then
+		rm -f "$TMP_FILE"
+	fi
+}
+trap cleanup EXIT INT TERM ERR
+
+# ANSI color codes.
 RED='\033[1;31m'
 GREEN='\033[1;32m'
 BLUE='\033[1;34m'
@@ -9,39 +20,41 @@ CYAN='\033[1;36m'
 YELLOW='\033[1;33m'
 RESET='\033[0m'
 
-# Function to display a header banner.
-function header() {
+# Logging functions with timestamps.
+log_info() {
+	echo -e "$(date +"%Y-%m-%d %H:%M:%S") ${BLUE}[INFO]${RESET} $1"
+}
+log_success() {
+	echo -e "$(date +"%Y-%m-%d %H:%M:%S") ${GREEN}[SUCCESS]${RESET} $1"
+}
+log_error() {
+	echo -e "$(date +"%Y-%m-%d %H:%M:%S") ${RED}[ERROR]${RESET} $1"
+}
+
+# Header banner.
+header() {
 	echo -e "${CYAN}========================================${RESET}"
-	echo -e "${CYAN}          CPENV Installer             ${RESET}"
+	echo -e "${CYAN}           CPENV Installer              ${RESET}"
 	echo -e "${CYAN}========================================${RESET}"
 }
-
-# Functions for printing messages with colors.
-function info() {
-	echo -e "${BLUE}[INFO]${RESET} $1"
-}
-
-function success() {
-	echo -e "${GREEN}[SUCCESS]${RESET} $1"
-}
-
-function error() {
-	echo -e "${RED}[ERROR]${RESET} $1"
-}
-
-# Display the header.
 header
+
+# Dependency check: require curl or wget.
+if ! command -v curl >/dev/null 2>&1; then
+	log_error "curl is required to download files. Please install curl."
+	exit 1
+fi
 
 REPO="y3owk1n/cpenv"
 BIN_NAME="cpenv" # Base name for the binary
 
-# Detect OS and Architecture, and set INSTALL_DIR and asset name.
+# Detect OS and architecture.
 OS="$(uname -s)"
 ARCH="$(uname -m)"
 ASSET=""
 INSTALL_DIR=""
 
-info "Detecting operating system and architecture..."
+log_info "Detecting operating system and architecture..."
 case "$OS" in
 Linux)
 	INSTALL_DIR="/usr/local/bin"
@@ -53,7 +66,7 @@ Linux)
 		ASSET="${BIN_NAME}-linux-arm64"
 		;;
 	*)
-		error "Unsupported architecture: $ARCH"
+		log_error "Unsupported architecture: $ARCH"
 		exit 1
 		;;
 	esac
@@ -68,69 +81,93 @@ Darwin)
 		ASSET="${BIN_NAME}-darwin-arm64"
 		;;
 	*)
-		error "Unsupported architecture: $ARCH"
+		log_error "Unsupported architecture: $ARCH"
 		exit 1
 		;;
 	esac
 	;;
 MINGW* | CYGWIN* | MSYS*)
-	# For Windows, use a user-specific directory.
 	INSTALL_DIR="$HOME/AppData/Local/Programs"
 	mkdir -p "$INSTALL_DIR"
 	ASSET="${BIN_NAME}-windows64.exe"
 	;;
 *)
-	error "Unsupported OS: $OS"
+	log_error "Unsupported OS: $OS"
 	exit 1
 	;;
 esac
 
-info "Detected OS: ${YELLOW}${OS}${RESET}"
-info "Detected Architecture: ${YELLOW}${ARCH}${RESET}"
-info "Preparing to download asset: ${YELLOW}${ASSET}${RESET}"
+log_info "Detected OS: ${YELLOW}$OS${RESET}"
+log_info "Detected Architecture: ${YELLOW}$ARCH${RESET}"
+log_info "Preparing to download asset: ${YELLOW}$ASSET${RESET}"
 
-# Construct the download URL for the latest release asset.
 DOWNLOAD_URL="https://github.com/${REPO}/releases/latest/download/${ASSET}"
-info "Download URL: ${YELLOW}${DOWNLOAD_URL}${RESET}"
+log_info "Download URL: ${YELLOW}$DOWNLOAD_URL${RESET}"
 
-# Function to check for a download tool and perform the download.
+# Function to download files.
 download_file() {
-	local url=$1
-	local output=$2
-	if command -v curl >/dev/null 2>&1; then
-		info "Using curl for download..."
-		curl -L --progress-bar -o "$output" "$url"
-	elif command -v wget >/dev/null 2>&1; then
-		info "Using wget for download..."
-		wget -O "$output" "$url"
-	else
-		error "Please install curl or wget to download files."
-		exit 1
-	fi
+	local url="$1"
+	local output="$2"
+	log_info "Downloading binary from: ${YELLOW}$url${RESET}"
+	curl -L --progress-bar -o "$output" "$url"
 }
 
 # Download the asset to a temporary file.
 TMP_FILE=$(mktemp)
 download_file "$DOWNLOAD_URL" "$TMP_FILE"
 
-# If not on Windows, make the file executable.
+# --- Checksum Verification ---
+CHECKSUM_URL="https://github.com/${REPO}/releases/latest/download/${ASSET}.sha256"
+TMP_CHECKSUM=$(mktemp)
+log_info "Downloading checksum from: ${YELLOW}$CHECKSUM_URL${RESET}"
+# Attempt to download the checksum file using curl with --fail.
+if curl -L --fail --progress-bar -o "$TMP_CHECKSUM" "$CHECKSUM_URL"; then
+	log_info "Extracting expected checksum from the checksum file..."
+
+	EXPECTED_CHECKSUM=$(awk '{ print $1 }' "$TMP_CHECKSUM")
+	log_info "Expected checksum: ${YELLOW}$EXPECTED_CHECKSUM${RESET}"
+
+	log_info "Computing checksum of the downloaded asset..."
+	if command -v sha256sum >/dev/null 2>&1; then
+		COMPUTED_CHECKSUM=$(sha256sum "$TMP_FILE" | awk '{ print $1 }')
+	else
+		COMPUTED_CHECKSUM=$(shasum -a 256 "$TMP_FILE" | awk '{ print $1 }')
+	fi
+	log_info "Computed checksum: ${YELLOW}$COMPUTED_CHECKSUM${RESET}"
+
+	if [[ "$EXPECTED_CHECKSUM" != "$COMPUTED_CHECKSUM" ]]; then
+		log_error "Checksum verification failed! The downloaded file may be corrupted."
+		rm -f "$TMP_CHECKSUM"
+		exit 1
+	else
+		log_success "Checksum verification passed."
+	fi
+	rm -f "$TMP_CHECKSUM"
+else
+	log_error "Checksum file not found at ${YELLOW}$CHECKSUM_URL${RESET}. Aborting installation."
+	rm -f "$TMP_CHECKSUM"
+	exit 1
+fi
+# --- End Checksum Verification ---
+
+# Make executable if not on Windows.
 if [[ "$OS" != MINGW* && "$OS" != CYGWIN* && "$OS" != MSYS* ]]; then
 	chmod +x "$TMP_FILE"
 fi
 
-# Determine final target path. On Windows, rename to include .exe.
+# Set final target path.
 TARGET_PATH="${INSTALL_DIR}/${BIN_NAME}"
 if [[ "$OS" == MINGW* || "$OS" == CYGWIN* || "$OS" == MSYS* ]]; then
 	TARGET_PATH="${INSTALL_DIR}/${BIN_NAME}.exe"
 fi
 
-info "Installing to ${YELLOW}${TARGET_PATH}${RESET}"
+log_info "Installing to ${YELLOW}$TARGET_PATH${RESET}"
 if [ ! -w "$INSTALL_DIR" ]; then
-	info "Elevated privileges required to install to ${INSTALL_DIR}. Prompting for sudo..."
+	log_info "Elevated privileges required to install to ${INSTALL_DIR}. Prompting for sudo..."
 	sudo mv "$TMP_FILE" "$TARGET_PATH"
 else
 	mv "$TMP_FILE" "$TARGET_PATH"
 fi
 
-success "Installation complete!"
+log_success "Installation complete!"
 echo -e "${CYAN}You can now run: ${YELLOW}cpenv help${RESET}"
