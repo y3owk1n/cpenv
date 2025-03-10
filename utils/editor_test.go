@@ -46,21 +46,29 @@ func TestOpenInEditorFileNotExist(t *testing.T) {
 // TestOpenInEditorDefaultEditor verifies the branch where the EDITOR environment variable is not set.
 // To avoid hanging (since it defaults to "vim"), we override PATH to an empty string so that "vim" cannot be found.
 func TestOpenInEditorDefaultEditor(t *testing.T) {
+	// Unset EDITOR so that OpenInEditor falls back to "vim".
 	oldEditor := os.Getenv("EDITOR")
 	defer os.Setenv("EDITOR", oldEditor)
 	os.Unsetenv("EDITOR")
 
+	// Create a temporary file in a temporary directory.
+	tempDir := t.TempDir()
+	tempFile, err := os.CreateTemp(tempDir, "testfile")
+	assert.NoError(t, err)
+	tempFileName := tempFile.Name()
+	// Immediately close the file so Windows won't lock it.
+	tempFile.Close()
+	defer os.Remove(tempFileName)
+
+	// Override PATH so that "vim" is not found.
 	oldPath := os.Getenv("PATH")
 	defer os.Setenv("PATH", oldPath)
 	os.Setenv("PATH", "")
 
-	tempFile, err := os.CreateTemp(t.TempDir(), "testfile")
-	assert.NoError(t, err)
-	defer os.Remove(tempFile.Name())
-
-	err = OpenInEditor(tempFile.Name())
+	// Call OpenInEditor; since "vim" is not found, we expect an error.
+	err = OpenInEditor(tempFileName)
 	assert.Error(t, err)
-	// The error from exec.Command when "vim" is not found usually mentions "executable file not found"
+	// Check that the error message contains "executable file not found".
 	assert.Contains(t, err.Error(), "executable file not found")
 }
 
