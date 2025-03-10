@@ -1,17 +1,19 @@
 package core
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/y3owk1n/cpenv/utils"
 
-	"github.com/charmbracelet/huh"
-	"github.com/charmbracelet/huh/spinner"
+	"github.com/briandowns/spinner"
+	"github.com/manifoldco/promptui"
 )
 
 func GetProjectsList(vaultDir string) ([]utils.Directory, error) {
@@ -44,23 +46,16 @@ func SelectProject(projects []utils.Directory) (string, error) {
 		return "", fmt.Errorf("no projects found in the vault")
 	}
 
-	var selectedProject string
-	baseTheme := huh.ThemeBase()
+	prompt := promptui.Select{
+		Label: "Choose a project to copy from",
+		Items: generateProjectOptions(projects),
+	}
 
-	form := huh.NewForm(
-		huh.NewGroup(
-			huh.NewSelect[string]().
-				Title("Choose a project to copy from").
-				Options(generateProjectOptions(projects)...).
-				Value(&selectedProject),
-		),
-	).WithTheme(baseTheme)
-
-	err := form.Run()
+	_, selectedProject, err := prompt.Run()
 	if err != nil {
-		if err == huh.ErrUserAborted {
+		if err == promptui.ErrInterrupt {
 			logrus.Debug("User aborted project selection")
-			fmt.Println("Until next time!")
+			fmt.Printf("%s %s\n", utils.WarningIcon(), utils.WhiteText("Selection cancelled."))
 			os.Exit(0)
 		}
 		return "", fmt.Errorf("error starting the selection form: %w", err)
@@ -74,12 +69,13 @@ func SelectProject(projects []utils.Directory) (string, error) {
 	return selectedProject, nil
 }
 
-func generateProjectOptions(projects []utils.Directory) []huh.Option[string] {
-	options := make([]huh.Option[string], len(projects))
-	for i, project := range projects {
-		options[i] = huh.NewOption(project.Name, project.Value)
+func generateProjectOptions(projects []utils.Directory) []string {
+	var projectOptions []string
+
+	for _, project := range projects {
+		projectOptions = append(projectOptions, project.Name)
 	}
-	return options
+	return projectOptions
 }
 
 func CopyEnvFilesToProject(project string, currentPath string, vaultDir string) error {
@@ -119,59 +115,41 @@ func processCopyEnvFileToProject(file, projectPath, currentPath string) error {
 }
 
 func copyFileWithSpinner(sourcePath, destinationPath string) error {
-	action := func() {
-		destDir := filepath.Dir(destinationPath)
-		logrus.Debugf("Creating directory: %s", destDir)
-		if err := os.MkdirAll(destDir, os.ModePerm); err != nil {
-			logrus.Errorf("Failed to create directory %s: %v", destDir, err)
-			return
-		}
+	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+	s.Prefix = fmt.Sprintf("Copying %s to %s", sourcePath, destinationPath)
+	s.Start()
 
-		logrus.Debugf("Copying file from %s to %s", sourcePath, destinationPath)
-		if err := utils.CopyFile(sourcePath, destinationPath); err != nil {
-			logrus.Errorf("Failed to copy file from %s to %s: %v", sourcePath, destinationPath, err)
-			return
-		}
-		logrus.Debugf("File copied successfully: %s", destinationPath)
+	destDir := filepath.Dir(destinationPath)
+	logrus.Debugf("Creating directory: %s", destDir)
+	if err := os.MkdirAll(destDir, os.ModePerm); err != nil {
+		logrus.Errorf("Failed to create directory %s: %v", destDir, err)
 	}
 
-	spinnerTitle := fmt.Sprintf("Copying %s to %s", sourcePath, destinationPath)
-	logrus.Debugf("Starting spinner with title: %s", spinnerTitle)
-	_ = spinner.New().
-		Title(spinnerTitle).
-		Action(action).
-		Run()
+	logrus.Debugf("Copying file from %s to %s", sourcePath, destinationPath)
+	if err := utils.CopyFile(sourcePath, destinationPath); err != nil {
+		logrus.Errorf("Failed to copy file from %s to %s: %v", sourcePath, destinationPath, err)
+	}
+	logrus.Debugf("File copied successfully: %s", destinationPath)
 
-	fmt.Println(utils.SuccessMessage.Render("Copied", sourcePath, "", destinationPath))
+	s.Stop()
+
+	fmt.Printf("%s %s %s %s %s\n", utils.SuccessIcon(), utils.WhiteText("Copied"), utils.CyanText(sourcePath), utils.WhiteText("to"), utils.CyanText(destinationPath))
 	return nil
 }
 
 func handleExistingFile(sourcePath, destinationPath string) error {
-	var confirm bool
-	baseTheme := huh.ThemeBase()
+	fmt.Printf("\n%s %s\n", utils.InfoIcon(), fmt.Sprintf("Processing for: %s", utils.CyanText(destinationPath)))
+	fmt.Printf("%s ", "File exists! Do you want to overwrite? (y/N): ")
 
-	form := huh.NewForm(huh.NewGroup(
-		huh.NewConfirm().
-			Title("File exists! Do you want to overwrite?").
-			Description(fmt.Sprintf("File: %s", destinationPath)).
-			Affirmative("Yes!").
-			Negative("No.").
-			Value(&confirm),
-	)).WithTheme(baseTheme)
-
-	err := form.Run()
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
 	if err != nil {
-		if err == huh.ErrUserAborted {
-			logrus.Debug("User aborted project selection")
-			fmt.Println("Until next time!")
-			os.Exit(0)
-		}
-		return fmt.Errorf("error confirming overwrite: %w", err)
+		logrus.Fatalf("Failed to read input: %v", err)
 	}
-
-	if !confirm {
+	input = strings.TrimSpace(input)
+	if strings.ToLower(input) != "y" {
 		logrus.Debugf("User chose not to overwrite file: %s", destinationPath)
-		fmt.Println(utils.WarningMessage.Render("Skipped", destinationPath))
+		fmt.Printf("%s %s\n", utils.WarningIcon(), utils.WhiteText("Skipped."))
 		return nil
 	}
 
@@ -182,31 +160,18 @@ func ConfirmCwd() error {
 	dir := utils.GetCurrentWorkingDirectory()
 	logrus.Debugf("Current working directory: %s", dir)
 
-	var confirm bool
-	baseTheme := huh.ThemeBase()
+	fmt.Printf("%s %s\n\n", utils.InfoIcon(), fmt.Sprintf("Current working directory: %s", utils.CyanText(dir)))
+	fmt.Printf("%s ", "Is this your root directory to perform the backup? (y/N): ")
 
-	form := huh.NewForm(huh.NewGroup(
-		huh.NewConfirm().
-			Title("Is this your root directory to perform the backup?").
-			Description(fmt.Sprintf("Current Root Directory: %s", dir)).
-			Affirmative("Yes!").
-			Negative("No.").
-			Value(&confirm),
-	)).WithTheme(baseTheme)
-
-	err := form.Run()
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
 	if err != nil {
-		if err == huh.ErrUserAborted {
-			logrus.Debug("User aborted project selection")
-			fmt.Println("Until next time!")
-			os.Exit(0)
-		}
-		return fmt.Errorf("error confirming cwd form: %w", err)
+		logrus.Fatalf("Failed to read input: %v", err)
 	}
-
-	if !confirm {
-		logrus.Debug("User did not confirm the current working directory")
-		fmt.Println(utils.WarningMessage.Render("cd to your desired directory and restart the backup."))
+	input = strings.TrimSpace(input)
+	if strings.ToLower(input) != "y" {
+		logrus.Debugf("User chose not to backup to: %s", dir)
+		fmt.Printf("%s %s\n", utils.WarningIcon(), utils.WhiteText("Aborted... cd to your desired directory and restart the backup again."))
 		os.Exit(0)
 		return nil
 	}

@@ -33,7 +33,7 @@ func newConfigInitCommand() *cobra.Command {
 		Use:     "init",
 		Short:   "Initialize a config for cpenv to work",
 		Aliases: []string{"i", "init"},
-		RunE:    cic.run,
+		Run:     cic.run,
 	}
 }
 
@@ -41,26 +41,26 @@ func newConfigEditCommand() *cobra.Command {
 	cec := &configEditCommand{}
 
 	return &cobra.Command{
-		Use:               "edit",
-		Short:             "Edit the cpenv config with $EDITOR",
-		Aliases:           []string{"e", "edit"},
-		PersistentPreRunE: cec.preRun,
-		RunE:              cec.run,
+		Use:              "edit",
+		Short:            "Edit the cpenv config with $EDITOR",
+		Aliases:          []string{"e", "edit"},
+		PersistentPreRun: cec.preRun,
+		Run:              cec.run,
 	}
 }
 
-func (cic *configInitCommand) run(cmd *cobra.Command, args []string) error {
+func (cic *configInitCommand) run(cmd *cobra.Command, args []string) {
 	logrus.Debug("Starting config init command")
 
 	if viper.ConfigFileUsed() != "" {
-		fmt.Println(utils.ErrorMessage.Render("Configuration exists! Use `cpenv config edit` to edit it"))
-		return nil
+		fmt.Printf("%s %s\n", utils.ErrorIcon(), utils.WhiteText("Configuration exists! Use `cpenv config edit` to edit it"))
+		return
 	}
 
 	home, err := os.UserHomeDir()
 	if err != nil {
 		logrus.Errorf("Failed to get user home directory: %v", err)
-		return err
+		return
 	}
 	logrus.Debugf("User home directory: %s", home)
 
@@ -74,27 +74,25 @@ func (cic *configInitCommand) run(cmd *cobra.Command, args []string) error {
 
 	if err := viper.WriteConfigAs(configPath); err != nil {
 		logrus.Errorf("Failed to save config: %v", err)
-		return err
+		return
 	}
 	logrus.Debug("Configuration written successfully")
 
-	fmt.Println(utils.SuccessMessage.Render("Configuration initialized successfully!"))
+	fmt.Printf("%s %s\n", utils.SuccessIcon(), utils.WhiteText("Configuration initialized successfully!"))
 
 	if _, err := core.CreateVaultIfNotFound(defaultVaultDir); err != nil {
 		logrus.Errorf("Failed to create vault directory: %v", err)
-		return err
+		return
 	}
 	logrus.Debug("Vault directory created successfully (if it was not already present)")
-
-	return nil
 }
 
-func (cec *configEditCommand) preRun(cmd *cobra.Command, args []string) error {
+func (cec *configEditCommand) preRun(cmd *cobra.Command, args []string) {
 	logrus.WithField("args", args).Debug("Starting config edit preRun command")
 
 	configPath := viper.ConfigFileUsed()
 	if configPath == "" {
-		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init` first"))
+		fmt.Printf("%s %s\n", utils.ErrorIcon(), utils.WhiteText("Please run `cpenv config init` first"))
 		os.Exit(0)
 	}
 	logrus.Debugf("Using config file: %s", configPath)
@@ -115,17 +113,15 @@ func (cec *configEditCommand) preRun(cmd *cobra.Command, args []string) error {
 	ctx = context.WithValue(ctx, VaultKey, vaultDirFull)
 	cmd.SetContext(ctx)
 	logrus.Debugf("Context set with ConfigKey=%s and VaultKey=%s", configPath, vaultDirFull)
-
-	return nil
 }
 
-func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
+func (cec *configEditCommand) run(cmd *cobra.Command, args []string) {
 	logrus.WithField("args", args).Debug("Starting config edit run command")
 
 	configPath, ok := cmd.Context().Value(ConfigKey).(string)
 	if !ok {
 		logrus.Error("Config not found in context")
-		return fmt.Errorf("config not found in context")
+		fmt.Printf("%s %s\n", utils.ErrorIcon(), utils.WhiteText("vault config not found in context"))
 	}
 	logrus.Debugf("Retrieved config file from context: %s", configPath)
 
@@ -135,7 +131,7 @@ func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
 	}
 	logrus.Debug("Configuration file opened in editor successfully")
 
-	fmt.Println(utils.SuccessMessage.Render("Successfully opened the configuration file in editor."))
+	fmt.Printf("%s %s\n", utils.SuccessIcon(), utils.WhiteText("Successfully opened the configuration file in editor."))
 
 	if err := viper.ReadInConfig(); err != nil {
 		logrus.Errorf("Failed to reload config: %v", err)
@@ -151,8 +147,6 @@ func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
 		os.Exit(1)
 	}
 	logrus.Debug("Vault directory ensured to exist after config reload")
-
-	return nil
 }
 
 func init() {
