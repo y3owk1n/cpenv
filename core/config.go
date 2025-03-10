@@ -10,6 +10,9 @@ import (
 	"github.com/y3owk1n/cpenv/utils"
 )
 
+// By default it points to os.UserHomeDir but can be overridden in tests.
+var UserHomeDirFunc = os.UserHomeDir
+
 func InitViper() error {
 	logrus.Debug("Initializing Viper configuration")
 	viper.SetConfigName("cpenv")
@@ -18,7 +21,7 @@ func InitViper() error {
 	viper.SetDefault("vault_dir", ".env-files")
 	logrus.Debug("Set default vault_dir to .env-files")
 
-	home, err := os.UserHomeDir()
+	home, err := UserHomeDirFunc()
 	if err != nil {
 		logrus.Errorf("Failed to get user home directory: %v", err)
 		return err
@@ -52,7 +55,7 @@ func InitViper() error {
 
 func GetFullVaultDir(vaultDir string) (string, error) {
 	logrus.Debugf("Resolving full vault directory for vault_dir: %s", vaultDir)
-	homeDir, err := os.UserHomeDir()
+	homeDir, err := UserHomeDirFunc()
 	if err != nil {
 		logrus.Errorf("Failed to get home directory: %v", err)
 		return "", fmt.Errorf("failed to get home directory: %w", err)
@@ -91,6 +94,7 @@ func CreateVaultIfNotFound(vaultDir string) (string, error) {
 		return "", fmt.Errorf("failed to create vault: %w", err)
 	}
 
+	// Print success message
 	fmt.Printf("%s %s %s\n", utils.SuccessIcon(), utils.WhiteText("Created vault directory at"), utils.CyanText(fullVaultDir))
 	logrus.Debugf("Vault directory created at: %s", fullVaultDir)
 

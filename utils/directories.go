@@ -63,8 +63,11 @@ func Mkdir(path string) error {
 	return nil
 }
 
+// It defaults to os.Getwd but can be overridden in tests.
+var GetWdFunc = os.Getwd
+
 func GetCurrentWorkingDirectory() string {
-	dir, err := os.Getwd()
+	dir, err := GetWdFunc()
 	if err != nil {
 		logrus.Errorf("Failed to get current working directory: %v", err)
 		return ""
@@ -94,6 +97,9 @@ func ReadDirRecursive(dirPath string) ([]string, error) {
 	logrus.Debugf("Total files found recursively in %s: %d", dirPath, len(files))
 	return files, nil
 }
+
+// Id defaults to ReadDirRecursive but can be overridden in tests.
+var ReadDirRecursiveFunc = ReadDirRecursive
 
 func OpenInFinder(dirPath string) error {
 	logrus.Debugf("Attempting to open directory in Finder: %s", dirPath)
