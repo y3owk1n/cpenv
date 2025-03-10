@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.15.2](https://github.com/y3owk1n/cpenv/compare/v1.15.1...v1.15.2) (2025-03-10)
+
+
+### Bug Fixes
+
+* handle verbose mode with more details ([#117](https://github.com/y3owk1n/cpenv/issues/117)) ([bcc6eb7](https://github.com/y3owk1n/cpenv/commit/bcc6eb7c214653a3cac155163a12a4a1f560bd20))
+* more consistent ui without charm ([#119](https://github.com/y3owk1n/cpenv/issues/119)) ([82f9cef](https://github.com/y3owk1n/cpenv/commit/82f9cefb8fe045c718dc5344fc6016ffe6979287))
+
 ## [1.15.1](https://github.com/y3owk1n/cpenv/compare/v1.15.0...v1.15.1) (2025-03-09)
 
 
