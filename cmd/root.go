@@ -9,10 +9,9 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/charmbracelet/log"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/y3owk1n/cpenv/core"
-	"github.com/y3owk1n/cpenv/utils"
 )
 
 type contextKey string
@@ -38,9 +37,9 @@ func Execute() {
 
 func initConfig() {
 	if verbose {
-		utils.Logger.SetLevel(log.DebugLevel)
+		logrus.SetLevel(logrus.DebugLevel)
 	} else {
-		utils.Logger.SetLevel(log.InfoLevel)
+		logrus.SetLevel(logrus.InfoLevel)
 	}
 
 	sigCh := make(chan os.Signal, 1)
@@ -48,13 +47,13 @@ func initConfig() {
 	go func() {
 		<-sigCh
 		fmt.Println()
-		utils.Logger.Debug("Interrupt received, canceling operations...")
+		logrus.Debug("Interrupt received, canceling operations...")
 		cancel()
 		os.Exit(1)
 	}()
 
 	if err := core.InitViper(); err != nil {
-		utils.Logger.Fatalf("Failed to init config: %v", err)
+		logrus.Fatalf("Failed to init config: %v", err)
 	}
 }
 

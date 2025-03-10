@@ -9,20 +9,16 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/charmbracelet/log"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/y3owk1n/cpenv/core"
 	"github.com/y3owk1n/cpenv/utils"
 )
 
-type configInitCommand struct {
-	logger *log.Logger
-}
+type configInitCommand struct{}
 
-type configEditCommand struct {
-	logger *log.Logger
-}
+type configEditCommand struct{}
 
 var configCmd = &cobra.Command{
 	Use:     "config",
@@ -31,9 +27,7 @@ var configCmd = &cobra.Command{
 }
 
 func newConfigInitCommand() *cobra.Command {
-	cic := &configInitCommand{
-		logger: utils.Logger,
-	}
+	cic := &configInitCommand{}
 
 	return &cobra.Command{
 		Use:     "init",
@@ -44,9 +38,7 @@ func newConfigInitCommand() *cobra.Command {
 }
 
 func newConfigEditCommand() *cobra.Command {
-	cec := &configEditCommand{
-		logger: utils.Logger,
-	}
+	cec := &configEditCommand{}
 
 	return &cobra.Command{
 		Use:               "edit",
@@ -58,6 +50,8 @@ func newConfigEditCommand() *cobra.Command {
 }
 
 func (cic *configInitCommand) run(cmd *cobra.Command, args []string) error {
+	logrus.Debug("Starting config init command")
+
 	if viper.ConfigFileUsed() != "" {
 		fmt.Println(utils.ErrorMessage.Render("Configuration exists! Use `cpenv config edit` to edit it"))
 		return nil
@@ -65,91 +59,98 @@ func (cic *configInitCommand) run(cmd *cobra.Command, args []string) error {
 
 	home, err := os.UserHomeDir()
 	if err != nil {
+		logrus.Errorf("Failed to get user home directory: %v", err)
 		return err
 	}
+	logrus.Debugf("User home directory: %s", home)
 
 	configPath := filepath.Join(home, ".config", "cpenv", "cpenv.yaml")
+	logrus.Debugf("Config file path: %s", configPath)
 
 	defaultVaultDir := ".env-files"
+	logrus.Debugf("Default vault directory: %s", defaultVaultDir)
 
 	viper.Set("vault_dir", defaultVaultDir)
 
 	if err := viper.WriteConfigAs(configPath); err != nil {
-		cic.logger.Error("Failed to save config",
-			"error", err,
-		)
+		logrus.Errorf("Failed to save config: %v", err)
 		return err
 	}
+	logrus.Debug("Configuration written successfully")
 
 	fmt.Println(utils.SuccessMessage.Render("Configuration initialized successfully!"))
 
 	if _, err := core.CreateVaultIfNotFound(defaultVaultDir); err != nil {
-		cic.logger.Error("Failed to create vault directory",
-			"error", err,
-		)
+		logrus.Errorf("Failed to create vault directory: %v", err)
 		return err
 	}
+	logrus.Debug("Vault directory created successfully (if it was not already present)")
 
 	return nil
 }
 
 func (cec *configEditCommand) preRun(cmd *cobra.Command, args []string) error {
+	logrus.WithField("args", args).Debug("Starting config edit preRun command")
+
 	configPath := viper.ConfigFileUsed()
 	if configPath == "" {
 		fmt.Println(utils.ErrorMessage.Render("Please run `cpenv config init` first"))
 		os.Exit(0)
 	}
+	logrus.Debugf("Using config file: %s", configPath)
 
 	vaultDir := viper.GetString("vault_dir")
+	logrus.Debugf("Vault directory from config: %s", vaultDir)
 
 	vaultDirFull, err := core.GetFullVaultDir(vaultDir)
 	if err != nil {
-		cec.logger.Error("Failed to get env file directory",
-			"error", err,
-		)
+		logrus.Errorf("Failed to get env file directory: %v", err)
 		os.Exit(1)
 	}
+	logrus.Debugf("Resolved full vault directory: %s", vaultDirFull)
 
-	cmd.SetContext(context.WithValue(cmd.Context(), ConfigKey, configPath))
-	cmd.SetContext(context.WithValue(cmd.Context(), VaultKey, vaultDirFull))
+	// Set context values
+	ctx := cmd.Context()
+	ctx = context.WithValue(ctx, ConfigKey, configPath)
+	ctx = context.WithValue(ctx, VaultKey, vaultDirFull)
+	cmd.SetContext(ctx)
+	logrus.Debugf("Context set with ConfigKey=%s and VaultKey=%s", configPath, vaultDirFull)
 
 	return nil
 }
 
 func (cec *configEditCommand) run(cmd *cobra.Command, args []string) error {
+	logrus.WithField("args", args).Debug("Starting config edit run command")
+
 	configPath, ok := cmd.Context().Value(ConfigKey).(string)
 	if !ok {
+		logrus.Error("Config not found in context")
 		return fmt.Errorf("config not found in context")
 	}
-
-	cec.logger.Debug("Running configEditCommand",
-		"configPath", configPath,
-	)
+	logrus.Debugf("Retrieved config file from context: %s", configPath)
 
 	if err := utils.OpenInEditor(configPath); err != nil {
-		cec.logger.Error("Failed to open configuration file in editor",
-			"error", err,
-		)
+		logrus.Errorf("Failed to open configuration file in editor: %v", err)
 		os.Exit(1)
 	}
+	logrus.Debug("Configuration file opened in editor successfully")
 
 	fmt.Println(utils.SuccessMessage.Render("Successfully opened the configuration file in editor."))
 
 	if err := viper.ReadInConfig(); err != nil {
-		cec.logger.Error("Failed to reload config",
-			"error", err,
-		)
+		logrus.Errorf("Failed to reload config: %v", err)
 		os.Exit(1)
 	}
+	logrus.Debug("Configuration reloaded successfully")
 
 	vaultDir := viper.GetString("vault_dir")
+	logrus.Debugf("Vault directory after reload: %s", vaultDir)
 
 	if _, err := core.CreateVaultIfNotFound(vaultDir); err != nil {
-		cec.logger.Error("Failed to create vault directory",
-			"error", err,
-		)
+		logrus.Errorf("Failed to create vault directory: %v", err)
 		os.Exit(1)
 	}
+	logrus.Debug("Vault directory ensured to exist after config reload")
 
 	return nil
 }
