@@ -102,7 +102,10 @@ func CopyEnvFilesToProject(project string, currentPath string, vaultDir string) 
 var copyFileWithSpinnerFunc = copyFileWithSpinner
 
 func processCopyEnvFileToProject(file, projectPath, currentPath string) error {
-	relativePath := strings.TrimPrefix(file, projectPath+"/")
+	relativePath, err := filepath.Rel(projectPath, file)
+	if err != nil {
+		return fmt.Errorf("failed to compute relative path: %w", err)
+	}
 	destinationPath := filepath.Join(utils.GetCurrentWorkingDirectory(), currentPath)
 	destinationPathWithFile := filepath.Join(destinationPath, relativePath)
 
