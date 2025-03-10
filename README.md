@@ -67,12 +67,64 @@ Before using EnvCopy CLI, ensure you have the following prerequisites:
 
 ### Installation
 
-Install via brew:
+#### Install with `install.sh`
+
+You can install **cpenv** with a single command that downloads and executes our installation script. The script automatically detects your operating system and architecture and installs the appropriate binary.
+
+> [!warning]
+> Always review remote scripts before execution. Before running any script from the internet, inspect its contents to ensure its safety.
+
+```bash
+# Using curl
+curl -fsSL https://raw.githubusercontent.com/y3owk1n/cpenv/main/install.sh | bash
+
+# Using wget
+wget -qO- https://raw.githubusercontent.com/y3owk1n/cpenv/main/install.sh | bash
+```
+
+We have also included an `uninstall script` if you would like to uninstall it
+
+```bash
+# Using curl
+curl -fsSL https://raw.githubusercontent.com/y3owk1n/cpenv/main/uninstall.sh | bash
+
+# Using wget
+wget -qO- https://raw.githubusercontent.com/y3owk1n/cpenv/main/uninstall.sh | bash
+```
+
+#### Install via brew
 
 ```bash
 brew tap y3owk1n/tap
 brew install y3owk1n/tap/cpenv
 ```
+
+#### Building From Source
+
+Make sure you have Go (v1.23 or later) installed. Then run:
+
+```bash
+git clone https://github.com/y3owk1n/nvs.git
+cd nvs
+mkdir -p build
+
+# Build for darwin-arm64
+env GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/y3owk1n/cpenv/cmd.Version=local-build" -trimpath -o ./build/cpenv-darwin-arm64 ./main.go
+
+# Build for darwin-amd64
+env GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/y3owk1n/cpenv/cmd.Version=local-build" -trimpath -o ./build/cpenv-darwin-amd64 ./main.go
+
+# Build for linux-arm64
+env GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/y3owk1n/cpenv/cmd.Version=local-build" -trimpath -o ./build/cpenv-linux-arm64 ./main.go
+
+# Build for linux-amd64
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/y3owk1n/cpenv/cmd.Version=local-build" -trimpath -o ./build/cpenv-linux-amd64 ./main.go
+
+# Build for windows-amd64
+env GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/y3owk1n/cpenv/cmd.Version=local-build" -trimpath -o ./build/cpenv-windows64.exe ./main.go
+```
+
+Move the binary to your PATH or run it directly.
 
 ### Usage
 
