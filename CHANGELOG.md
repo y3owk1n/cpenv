@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.4](https://github.com/y3owk1n/cpenv/compare/v1.15.3...v1.15.4) (2025-03-10)
+
+
+### Bug Fixes
+
+* action typo for build ([#125](https://github.com/y3owk1n/cpenv/issues/125)) ([2325447](https://github.com/y3owk1n/cpenv/commit/23254471471f82ee63fd5971dc732b39995c252b))
+
 ## [1.15.3](https://github.com/y3owk1n/cpenv/compare/v1.15.2...v1.15.3) (2025-03-10)
 
 
