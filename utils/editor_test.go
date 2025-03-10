@@ -86,6 +86,8 @@ func TestOpenInEditorFakeEditorSuccess(t *testing.T) {
 func TestOpenInEditorFakeEditorFailure(t *testing.T) {
 	tempFile, err := os.CreateTemp(t.TempDir(), "testfile")
 	assert.NoError(t, err)
+	// Close the file so Windows doesn't lock it
+	tempFile.Close()
 	defer os.Remove(tempFile.Name())
 
 	oldEditor := os.Getenv("EDITOR")
