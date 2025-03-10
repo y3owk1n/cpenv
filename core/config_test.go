@@ -12,13 +12,17 @@ import (
 
 // TestInitViperConfigNotFound tests the branch where no config file exists.
 func TestInitViperConfigNotFound(t *testing.T) {
-	// Save and restore HOME and reset viper.
+	// Set HOME and USERPROFILE to a temporary directory.
 	oldHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", oldHome)
-	viper.Reset()
-
+	oldUserProfile := os.Getenv("USERPROFILE")
 	tempHome := t.TempDir()
 	os.Setenv("HOME", tempHome)
+	os.Setenv("USERPROFILE", tempHome)
+	defer func() {
+		os.Setenv("HOME", oldHome)
+		os.Setenv("USERPROFILE", oldUserProfile)
+	}()
+	viper.Reset()
 
 	// Ensure no config file exists.
 	configDir := filepath.Join(tempHome, ".config", "cpenv")
@@ -35,11 +39,15 @@ func TestInitViperConfigNotFound(t *testing.T) {
 // TestInitViperConfigInvalid tests the branch where a config file exists but is invalid.
 func TestInitViperConfigInvalid(t *testing.T) {
 	oldHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", oldHome)
-	viper.Reset()
-
+	oldUserProfile := os.Getenv("USERPROFILE")
 	tempHome := t.TempDir()
 	os.Setenv("HOME", tempHome)
+	os.Setenv("USERPROFILE", tempHome)
+	defer func() {
+		os.Setenv("HOME", oldHome)
+		os.Setenv("USERPROFILE", oldUserProfile)
+	}()
+	viper.Reset()
 
 	configDir := filepath.Join(tempHome, ".config", "cpenv")
 	err := os.MkdirAll(configDir, 0755)
@@ -70,11 +78,16 @@ func TestInitViperUserHomeError(t *testing.T) {
 
 // TestGetFullVaultDir verifies that GetFullVaultDir returns the correct full path.
 func TestGetFullVaultDir(t *testing.T) {
+	// Override HOME and USERPROFILE.
 	oldHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", oldHome)
-
+	oldUserProfile := os.Getenv("USERPROFILE")
 	tempHome := t.TempDir()
 	os.Setenv("HOME", tempHome)
+	os.Setenv("USERPROFILE", tempHome)
+	defer func() {
+		os.Setenv("HOME", oldHome)
+		os.Setenv("USERPROFILE", oldUserProfile)
+	}()
 
 	vaultDir := "myVault"
 	expected := filepath.Join(tempHome, vaultDir)
@@ -103,10 +116,14 @@ func TestGetFullVaultDirUserHomeError(t *testing.T) {
 // CreateVaultIfNotFound returns its path without re-creating it.
 func TestCreateVaultIfNotFound_AlreadyExists(t *testing.T) {
 	oldHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", oldHome)
-
+	oldUserProfile := os.Getenv("USERPROFILE")
 	tempHome := t.TempDir()
 	os.Setenv("HOME", tempHome)
+	os.Setenv("USERPROFILE", tempHome)
+	defer func() {
+		os.Setenv("HOME", oldHome)
+		os.Setenv("USERPROFILE", oldUserProfile)
+	}()
 
 	vaultDir := ".env-files"
 	fullVault := filepath.Join(tempHome, vaultDir)
@@ -123,10 +140,14 @@ func TestCreateVaultIfNotFound_AlreadyExists(t *testing.T) {
 // CreateVaultIfNotFound creates it.
 func TestCreateVaultIfNotFound_NotExist(t *testing.T) {
 	oldHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", oldHome)
-
+	oldUserProfile := os.Getenv("USERPROFILE")
 	tempHome := t.TempDir()
 	os.Setenv("HOME", tempHome)
+	os.Setenv("USERPROFILE", tempHome)
+	defer func() {
+		os.Setenv("HOME", oldHome)
+		os.Setenv("USERPROFILE", oldUserProfile)
+	}()
 
 	vaultDir := "myVault"
 	fullVault := filepath.Join(tempHome, vaultDir)
@@ -144,10 +165,14 @@ func TestCreateVaultIfNotFound_NotExist(t *testing.T) {
 // TestCreateVaultIfNotFound_MkdirAllError simulates a failure in creating the vault directory.
 func TestCreateVaultIfNotFound_MkdirAllError(t *testing.T) {
 	oldHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", oldHome)
-
+	oldUserProfile := os.Getenv("USERPROFILE")
 	tempHome := t.TempDir()
 	os.Setenv("HOME", tempHome)
+	os.Setenv("USERPROFILE", tempHome)
+	defer func() {
+		os.Setenv("HOME", oldHome)
+		os.Setenv("USERPROFILE", oldUserProfile)
+	}()
 
 	// Create a file where a directory is expected.
 	parentPath := filepath.Join(tempHome, "parent")
