@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-# Configuration: update these with your GitHub repository details.
-REPO="owner/repo" # Replace with your GitHub repo, e.g., "yourusername/cpenv"
-BIN_NAME="cpenv"  # Base name for the binary
+REPO="y3owk1n/cpenv"
+BIN_NAME="cpenv" # Base name for the binary
 
 # Detect OS and Architecture, and set INSTALL_DIR and asset name.
 OS="$(uname -s)"
