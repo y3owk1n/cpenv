@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.3](https://github.com/y3owk1n/cpenv/compare/v1.15.2...v1.15.3) (2025-03-10)
+
+
+### Bug Fixes
+
+* build with checksum & improved scripts ([#123](https://github.com/y3owk1n/cpenv/issues/123)) ([9bcca83](https://github.com/y3owk1n/cpenv/commit/9bcca83a3b460a29f3d3ecf744ac26f00acd3d29))
+
 ## [1.15.2](https://github.com/y3owk1n/cpenv/compare/v1.15.1...v1.15.2) (2025-03-10)
 
 
