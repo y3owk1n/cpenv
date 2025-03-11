@@ -303,7 +303,7 @@ func TestCopyEnvFilesToProject_Success(t *testing.T) {
 
 	// Set the current working directory to a temporary directory.
 	tempCwd := t.TempDir()
-	origWd, err := os.Getwd()
+	origWd, err := utils.GetWdFunc()
 	assert.NoError(t, err)
 	err = os.Chdir(tempCwd)
 	assert.NoError(t, err)
@@ -331,7 +331,7 @@ func TestProcessCopyEnvFileToProject_FileNotExists(t *testing.T) {
 	dummyFile := filepath.Join(tempProject, "file.env")
 	assert.NoError(t, os.WriteFile(dummyFile, []byte("data"), 0644))
 	tempCwd := t.TempDir()
-	origWd, _ := os.Getwd()
+	origWd, _ := utils.GetWdFunc()
 	os.Chdir(tempCwd)
 	defer os.Chdir(origWd)
 	destPath := filepath.Join(tempCwd, currentPath, "file.env")
@@ -367,7 +367,7 @@ func TestProcessCopyEnvFileToProject_FileExists(t *testing.T) {
 		called = true
 		return nil
 	}
-	origWd, err := os.Getwd()
+	origWd, err := utils.GetWdFunc()
 	assert.NoError(t, err)
 	err = os.Chdir(tempCwd)
 	assert.NoError(t, err)
@@ -467,7 +467,7 @@ func TestHandleExistingFile_Overwrite(t *testing.T) {
 func TestConfirmCwd_Success(t *testing.T) {
 	// Set working directory to a temporary directory.
 	tempDir := t.TempDir()
-	origWd, _ := os.Getwd()
+	origWd, _ := utils.GetWdFunc()
 	os.Chdir(tempDir)
 	defer os.Chdir(origWd)
 	origStdin := os.Stdin
@@ -491,7 +491,7 @@ func TestConfirmCwd_Abort(t *testing.T) {
 	}
 	defer func() { exitFunc = origExit }()
 	tempDir := t.TempDir()
-	origWd, _ := os.Getwd()
+	origWd, _ := utils.GetWdFunc()
 	os.Chdir(tempDir)
 	defer os.Chdir(origWd)
 	origStdin := os.Stdin
@@ -552,7 +552,7 @@ func TestCopyEnvFilesToVault_WithTempVault(t *testing.T) {
 	}
 
 	// Simulate that the current working directory is the temporary project directory.
-	origWd, err := os.Getwd()
+	origWd, err := utils.GetWdFunc()
 	assert.NoError(t, err)
 	err = os.Chdir(tempProjectDir)
 	assert.NoError(t, err)
