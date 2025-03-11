@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.5](https://github.com/y3owk1n/cpenv/compare/v1.15.4...v1.15.5) (2025-03-11)
+
+
+### Bug Fixes
+
+* add prettified path for better presentation ([#127](https://github.com/y3owk1n/cpenv/issues/127)) ([c15c8ca](https://github.com/y3owk1n/cpenv/commit/c15c8caf46f45774f3e637889f1168d3b8ad3314))
+
 ## [1.15.4](https://github.com/y3owk1n/cpenv/compare/v1.15.3...v1.15.4) (2025-03-10)
 
 
