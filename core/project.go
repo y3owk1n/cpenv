@@ -124,33 +124,47 @@ func processCopyEnvFileToProject(file, projectPath, currentPath string, vaultDir
 }
 
 func prettifiedPath(path, vaultDir string) string {
-	// Normalize paths.
-	path = filepath.Clean(path)
-	vaultDir = filepath.Clean(vaultDir)
+	// Resolve all paths to absolute and follow symlinks
+	resolvePath := func(p string) string {
+		abs, err := filepath.Abs(p)
+		if err != nil {
+			return p
+		}
+		resolved, err := filepath.EvalSymlinks(abs)
+		if err != nil {
+			return abs
+		}
+		return resolved
+	}
+
+	resolvedPath := resolvePath(path)
+	resolvedVault := resolvePath(vaultDir)
+
 	cwd, err := utils.GetWdFunc()
 	if err != nil {
-		// In production you might return an error, but here we fallback.
-		return path
+		logrus.Errorf("Failed to get current working directory: %v", err)
+		return ""
 	}
-	cwd = filepath.Clean(cwd)
+	resolvedCWD := resolvePath(cwd)
 
-	// Check if path is under cwd.
-	if relPath, err := filepath.Rel(cwd, path); err == nil && !strings.HasPrefix(relPath, "..") {
-		if relPath == "." {
+	// Check against CWD first
+	if rel, err := filepath.Rel(resolvedCWD, resolvedPath); err == nil && !strings.HasPrefix(rel, "..") {
+		if rel == "." {
 			return "{project}"
 		}
-		return filepath.Join("{project}", relPath)
+		return filepath.Join("{project}", rel)
 	}
 
-	// Check if path is under vaultDir.
-	if relPath, err := filepath.Rel(vaultDir, path); err == nil && !strings.HasPrefix(relPath, "..") {
-		if relPath == "." {
+	// Check against vault directory
+	if rel, err := filepath.Rel(resolvedVault, resolvedPath); err == nil && !strings.HasPrefix(rel, "..") {
+		if rel == "." {
 			return "{vault}"
 		}
-		return filepath.Join("{vault}", relPath)
+		return filepath.Join("{vault}", rel)
 	}
 
-	return path // Fallback to full length if no match.
+	// Return original path if no match (not prettified)
+	return path
 }
 
 func copyFileWithSpinner(sourcePath, destinationPath string, vaultDir string) error {
