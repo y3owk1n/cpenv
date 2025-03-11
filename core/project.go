@@ -92,7 +92,7 @@ func CopyEnvFilesToProject(project string, currentPath string, vaultDir string) 
 	}
 
 	for _, file := range filesInProject {
-		if err := processCopyEnvFileToProject(file, projectPath, currentPath); err != nil {
+		if err := processCopyEnvFileToProject(file, projectPath, currentPath, vaultDir); err != nil {
 			logrus.Errorf("Error processing env file: file: %s, error: %v", file, err)
 		}
 	}
@@ -101,7 +101,7 @@ func CopyEnvFilesToProject(project string, currentPath string, vaultDir string) 
 
 var copyFileWithSpinnerFunc = copyFileWithSpinner
 
-func processCopyEnvFileToProject(file, projectPath, currentPath string) error {
+func processCopyEnvFileToProject(file, projectPath, currentPath string, vaultDir string) error {
 	relativePath, err := filepath.Rel(projectPath, file)
 	if err != nil {
 		return fmt.Errorf("failed to compute relative path: %w", err)
@@ -116,14 +116,44 @@ func processCopyEnvFileToProject(file, projectPath, currentPath string) error {
 
 	if !fileExists {
 		logrus.Debugf("File does not exist, proceeding to copy: %s", file)
-		return copyFileWithSpinnerFunc(file, destinationPathWithFile)
+		return copyFileWithSpinnerFunc(file, destinationPathWithFile, vaultDir)
 	}
 
 	logrus.Debugf("File exists, prompting for overwrite: %s", destinationPathWithFile)
-	return handleExistingFile(file, destinationPathWithFile)
+	return handleExistingFile(file, destinationPathWithFile, vaultDir)
 }
 
-func copyFileWithSpinner(sourcePath, destinationPath string) error {
+func prettifiedPath(path, vaultDir string) string {
+	// Normalize paths.
+	path = filepath.Clean(path)
+	vaultDir = filepath.Clean(vaultDir)
+	cwd, err := os.Getwd()
+	if err != nil {
+		// In production you might return an error, but here we fallback.
+		return path
+	}
+	cwd = filepath.Clean(cwd)
+
+	// Check if path is under cwd.
+	if relPath, err := filepath.Rel(cwd, path); err == nil && !strings.HasPrefix(relPath, "..") {
+		if relPath == "." {
+			return "{project}"
+		}
+		return filepath.Join("{project}", relPath)
+	}
+
+	// Check if path is under vaultDir.
+	if relPath, err := filepath.Rel(vaultDir, path); err == nil && !strings.HasPrefix(relPath, "..") {
+		if relPath == "." {
+			return "{vault}"
+		}
+		return filepath.Join("{vault}", relPath)
+	}
+
+	return path // Fallback to full length if no match.
+}
+
+func copyFileWithSpinner(sourcePath, destinationPath string, vaultDir string) error {
 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 	s.Prefix = fmt.Sprintf("Copying %s to %s", sourcePath, destinationPath)
 	s.Start()
@@ -142,11 +172,11 @@ func copyFileWithSpinner(sourcePath, destinationPath string) error {
 
 	s.Stop()
 
-	fmt.Printf("%s %s %s %s %s\n", utils.SuccessIcon(), utils.WhiteText("Copied"), utils.CyanText(sourcePath), utils.WhiteText("to"), utils.CyanText(destinationPath))
+	fmt.Printf("%s %s %s %s %s\n", utils.SuccessIcon(), utils.WhiteText("Copied"), utils.CyanText(prettifiedPath(sourcePath, vaultDir)), utils.WhiteText("to"), utils.CyanText(prettifiedPath(destinationPath, vaultDir)))
 	return nil
 }
 
-func handleExistingFile(sourcePath, destinationPath string) error {
+func handleExistingFile(sourcePath, destinationPath string, vaultDir string) error {
 	fmt.Printf("\n%s %s\n", utils.InfoIcon(), fmt.Sprintf("Processing for: %s", utils.CyanText(destinationPath)))
 	fmt.Printf("%s ", "File exists! Do you want to overwrite? (y/N): ")
 
@@ -162,7 +192,7 @@ func handleExistingFile(sourcePath, destinationPath string) error {
 		return nil
 	}
 
-	return copyFileWithSpinnerFunc(sourcePath, destinationPath)
+	return copyFileWithSpinnerFunc(sourcePath, destinationPath, vaultDir)
 }
 
 var exitFunc = os.Exit
@@ -220,14 +250,14 @@ func CopyEnvFilesToVault(vaultDir string) error {
 	}
 
 	for _, file := range filesInProject {
-		if err := processCopyEnvFileToVault(file, dir, destinationPath); err != nil {
+		if err := processCopyEnvFileToVault(file, dir, destinationPath, vaultDir); err != nil {
 			logrus.Errorf("Error processing env file: file: %s, error: %v", file, err)
 		}
 	}
 	return nil
 }
 
-func processCopyEnvFileToVault(file, cwd, destinationPath string) error {
+func processCopyEnvFileToVault(file, cwd, destinationPath string, vaultDir string) error {
 	fileName := filepath.Base(file)
 	fullPath, _ := filepath.Abs(file)
 
@@ -246,5 +276,5 @@ func processCopyEnvFileToVault(file, cwd, destinationPath string) error {
 	destinationPathWithFile := filepath.Join(destinationPath, relativePath)
 
 	logrus.Debugf("Copying env file to vault: source: %s, destination: %s", sourcePath, destinationPathWithFile)
-	return copyFileWithSpinnerFunc(sourcePath, destinationPathWithFile)
+	return copyFileWithSpinnerFunc(sourcePath, destinationPathWithFile, vaultDir)
 }

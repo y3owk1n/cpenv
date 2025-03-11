@@ -143,6 +143,125 @@ func TestGenerateProjectOptions(t *testing.T) {
 // Tests for CopyEnvFilesToProject and related functions
 // ---------------------------
 
+func TestPrettifiedPath(t *testing.T) {
+	// Create a temporary base directory.
+	baseDir := t.TempDir()
+
+	// Create simulated directories for CWD and vault.
+	simulatedCwd := filepath.Join(baseDir, "cwd")
+	if err := os.MkdirAll(simulatedCwd, 0755); err != nil {
+		t.Fatal(err)
+	}
+	simulatedVault := filepath.Join(baseDir, "vault")
+	if err := os.MkdirAll(simulatedVault, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Change working directory to simulatedCwd so that os.Getwd() returns it.
+	origWd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		if err := os.Chdir(origWd); err != nil {
+			t.Fatal(err)
+		}
+	}()
+	if err := os.Chdir(simulatedCwd); err != nil {
+		t.Fatal(err)
+	}
+	// Now os.Getwd() returns simulatedCwd.
+
+	// Define test cases.
+	// Note:
+	// - When a file is under the simulated CWD, your function returns the unchanged absolute path.
+	// - When under the vault directory, it returns a path with "{vault}/" as the prefix.
+	// - When both CWD and vault are the same, your function currently returns "{vault}".
+	// - Trailing slashes are not stripped in your function, so we expect them to be cleaned via filepath.Clean.
+	tests := []struct {
+		name     string
+		path     string
+		vaultDir string
+		expected string
+	}{
+		{
+			name:     "CWD_Match",
+			path:     filepath.Join(simulatedCwd, "file.txt"),
+			vaultDir: simulatedVault,
+			expected: filepath.Join(simulatedCwd, "file.txt"),
+		},
+		{
+			name:     "CWD_Subdir_Match",
+			path:     filepath.Join(simulatedCwd, "subdir", "config.json"),
+			vaultDir: simulatedVault,
+			expected: filepath.Join(simulatedCwd, "subdir", "config.json"),
+		},
+		{
+			name:     "Vault_Match",
+			path:     filepath.Join(simulatedVault, "data.db"),
+			vaultDir: simulatedVault,
+			expected: filepath.Join("{vault}/", "data.db"),
+		},
+		{
+			name:     "Vault_Subdir_Match",
+			path:     filepath.Join(simulatedVault, "logs", "error.log"),
+			vaultDir: simulatedVault,
+			expected: filepath.Join("{vault}/", "logs", "error.log"),
+		},
+		{
+			name:     "No_Match_Absolute",
+			path:     "/etc/passwd",
+			vaultDir: simulatedVault,
+			expected: "/etc/passwd",
+		},
+		{
+			name:     "No_Match_Relative",
+			path:     "relative/path.txt",
+			vaultDir: simulatedVault,
+			expected: "relative/path.txt",
+		},
+		{
+			name:     "CWD_Equals_Vault",
+			path:     simulatedCwd,
+			vaultDir: simulatedCwd, // Both directories are the same.
+			// Your function will hit the vault branch and return "{vault}".
+			expected: "{vault}",
+		},
+		{
+			name:     "Vault_Equals_VaultDir",
+			path:     simulatedVault,
+			vaultDir: simulatedVault,
+			// When path equals vaultDir, filepath.Rel returns ".",
+			// and filepath.Join("{vault}/", ".") cleans to "{vault}".
+			expected: "{vault}",
+		},
+		{
+			name:     "Trailing_Slash_in_VaultDir",
+			path:     simulatedVault + string(os.PathSeparator),
+			vaultDir: simulatedVault,
+			// Trailing slash is cleaned so that path equals simulatedVault.
+			expected: "{vault}",
+		},
+		{
+			name:     "Trailing_Slash_in_CWD",
+			path:     simulatedCwd + string(os.PathSeparator),
+			vaultDir: simulatedVault,
+			// filepath.Clean(simulatedCwd + "/") equals simulatedCwd.
+			expected: filepath.Clean(simulatedCwd),
+		},
+	}
+
+	// Run test cases.
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := prettifiedPath(tt.path, tt.vaultDir)
+			if got != tt.expected {
+				t.Errorf("prettifiedPath(%q, %q) = %q; want %q", tt.path, tt.vaultDir, got, tt.expected)
+			}
+		})
+	}
+}
+
 func TestCopyEnvFilesToProject_ReadDirError(t *testing.T) {
 	// Provide a vaultDir that does not exist so that ReadDirRecursive returns an error.
 	nonExistentDir := filepath.Join(t.TempDir(), "nonexistent")
@@ -176,7 +295,7 @@ func TestCopyEnvFilesToProject_Success(t *testing.T) {
 	var recordedSource, recordedDest string
 	origCopySpinner := copyFileWithSpinnerFunc
 	defer func() { copyFileWithSpinnerFunc = origCopySpinner }()
-	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string) error {
+	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string, vaultDir string) error {
 		recordedSource = sourcePath
 		recordedDest = destinationPath
 		return nil
@@ -220,11 +339,11 @@ func TestProcessCopyEnvFileToProject_FileNotExists(t *testing.T) {
 	var called bool
 	origCopySpinner := copyFileWithSpinnerFunc
 	defer func() { copyFileWithSpinnerFunc = origCopySpinner }()
-	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string) error {
+	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string, vaultDir string) error {
 		called = true
 		return nil
 	}
-	err := processCopyEnvFileToProject(dummyFile, tempProject, currentPath)
+	err := processCopyEnvFileToProject(dummyFile, tempProject, currentPath, tempProject)
 	assert.NoError(t, err)
 	assert.True(t, called)
 }
@@ -244,7 +363,7 @@ func TestProcessCopyEnvFileToProject_FileExists(t *testing.T) {
 	var called bool
 	origCopySpinner := copyFileWithSpinnerFunc
 	defer func() { copyFileWithSpinnerFunc = origCopySpinner }()
-	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string) error {
+	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string, vaultDir string) error {
 		called = true
 		return nil
 	}
@@ -265,7 +384,7 @@ func TestProcessCopyEnvFileToProject_FileExists(t *testing.T) {
 	w.Close()
 	os.Stdin = r
 	defer func() { os.Stdin = origStdin }()
-	err = processCopyEnvFileToProject(dummyFile, tempProject, currentPath)
+	err = processCopyEnvFileToProject(dummyFile, tempProject, currentPath, tempProject)
 	assert.NoError(t, err)
 	// Since the destination file exists and user chose not to overwrite,
 	// copyFileWithSpinnerFunc should not be called.
@@ -288,7 +407,7 @@ func TestCopyFileWithSpinner(t *testing.T) {
 		}
 		return os.WriteFile(destination, data, 0644)
 	}
-	err := copyFileWithSpinner(sourceFile, destFile)
+	err := copyFileWithSpinner(sourceFile, destFile, tempDir)
 	assert.NoError(t, err)
 	data, err := os.ReadFile(destFile)
 	assert.NoError(t, err)
@@ -296,6 +415,7 @@ func TestCopyFileWithSpinner(t *testing.T) {
 }
 
 func TestHandleExistingFile_NotOverwrite(t *testing.T) {
+	tempDir := t.TempDir()
 	// Simulate user input "n" so that the file is not overwritten.
 	origStdin := os.Stdin
 	r, w, err := os.Pipe()
@@ -308,16 +428,17 @@ func TestHandleExistingFile_NotOverwrite(t *testing.T) {
 	var called bool
 	origCopySpinner := copyFileWithSpinnerFunc
 	defer func() { copyFileWithSpinnerFunc = origCopySpinner }()
-	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string) error {
+	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string, vaultDir string) error {
 		called = true
 		return nil
 	}
-	err = handleExistingFile("dummySource", "dummyDest")
+	err = handleExistingFile("dummySource", "dummyDest", tempDir)
 	assert.NoError(t, err)
 	assert.False(t, called)
 }
 
 func TestHandleExistingFile_Overwrite(t *testing.T) {
+	tempDir := t.TempDir()
 	// Simulate user input "y" so that the file is overwritten.
 	origStdin := os.Stdin
 	r, w, err := os.Pipe()
@@ -330,11 +451,11 @@ func TestHandleExistingFile_Overwrite(t *testing.T) {
 	var called bool
 	origCopySpinner := copyFileWithSpinnerFunc
 	defer func() { copyFileWithSpinnerFunc = origCopySpinner }()
-	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string) error {
+	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string, vaultDir string) error {
 		called = true
 		return nil
 	}
-	err = handleExistingFile("dummySource", "dummyDest")
+	err = handleExistingFile("dummySource", "dummyDest", tempDir)
 	assert.NoError(t, err)
 	assert.True(t, called, "Expected copy function to be called when user confirms overwrite")
 }
@@ -425,7 +546,7 @@ func TestCopyEnvFilesToVault_WithTempVault(t *testing.T) {
 	var called bool
 	origCopySpinner := copyFileWithSpinnerFunc
 	defer func() { copyFileWithSpinnerFunc = origCopySpinner }()
-	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string) error {
+	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string, vaultDir string) error {
 		called = true
 		return nil
 	}
@@ -460,18 +581,20 @@ func TestCopyEnvFilesToVault_WithTempVault(t *testing.T) {
 }
 
 func TestProcessCopyEnvFileToVault_SkipCases(t *testing.T) {
+	tempDir := t.TempDir()
 	// Test branches that should skip copying.
-	err := processCopyEnvFileToVault("node_modules/somefile.env", "dummyCwd", "dummyDest")
+	err := processCopyEnvFileToVault("node_modules/somefile.env", "dummyCwd", "dummyDest", tempDir)
 	assert.NoError(t, err)
-	err = processCopyEnvFileToVault("dummyCwd/config.template", "dummyCwd", "dummyDest")
+	err = processCopyEnvFileToVault("dummyCwd/config.template", "dummyCwd", "dummyDest", tempDir)
 	assert.NoError(t, err)
-	err = processCopyEnvFileToVault("dummyCwd/config.example", "dummyCwd", "dummyDest")
+	err = processCopyEnvFileToVault("dummyCwd/config.example", "dummyCwd", "dummyDest", tempDir)
 	assert.NoError(t, err)
-	err = processCopyEnvFileToVault("dummyCwd/readme.txt", "dummyCwd", "dummyDest")
+	err = processCopyEnvFileToVault("dummyCwd/readme.txt", "dummyCwd", "dummyDest", tempDir)
 	assert.NoError(t, err)
 }
 
 func TestProcessCopyEnvFileToVault_Copy(t *testing.T) {
+	tempDir := t.TempDir()
 	// Test the branch that actually copies an .env file.
 	tempCwd := t.TempDir()
 	dummyFile := filepath.Join(tempCwd, "config.env")
@@ -479,11 +602,11 @@ func TestProcessCopyEnvFileToVault_Copy(t *testing.T) {
 	var called bool
 	origCopySpinner := copyFileWithSpinnerFunc
 	defer func() { copyFileWithSpinnerFunc = origCopySpinner }()
-	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string) error {
+	copyFileWithSpinnerFunc = func(sourcePath, destinationPath string, vaultDir string) error {
 		called = true
 		return nil
 	}
-	err := processCopyEnvFileToVault(dummyFile, tempCwd, filepath.Join(tempCwd, "vault"))
+	err := processCopyEnvFileToVault(dummyFile, tempCwd, filepath.Join(tempCwd, "vault"), tempDir)
 	assert.NoError(t, err)
 	assert.True(t, called)
 }
