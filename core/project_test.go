@@ -145,17 +145,8 @@ func TestGenerateProjectOptions(t *testing.T) {
 
 func TestPrettifiedPath(t *testing.T) {
 	// Create a temporary base directory.
-	baseDir := t.TempDir()
-
-	// Create simulated directories for CWD and vault.
-	simulatedCwd := filepath.Join(baseDir, "cwd")
-	if err := os.MkdirAll(simulatedCwd, 0755); err != nil {
-		t.Fatal(err)
-	}
-	simulatedVault := filepath.Join(baseDir, "vault")
-	if err := os.MkdirAll(simulatedVault, 0755); err != nil {
-		t.Fatal(err)
-	}
+	cwdBaseDir := t.TempDir()
+	vaultBaseDir := t.TempDir()
 
 	// Change working directory to simulatedCwd so that os.Getwd() returns it.
 	origWd, err := utils.GetWdFunc()
@@ -167,7 +158,7 @@ func TestPrettifiedPath(t *testing.T) {
 			t.Fatal(err)
 		}
 	}()
-	if err := os.Chdir(simulatedCwd); err != nil {
+	if err := os.Chdir(cwdBaseDir); err != nil {
 		t.Fatal(err)
 	}
 	// Now os.Getwd() returns simulatedCwd.
@@ -186,68 +177,68 @@ func TestPrettifiedPath(t *testing.T) {
 	}{
 		{
 			name:     "CWD_Match",
-			path:     filepath.Join(simulatedCwd, "file.txt"),
-			vaultDir: simulatedVault,
-			expected: filepath.Join(simulatedCwd, "file.txt"),
+			path:     filepath.Join(cwdBaseDir, "file.txt"),
+			vaultDir: vaultBaseDir,
+			expected: filepath.Join(cwdBaseDir, "file.txt"),
 		},
 		{
 			name:     "CWD_Subdir_Match",
-			path:     filepath.Join(simulatedCwd, "subdir", "config.json"),
-			vaultDir: simulatedVault,
-			expected: filepath.Join(simulatedCwd, "subdir", "config.json"),
+			path:     filepath.Join(cwdBaseDir, "subdir", "config.json"),
+			vaultDir: vaultBaseDir,
+			expected: filepath.Join(cwdBaseDir, "subdir", "config.json"),
 		},
 		{
 			name:     "Vault_Match",
-			path:     filepath.Join(simulatedVault, "data.db"),
-			vaultDir: simulatedVault,
+			path:     filepath.Join(vaultBaseDir, "data.db"),
+			vaultDir: vaultBaseDir,
 			expected: filepath.Join("{vault}/", "data.db"),
 		},
 		{
 			name:     "Vault_Subdir_Match",
-			path:     filepath.Join(simulatedVault, "logs", "error.log"),
-			vaultDir: simulatedVault,
+			path:     filepath.Join(vaultBaseDir, "logs", "error.log"),
+			vaultDir: vaultBaseDir,
 			expected: filepath.Join("{vault}/", "logs", "error.log"),
 		},
 		{
 			name:     "No_Match_Absolute",
 			path:     "/etc/passwd",
-			vaultDir: simulatedVault,
+			vaultDir: vaultBaseDir,
 			expected: "/etc/passwd",
 		},
 		{
 			name:     "No_Match_Relative",
 			path:     "relative/path.txt",
-			vaultDir: simulatedVault,
+			vaultDir: vaultBaseDir,
 			expected: "relative/path.txt",
 		},
 		{
 			name:     "CWD_Equals_Vault",
-			path:     simulatedCwd,
-			vaultDir: simulatedCwd, // Both directories are the same.
+			path:     cwdBaseDir,
+			vaultDir: cwdBaseDir, // Both directories are the same.
 			// Your function will hit the vault branch and return "{vault}".
 			expected: "{vault}",
 		},
 		{
 			name:     "Vault_Equals_VaultDir",
-			path:     simulatedVault,
-			vaultDir: simulatedVault,
+			path:     vaultBaseDir,
+			vaultDir: vaultBaseDir,
 			// When path equals vaultDir, filepath.Rel returns ".",
 			// and filepath.Join("{vault}/", ".") cleans to "{vault}".
 			expected: "{vault}",
 		},
 		{
 			name:     "Trailing_Slash_in_VaultDir",
-			path:     simulatedVault + string(os.PathSeparator),
-			vaultDir: simulatedVault,
-			// Trailing slash is cleaned so that path equals simulatedVault.
+			path:     vaultBaseDir + string(os.PathSeparator),
+			vaultDir: vaultBaseDir,
+			// Trailing slash is cleaned so that path equals vaultBaseDir.
 			expected: "{vault}",
 		},
 		{
 			name:     "Trailing_Slash_in_CWD",
-			path:     simulatedCwd + string(os.PathSeparator),
-			vaultDir: simulatedVault,
-			// filepath.Clean(simulatedCwd + "/") equals simulatedCwd.
-			expected: filepath.Clean(simulatedCwd),
+			path:     cwdBaseDir + string(os.PathSeparator),
+			vaultDir: vaultBaseDir,
+			// filepath.Clean(cwdBaseDir + "/") equals cwdBaseDir.
+			expected: filepath.Clean(cwdBaseDir),
 		},
 	}
 
