@@ -127,7 +127,7 @@ func prettifiedPath(path, vaultDir string) string {
 	// Normalize paths.
 	path = filepath.Clean(path)
 	vaultDir = filepath.Clean(vaultDir)
-	cwd, err := os.Getwd()
+	cwd, err := utils.GetWdFunc()
 	if err != nil {
 		// In production you might return an error, but here we fallback.
 		return path

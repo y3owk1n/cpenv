@@ -158,7 +158,7 @@ func TestPrettifiedPath(t *testing.T) {
 	}
 
 	// Change working directory to simulatedCwd so that os.Getwd() returns it.
-	origWd, err := os.Getwd()
+	origWd, err := utils.GetWdFunc()
 	if err != nil {
 		t.Fatal(err)
 	}
