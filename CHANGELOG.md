@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.6](https://github.com/y3owk1n/cpenv/compare/v1.15.5...v1.15.6) (2025-05-16)
+
+
+### Bug Fixes
+
+* **config:** support absolute path for vault configuration ([#129](https://github.com/y3owk1n/cpenv/issues/129)) ([5857455](https://github.com/y3owk1n/cpenv/commit/58574558ced11f47294391d1d5d3f6bac17984eb))
+
 ## [1.15.5](https://github.com/y3owk1n/cpenv/compare/v1.15.4...v1.15.5) (2025-03-11)
 
 
