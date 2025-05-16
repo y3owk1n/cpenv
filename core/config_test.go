@@ -76,6 +76,15 @@ func TestInitViperUserHomeError(t *testing.T) {
 	assert.Contains(t, err.Error(), "mocked error")
 }
 
+// TestGetFullVaultDirAbsolutePath verifies that absolute paths are returned as-is.
+func TestGetFullVaultDirAbsolutePath(t *testing.T) {
+	absPath := filepath.Join(t.TempDir(), "absoluteVault")
+
+	result, err := GetFullVaultDir(absPath)
+	assert.NoError(t, err)
+	assert.Equal(t, absPath, result)
+}
+
 // TestGetFullVaultDir verifies that GetFullVaultDir returns the correct full path.
 func TestGetFullVaultDir(t *testing.T) {
 	// Override HOME and USERPROFILE.

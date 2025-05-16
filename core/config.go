@@ -55,6 +55,12 @@ func InitViper() error {
 
 func GetFullVaultDir(vaultDir string) (string, error) {
 	logrus.Debugf("Resolving full vault directory for vault_dir: %s", vaultDir)
+
+	if filepath.IsAbs(vaultDir) {
+		logrus.Debugf("Vault directory is absolute path: %s", vaultDir)
+		return vaultDir, nil
+	}
+
 	homeDir, err := UserHomeDirFunc()
 	if err != nil {
 		logrus.Errorf("Failed to get home directory: %v", err)
