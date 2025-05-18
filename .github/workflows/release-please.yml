@@ -12,6 +12,9 @@ name: release-please
 jobs:
     release-please:
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                go: ["1.23.9"]
         steps:
             - uses: googleapis/release-please-action@v4
               id: release
@@ -33,7 +36,7 @@ jobs:
             - uses: actions/setup-go@v5
               if: ${{ steps.release.outputs.release_created }}
               with:
-                  go-version: "^1.23.3"
+                  go-version: ${{ matrix.go }}
 
             - name: Build project and prepare release artifact
               if: ${{ steps.release.outputs.release_created }}

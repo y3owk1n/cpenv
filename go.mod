@@ -1,9 +1,8 @@
 module github.com/y3owk1n/cpenv
 
-go 1.23.3
+go 1.23.9
 
 require (
-	bou.ke/monkey v1.0.2
 	github.com/briandowns/spinner v1.23.2
 	github.com/fatih/color v1.14.1
 	github.com/manifoldco/promptui v0.9.0
